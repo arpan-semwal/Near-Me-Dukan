@@ -7,6 +7,7 @@ import MoreScreen from './App/Screens/MoreScreen/MoreScreen';
 import AnotherScreen from './App/Screens/AnotherScreen/AnotherScreen';
 import React from 'react';
 import OptionScreen from "./App/Screens/OptionScreen/OptiionScreen.jsx"
+import OtpScreen1 from './App/Screens/OtpScreen/OtpScreen1.jsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,6 +19,7 @@ function StackNavigator() {
       <Stack.Screen name="HomePage" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="More" component={MoreScreen} options={{ title: 'More' }} />
       <Stack.Screen name="Another" component={AnotherScreen} options={{ title: 'Another' }} />
+      <Stack.Screen name="Otp1" component={OtpScreen1} options={{ title: 'Otp1' }} />
     </Stack.Navigator>
   );
 }

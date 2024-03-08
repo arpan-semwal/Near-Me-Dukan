@@ -2,8 +2,17 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import React from 'react';
 import DropdownComponent from '../../Components/DropDownComponent/DropDownComponent';
 import Colors from '../../utils/Colors';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
+	const navigation = useNavigation();
+	
+	//Navigate to OTP new screen
+	const handleNavigation = () => {
+		navigation.navigate('Otp1');  
+	  }
+	
+	
   return (
     <View style={styles.mainContainer}>
 		<Text style={styles.heading}>Near Ki Dukan</Text>
@@ -12,7 +21,7 @@ export default function HomeScreen() {
       	<DropdownComponent />
 
       <View style={styles.buttonContainer}>
-        <Button title="continue" />
+        <Button title="continue" onPress={handleNavigation}/>
       </View>
 		</View>
       
@@ -38,9 +47,6 @@ const styles = StyleSheet.create({
 	  textAlign: 'center',
 	},
 	buttonContainer: {
-	  width: '80%', // Adjust width as needed
-	  alignSelf: 'center',
 	  backgroundColor: Colors.BUTTONCOLOR,
-	  borderRadius: 8,
 	},
   });
