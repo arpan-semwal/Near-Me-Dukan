@@ -1,3 +1,4 @@
 export default{
-	BACKGROUND:'#FFFFFF'
+	BACKGROUND:'#FFFFFF',
+	BUTTONCOLOR:"#0075EB",
 }
