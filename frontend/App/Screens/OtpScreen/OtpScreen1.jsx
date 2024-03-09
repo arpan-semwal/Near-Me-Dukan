@@ -31,11 +31,16 @@ export default function OtpScreen1() {
                     onChangeText={(text) => setPhoneNumber(text)}
                 />
             </View>
+            
+            <View style={styles.buttonContainer}>
             <Button
+                style={styles.btn1}
                 title="Submit"
                 onPress={handleSubmitPhoneNumber}
-                color={Colors.primary} // Assuming primary color defined in your Colors file
+                
             />
+            </View>
+           
         </View>
     );
 }
@@ -46,18 +51,21 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
+        
     },
     blueBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 10,
-        width: '100%', // Set width to fill the container
+        width: '100%', 
+        borderWidth:1,// Set width to fill the container
+        
+        
     },
     countryCodeContainer: {
         backgroundColor: '#007bff',
-        borderRadius: 5,
         paddingHorizontal: 8,
         paddingVertical: 10,
+        
     },
     countryCode: {
         color: '#fff',
@@ -68,5 +76,13 @@ const styles = StyleSheet.create({
         height: 39,
         color: '#000',
         fontSize: 18,
+        textAlign:"center"
+        
     },
+    buttonContainer:{
+       marginTop:20 
+    },
+    btn1:{
+        backgroundColor:Colors.BUTTONCOLOR,
+    }
 });
