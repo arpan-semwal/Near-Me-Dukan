@@ -3,11 +3,12 @@ import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity } from 'rea
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 import ShopkeeperScreen from '../RegisterScreen/ShopkeeperScreen';
- 
+
 export default function OtpScreen2({ route }) {
     const { phoneNumber } = route.params;
     const [otp, setOtp] = useState('');
     const [isCorrectOtp, setIsCorrectOtp] = useState(true); // Initially assuming OTP is correct
+    const [isResent, setIsResent] = useState(false); // State to track if OTP has been resent
     const navigation = useNavigation();
 
     // Function to handle OTP input change
@@ -30,6 +31,13 @@ export default function OtpScreen2({ route }) {
             // Incorrect OTP
             setIsCorrectOtp(false);
         }
+    };
+
+    // Function to handle resend OTP
+    const handleResend = () => {
+        // Logic to resend OTP
+        setIsResent(true); // Set the state to indicate OTP has been resent
+        setIsCorrectOtp(true); // Reset to true on resend
     };
 
     return (
@@ -63,7 +71,9 @@ export default function OtpScreen2({ route }) {
                             />
                         ))}
                     </View>
-                    <Text style={styles.resendText}>Resend OTP</Text>
+                    <TouchableOpacity onPress={handleResend}>
+                        <Text style={styles.resendText}>Resend OTP</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
             <View style={styles.buttonContainer}>
@@ -75,7 +85,7 @@ export default function OtpScreen2({ route }) {
             </View>
             <View style={styles.sentTextContainer}>
                 <Text style={[styles.sentText, !isCorrectOtp && styles.errorText]}>
-                    {isCorrectOtp ? "We have sent OTP," : "Oops! You entered the wrong OTP"}
+                    {isCorrectOtp ? (isResent ? "We have resent OTP," : "We have sent OTP,") : "Oops! You entered the wrong OTP"}
                 </Text>
                 {!isCorrectOtp && <Text style={styles.errorText}>Please try again.</Text>}
             </View>
