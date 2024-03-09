@@ -2,11 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Fontisto, FontAwesome6 } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
+import { useNavigation } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function RegisterationMainScreen() {
+	
+	const navigation = useNavigation();
+	
+	const handleCustomerPress = () => {
+        // Navigate to the customer screen
+        navigation.navigate('Customer');
+    };
+	
     return (
         <View style={styles.container}>
             <Text style={styles.registerText}>Register Now</Text>
@@ -14,7 +23,7 @@ export default function RegisterationMainScreen() {
                 <Fontisto name="person" size={windowWidth * 0.2} color="black" />
                 <Text style={styles.cardText}>Shopkeeper</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.card} onPress={() => console.log('Customer pressed')}>
+            <TouchableOpacity style={styles.card} onPress={handleCustomerPress}>
                 <FontAwesome6 name="people-group" size={windowWidth * 0.2} color="black" />
                 <Text style={styles.cardText}>Customer</Text>
             </TouchableOpacity>
