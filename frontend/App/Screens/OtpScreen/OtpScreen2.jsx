@@ -2,42 +2,35 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
-import ShopkeeperScreen from '../RegisterScreen/ShopkeeperScreen';
 
 export default function OtpScreen2({ route }) {
-    const { phoneNumber } = route.params;
+    const { phoneNumber } = route.params || {};
     const [otp, setOtp] = useState('');
-    const [isCorrectOtp, setIsCorrectOtp] = useState(true); // Initially assuming OTP is correct
-    const [isResent, setIsResent] = useState(false); // State to track if OTP has been resent
+    const [isCorrectOtp, setIsCorrectOtp] = useState(true);
+    const [isResent, setIsResent] = useState(false);
     const navigation = useNavigation();
 
-    // Function to handle OTP input change
     const handleOtpChange = (text, index) => {
         let newOtp = otp.split('');
         newOtp[index] = text;
         setOtp(newOtp.join(''));
-        setIsCorrectOtp(true); // Reset to true on OTP change
+        setIsCorrectOtp(true);
     };
 
-    // Function to handle OTP submission
     const handleSubmit = () => {
         const correctOtp = '1234'; // Example correct OTP
         if (otp === correctOtp) {
-            // Correct OTP
             setIsCorrectOtp(true);
-            // Navigate to ShopkeeperScreen
-            navigation.navigate('Shop');
+            // Navigate to RegisterationMainScreen upon correct OTP
+            navigation.navigate('Register');
         } else {
-            // Incorrect OTP
             setIsCorrectOtp(false);
         }
     };
 
-    // Function to handle resend OTP
     const handleResend = () => {
-        // Logic to resend OTP
-        setIsResent(true); // Set the state to indicate OTP has been resent
-        setIsCorrectOtp(true); // Reset to true on resend
+        setIsResent(true);
+        setIsCorrectOtp(true);
     };
 
     return (
@@ -51,7 +44,7 @@ export default function OtpScreen2({ route }) {
                     style={[styles.input, { width: '100%' }]}
                     placeholder="10 digits mobile number"
                     keyboardType="phone-pad"
-                    value={phoneNumber}
+                    value={phoneNumber || ''} // Display phoneNumber, if available
                     editable={false}
                 />
             </View>
@@ -78,7 +71,6 @@ export default function OtpScreen2({ route }) {
             </View>
             <View style={styles.buttonContainer}>
                 <Button
-                    style={styles.btn1}
                     title="Submit"
                     onPress={handleSubmit}
                 />
@@ -107,7 +99,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     subheadingContainer: {
-        alignItems: 'flex-start', // Align the subheading to the left
+        alignItems: 'flex-start',
         marginBottom: 10,
     },
     subheading: {
@@ -116,41 +108,38 @@ const styles = StyleSheet.create({
         color: '#484848',
     },
     otpMainContainer: {
-        alignItems: 'center', // Center the OTP container horizontally
+        alignItems: 'center',
     },
     otpContainer: {
         flexDirection: 'row',
-        justifyContent: 'center', // Center OTP inputs horizontally
+        justifyContent: 'center',
         width: '70%',
     },
     otpInput: {
-        width: '22%', // Adjusted width to accommodate spacing between inputs
+        width: '22%',
         height: 30,
         borderWidth: 1,
         borderColor: '#707070',
         textAlign: 'center',
         fontSize: 18,
         borderRadius: 5,
-        marginHorizontal: 5, // Add margin between OTP input fields
+        marginHorizontal: 5,
     },
     resendText: {
         fontSize: 14,
-        color: '',
         marginTop: 10,
     },
     sentTextContainer: {
-        width: '60%', // Make the container width cover the entire screen
+        width: '60%',
         alignItems: 'center',
-        backgroundColor: Colors.BACKGROUND,  
     },
     sentText: {
-        color: 'blue', // Set text color to white
-        backgroundColor: Colors.BACKGROUND,   // Set background color to #484848
-        padding: 3, // Add padding for better visibility
-        textAlign: 'center', // Center the text
+        color: 'blue',
+        padding: 3,
+        textAlign: 'center',
     },
     errorText: {
-        color: 'blue', // Set text color to red for error message
+        color: 'red',
     },
     blueBox: {
         flexDirection: 'row',
@@ -178,8 +167,5 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '50%',
         marginBottom: 20,
-    },
-    btn1: {
-        backgroundColor: Colors.BUTTONCOLOR,
     },
 });

@@ -1,4 +1,5 @@
 export default{
 	BACKGROUND:'#FFFFFF',
 	BUTTONCOLOR:"#0075EB",
+	CARDCOLOR:"#44C7F4"
 }
