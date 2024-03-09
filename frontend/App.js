@@ -9,6 +9,7 @@ import React from 'react';
 import OptionScreen from "./App/Screens/OptionScreen/OptiionScreen.jsx"
 import OtpScreen1 from './App/Screens/OtpScreen/OtpScreen1.jsx';
 import OtpScreen2 from "./App/Screens/OtpScreen/OtpScreen2.jsx"
+import ShopkeeperScreen from './App/Screens/RegisterScreen/ShopkeeperScreen.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -21,6 +22,7 @@ function StackNavigator() {
       <Stack.Screen name="Another" component={AnotherScreen} options={{ title: 'Another' }} />
       <Stack.Screen name="Otp1" component={OtpScreen1} options={{ title: 'Otp1' }} />
       <Stack.Screen name="Otp2" component={OtpScreen2} options={{ title: 'Otp2' }} />
+      <Stack.Screen name="Shop" component={ShopkeeperScreen} options={{ title: 'Shopkeeper' }} />
     </Stack.Navigator>
   );
 }
