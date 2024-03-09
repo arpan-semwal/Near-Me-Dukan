@@ -12,6 +12,7 @@ import OtpScreen2 from "./App/Screens/OtpScreen/OtpScreen2.jsx"
 import ShopkeeperScreen from './App/Screens/RegisterScreen/ShopkeeperScreen.jsx';
 import RegisterationMainScreen from './App/Screens/RegisterScreen/RegisterationMainScreen.jsx';
 import CustomerScreen from "./App/Screens/RegisterScreen/CustomerScreen.jsx";
+import CustomerHomePage from './App/Screens/CustomerHomePage/CustomerHomePage.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -27,6 +28,7 @@ function StackNavigator() {
       <Stack.Screen name="Register" component={RegisterationMainScreen} options={{ title: 'Register' }} />
       <Stack.Screen name="Shopkeeper" component={ShopkeeperScreen} options={{ title: 'Shopkeeper' }} />
       <Stack.Screen name="Customer" component={CustomerScreen} options={{ title: 'Customer' }} />
+      <Stack.Screen name="CustomerHomePage" component={CustomerHomePage} options={{ title: 'Customer' }} />
     </Stack.Navigator>
   );
 }

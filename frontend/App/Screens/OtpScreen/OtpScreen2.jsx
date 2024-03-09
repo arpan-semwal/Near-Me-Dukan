@@ -21,8 +21,8 @@ export default function OtpScreen2({ route }) {
         const correctOtp = '1234'; // Example correct OTP
         if (otp === correctOtp) {
             setIsCorrectOtp(true);
-            // Navigate to RegisterationMainScreen upon correct OTP
-            navigation.navigate('Register');
+            // Navigate to RegisterationMainScreen with phoneNumber as a parameter
+            navigation.navigate('Register', { phoneNumber });
         } else {
             setIsCorrectOtp(false);
         }
@@ -44,7 +44,7 @@ export default function OtpScreen2({ route }) {
                     style={[styles.input, { width: '100%' }]}
                     placeholder="10 digits mobile number"
                     keyboardType="phone-pad"
-                    value={phoneNumber || ''} // Display phoneNumber, if available
+                    value={phoneNumber || ''}
                     editable={false}
                 />
             </View>

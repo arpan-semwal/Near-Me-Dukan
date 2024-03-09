@@ -7,15 +7,15 @@ import { useNavigation } from '@react-navigation/native';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function RegisterationMainScreen() {
-	
-	const navigation = useNavigation();
-	
-	const handleCustomerPress = () => {
-        // Navigate to the customer screen
-        navigation.navigate('Customer');
+export default function RegisterationMainScreen({ route }) {
+    const navigation = useNavigation();
+    const { phoneNumber } = route.params;
+
+    const handleCustomerPress = () => {
+        // Navigate to the customer screen and pass the phone number as a parameter
+        navigation.navigate('Customer', { phoneNumber: phoneNumber });
     };
-	
+
     return (
         <View style={styles.container}>
             <Text style={styles.registerText}>Register Now</Text>
