@@ -86,3 +86,19 @@ const styles = StyleSheet.create({
         backgroundColor:Colors.BUTTONCOLOR,
     }
 });
+{/*<View style={styles.container}>
+            <Text style={styles.label}>Phone Number:</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="10 digits mobile number"
+                keyboardType="phone-pad"
+                value={phoneNumber} // Display the phone number passed as a parameter
+                editable={false} // Make the input field disabled
+            />
+            <Button
+                title="Verify"
+                onPress={() => {
+                    // Implement verification logic here
+                }}
+            />
+        </View>*/}
