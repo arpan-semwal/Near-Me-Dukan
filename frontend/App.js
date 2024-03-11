@@ -6,6 +6,8 @@ import HomeScreen from './App/Screens/HomeScreen/HomeScreen';
 import MoreScreen from './App/Screens/MoreScreen/MoreScreen';
 import AnotherScreen from './App/Screens/AnotherScreen/AnotherScreen';
 import React from 'react';
+import CartScreen from "./App/Screens/CartScreen/CartScreen.jsx"
+import CategoriesScreen from "./App/Screens/CategoriesScreen/CategoriesScreen.jsx"
 import OptionScreen from "./App/Screens/OptionScreen/OptiionScreen.jsx"
 import OtpScreen1 from './App/Screens/OtpScreen/OtpScreen1.jsx';
 import OtpScreen2 from "./App/Screens/OtpScreen/OtpScreen2.jsx"
@@ -34,7 +36,7 @@ function StackNavigator() {
 }
 
 // Tab Navigator
-function TabNavigator() {
+function TabNavigator( ) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -70,6 +72,25 @@ function TabNavigator() {
           ),
         }} 
       />
+      <Tab.Screen 
+        name="Categories" 
+        component={CategoriesScreen}  
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="apps" color={color} size={size} /> 
+          ),
+        }} 
+      />
+      <Tab.Screen 
+        name="Cart" 
+        component={CartScreen} 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cart" color={color} size={size} /> 
+          ),
+        }} 
+      />
+      
     </Tab.Navigator>
   );
 }

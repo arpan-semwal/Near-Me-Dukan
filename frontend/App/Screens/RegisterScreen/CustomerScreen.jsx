@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import Colors from '../../utils/Colors';
 
 const windowWidth = Dimensions.get('window').width;
@@ -15,10 +15,12 @@ export default function CustomerScreen({ route }) {
     const [city, setCity] = useState('');
     const [address, setAddress] = useState('');
     const [requiredFields, setRequiredFields] = useState({});
+    const [formSubmitted ,   setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false); // Track if form submission has been attempted
-    const navigation = useNavigation();
+    const navigation = useNavigation(); // Initialize useNavigation hook
 
     const handleSubmit = () => {
+       
         setSubmitted(true); // Set form submission attempt
 
         // Check if all required fields are filled
@@ -27,6 +29,8 @@ export default function CustomerScreen({ route }) {
             console.log(alert("Please fill in all required fields."));
             return;
         }
+        
+        setFormSubmitted(true);
 
         // Perform form submission logic here
         console.log("Name:", name);
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
     logo: {
         resizeMode: 'contain',
         width: windowWidth * 0.8, // Adjust width based on device width
-        height: windowHeight * 0.1, // Adjust height based on device height
+        height: windowHeight * 0.17, // Adjust height based on device height
         marginBottom: windowHeight * 0.03, // Add some margin below the image
     },
     heading: {
