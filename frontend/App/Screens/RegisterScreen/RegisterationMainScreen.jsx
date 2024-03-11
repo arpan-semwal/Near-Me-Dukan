@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { Fontisto, FontAwesome6 } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
@@ -18,6 +18,10 @@ export default function RegisterationMainScreen({ route }) {
 
     return (
         <View style={styles.container}>
+            <Image
+                source={require('../../../assets/logo.png')}
+                style={styles.logo}
+            />
             <Text style={styles.registerText}>Register Now</Text>
             <TouchableOpacity style={styles.card} onPress={() => console.log('Shopkeeper pressed')}>
                 <Fontisto name="person" size={windowWidth * 0.2} color="black" />
@@ -36,6 +40,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    logo: {
+        resizeMode: 'contain',
+        width: windowWidth * 0.8, // Adjust as needed
+          height: windowHeight * 0.2, // Adjust as needed
+        marginBottom: windowHeight * 0.03, // Add some margin below the image
     },
     registerText: {
         fontSize: windowWidth * 0.06,

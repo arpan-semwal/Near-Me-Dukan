@@ -19,12 +19,7 @@ const DropdownComponent = () => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
- 
-
-  return (
-	
-	 
-			
+  return (	
 		<View style={styles.container}>
 			<Dropdown
 				style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
@@ -37,7 +32,7 @@ const DropdownComponent = () => {
 				maxHeight={300}
 				labelField="label"
 				valueField="value"
-				placeholder={!isFocus ? 'Select item' : '...'}
+				placeholder={!isFocus ? 'Select language' : '...'}
 				searchPlaceholder="Search..."
 				value={value}
 				onFocus={() => setIsFocus(true)}

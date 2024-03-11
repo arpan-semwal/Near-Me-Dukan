@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity , Dimensions , Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function OtpScreen2({ route }) {
     const { phoneNumber } = route.params || {};
@@ -35,6 +38,12 @@ export default function OtpScreen2({ route }) {
 
     return (
         <View style={styles.container}>
+            <View style={styles.imageContainer}>
+                <Image
+                    source={require('../../../assets/logo.png')}
+                    style={styles.logo}
+                />
+            </View>
             <Text style={styles.heading}>Enter OTP</Text>
             <View style={styles.blueBox}>
                 <View style={styles.countryCodeContainer}>
@@ -91,6 +100,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
+    },
+    imageContainer: {
+        marginBottom: windowHeight * 0.05, // Adjust margin bottom based on device height
+    },
+    logo: {
+        resizeMode: 'contain',
+        width: windowWidth * 0.4, // Adjust width based on device width
+        height: windowHeight * 0.2, // Adjust height based on device height
     },
     heading: {
         fontSize: 26,

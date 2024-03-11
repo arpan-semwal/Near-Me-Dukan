@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../utils/Colors';
 
@@ -70,6 +70,10 @@ export default function CustomerScreen({ route }) {
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent}  keyboardShouldPersistTaps="handled" >
             <View style={styles.container}>
+                <Image
+                    source={require('../../../assets/logo.png')}
+                    style={styles.logo}
+                />
                 <Text style={styles.heading}>Customer Registration</Text>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Phone Number</Text>
@@ -156,6 +160,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
         alignItems: 'center',
+    },
+    logo: {
+        resizeMode: 'contain',
+        width: windowWidth * 0.8, // Adjust width based on device width
+        height: windowHeight * 0.1, // Adjust height based on device height
+        marginBottom: windowHeight * 0.03, // Add some margin below the image
     },
     heading: {
         fontSize: windowWidth * 0.06,
