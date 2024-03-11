@@ -1,53 +1,73 @@
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import React from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
+import { useNavigation } from '@react-navigation/native';
 
 export default function CustomerHomePage({ route }) {
-  const { name } = route.params || {};
+  const { name, pincode } = route.params || {};
+  const navigation = useNavigation();
   
-  
+  const navigateToScreen = (screenName, params) => {
+    navigation.navigate(screenName, params);
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Image
-            source={require('../../../assets/logo.png')} // Specify the path to your image
+            source={require('../../../assets/logo.png')}
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Hello, {name}</Text>
+        <Text style={styles.welcomeText}>Welcome, {name}</Text>
+       
+        <View style={styles.cardRow}>
+          <View style={styles.card}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops')}>
+              <View style={styles.cardContent}>
+                <View style={styles.iconWrapper}>
+                  <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
+                </View>
+                <Text style={styles.cardText}>My Preferred Shops</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.card}>
+            <TouchableOpacity onPress={() => navigateToScreen('Orders')}>
+              <View style={styles.cardContent}>
+                <View style={styles.iconWrapper}>
+                  <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
+                </View>
+                <Text style={styles.cardText}>My Orders</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
         
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <View style={styles.iconWrapper}>
-              <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
-            </View>
-            <Text style={styles.cardText}>My Preferred Shops</Text>
+            <TouchableOpacity onPress={() => navigateToScreen('MyAddress')}>
+              <View style={styles.cardContent}>
+                <View style={styles.iconWrapper}>
+                  <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />
+                </View>
+                <Text style={styles.cardText}>My Addresses</Text>
+              </View>
+            </TouchableOpacity>
           </View>
+          
           <View style={styles.card}>
-            <View style={styles.iconWrapper}>
-              <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
-            </View>
-            <Text style={styles.cardText}>My Orders</Text>
-          </View>
-        </View>
-        <View style={styles.cardRow}>
-          <View style={styles.card}>
-            <View style={styles.iconWrapper}>
-              <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />
-            </View>
-            <Text style={styles.cardText}>My Addresses</Text>
-          </View>
-          <View style={styles.card}>
-            <View style={styles.iconWrapper}>
+          <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name })}>
+              <View style={styles.cardContent}>
+              <View style={styles.iconWrapper}>
               <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
-            </View>
-            <Text style={styles.cardText}>Search Shops</Text>
+        </View>
+        <Text style={styles.cardText}>Search Shops</Text>
+    </View>
+</TouchableOpacity>
           </View>
         </View>
       </View>
@@ -80,11 +100,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  pageTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
   cardRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -98,6 +113,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 10,
+  },
+  cardContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardText: {
     fontSize: 16,

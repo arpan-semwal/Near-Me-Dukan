@@ -15,12 +15,11 @@ export default function CustomerScreen({ route }) {
     const [city, setCity] = useState('');
     const [address, setAddress] = useState('');
     const [requiredFields, setRequiredFields] = useState({});
-    const [formSubmitted ,   setFormSubmitted] = useState(false);
+    const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false); // Track if form submission has been attempted
     const navigation = useNavigation(); // Initialize useNavigation hook
 
     const handleSubmit = () => {
-       
         setSubmitted(true); // Set form submission attempt
 
         // Check if all required fields are filled
@@ -29,7 +28,7 @@ export default function CustomerScreen({ route }) {
             console.log(alert("Please fill in all required fields."));
             return;
         }
-        
+
         setFormSubmitted(true);
 
         // Perform form submission logic here
@@ -39,32 +38,33 @@ export default function CustomerScreen({ route }) {
 
         // Navigate to the new screen and pass parameters
         navigation.navigate('CustomerHomePage', {
-            phoneNumber: phoneNumber,
-            name: name,
+            pincode: pincode,
+            name:name,
+            
         });
     };
 
     const handleInputChange = (value, fieldName) => {
-        switch(fieldName) {
+        switch (fieldName) {
             case 'name':
                 setName(value);
-                setRequiredFields({...requiredFields, name: value.trim() !== ''});
+                setRequiredFields({ ...requiredFields, name: value.trim() !== '' });
                 break;
             case 'pincode':
                 setPincode(value);
-                setRequiredFields({...requiredFields, pincode: value.trim() !== ''});
+                setRequiredFields({ ...requiredFields, pincode: value.trim() !== '' });
                 break;
             case 'state':
                 setState(value);
-                setRequiredFields({...requiredFields, state: value.trim() !== ''});
+                setRequiredFields({ ...requiredFields, state: value.trim() !== '' });
                 break;
             case 'city':
                 setCity(value);
-                setRequiredFields({...requiredFields, city: value.trim() !== ''});
+                setRequiredFields({ ...requiredFields, city: value.trim() !== '' });
                 break;
             case 'address':
                 setAddress(value);
-                setRequiredFields({...requiredFields, address: value.trim() !== ''});
+                setRequiredFields({ ...requiredFields, address: value.trim() !== '' });
                 break;
             default:
                 break;
@@ -72,7 +72,7 @@ export default function CustomerScreen({ route }) {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContent}  keyboardShouldPersistTaps="handled" >
+        <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
             <View style={styles.container}>
                 <Image
                     source={require('../../../assets/logo.png')}
@@ -167,9 +167,9 @@ const styles = StyleSheet.create({
     },
     logo: {
         resizeMode: 'contain',
-        width: windowWidth * 0.8, // Adjust width based on device width
-        height: windowHeight * 0.17, // Adjust height based on device height
-        marginBottom: windowHeight * 0.03, // Add some margin below the image
+        width: windowWidth * 0.8,
+        height: windowHeight * 0.17,
+        marginBottom: windowHeight * 0.03,
     },
     heading: {
         fontSize: windowWidth * 0.06,
@@ -198,3 +198,4 @@ const styles = StyleSheet.create({
         borderColor: 'red',
     },
 });
+ 

@@ -37,8 +37,8 @@ function StackNavigator() {
       <Stack.Screen name="CustomerHomePage" component={CustomerHomePage} options={{ title: 'Customer' }} />
       <Stack.Screen name="PrefferedShops" component={PreferredShops} options={{ title: 'Customer' }} />
       <Stack.Screen name="Orders" component={Orders} options={{ title: 'Customer' }} />
-      <Stack.Screen name="My Address" component={MyAddress} options={{ title: 'Customer' }} />
-      <Stack.Screen name="Search Shops" component={SearchShops} options={{ title: 'Customer' }} />
+      <Stack.Screen name="MyAddress" component={MyAddress} options={{ title: 'Customer' }} />
+      <Stack.Screen name="SearchShops" component={SearchShops} options={{ title: 'Customer' }} />
     </Stack.Navigator>
   );
 }
