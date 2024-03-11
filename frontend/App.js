@@ -15,6 +15,10 @@ import ShopkeeperScreen from './App/Screens/RegisterScreen/ShopkeeperScreen.jsx'
 import RegisterationMainScreen from './App/Screens/RegisterScreen/RegisterationMainScreen.jsx';
 import CustomerScreen from "./App/Screens/RegisterScreen/CustomerScreen.jsx";
 import CustomerHomePage from './App/Screens/CustomerHomePage/CustomerHomePage.jsx';
+import Orders from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders.jsx';
+import MyAddress from './App/Screens/CustomerHomePage/CustomerHomeCards/MyAddress.jsx';
+import SearchShops from './App/Screens/CustomerHomePage/CustomerHomeCards/SearchShops.jsx';
+import PreferredShops from './App/Screens/CustomerHomePage/CustomerHomeCards/PreferredShops.jsx'
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +35,10 @@ function StackNavigator() {
       <Stack.Screen name="Shopkeeper" component={ShopkeeperScreen} options={{ title: 'Shopkeeper' }} />
       <Stack.Screen name="Customer" component={CustomerScreen} options={{ title: 'Customer' }} />
       <Stack.Screen name="CustomerHomePage" component={CustomerHomePage} options={{ title: 'Customer' }} />
+      <Stack.Screen name="PrefferedShops" component={PreferredShops} options={{ title: 'Customer' }} />
+      <Stack.Screen name="Orders" component={Orders} options={{ title: 'Customer' }} />
+      <Stack.Screen name="My Address" component={MyAddress} options={{ title: 'Customer' }} />
+      <Stack.Screen name="Search Shops" component={SearchShops} options={{ title: 'Customer' }} />
     </Stack.Navigator>
   );
 }

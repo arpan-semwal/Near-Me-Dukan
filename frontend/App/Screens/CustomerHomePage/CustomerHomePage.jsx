@@ -8,6 +8,8 @@ import Colors from '../../utils/Colors';
 
 export default function CustomerHomePage({ route }) {
   const { name } = route.params || {};
+  
+  
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -22,21 +24,29 @@ export default function CustomerHomePage({ route }) {
         
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <FontAwesome5 name="shopping-cart" size={50} color="black" />
+            <View style={styles.iconWrapper}>
+              <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
+            </View>
             <Text style={styles.cardText}>My Preferred Shops</Text>
           </View>
           <View style={styles.card}>
-            <MaterialIcons name="menu-book" size={50} color="black" />
+            <View style={styles.iconWrapper}>
+              <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
+            </View>
             <Text style={styles.cardText}>My Orders</Text>
           </View>
         </View>
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <MaterialCommunityIcons name="google-maps" size={50} color="black" />
+            <View style={styles.iconWrapper}>
+              <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />
+            </View>
             <Text style={styles.cardText}>My Addresses</Text>
           </View>
           <View style={styles.card}>
-            <MaterialCommunityIcons name="shopping-search" size={50} color="black" />
+            <View style={styles.iconWrapper}>
+              <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
+            </View>
             <Text style={styles.cardText}>Search Shops</Text>
           </View>
         </View>
@@ -51,22 +61,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
-    backgroundColor:Colors.BACKGROUND
-    
+    backgroundColor: Colors.BACKGROUND,
   },
   container: {
     flex: 1,
     alignItems: 'center',
-     // Center content horizontally
   },
   header: {
     marginTop: 20,
     marginBottom: 20,
   },
   image: {
-    width: 100, // Adjust width according to your image
-    height: 100, // Adjust height according to your image
-    
+    width: 100,
+    height: 100,
   },
   welcomeText: {
     fontSize: 20,
@@ -81,20 +88,32 @@ const styles = StyleSheet.create({
   cardRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20, // Increase margin bottom to increase space between rows
+    marginBottom: 20,
   },
   card: {
-    width: '42%', // Adjust the width according to your design
-    height: 150, // Adjust the height according to your design
+    width: '42%',
+    height: 150,
     backgroundColor: '#FFF100',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 10, // Add margin between cards horizontally
+    marginHorizontal: 10,
   },
   cardText: {
     fontSize: 16,
     paddingTop: 10,
     fontWeight: 'bold',
+  },
+  iconWrapper: {
+    backgroundColor: 'white',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  icon: {
+    backgroundColor: 'transparent',
   },
 });
