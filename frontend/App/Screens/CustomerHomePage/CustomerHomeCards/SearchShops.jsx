@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     changePincodeText: {
-        color: 'blue',
+        color: '#9F9F9F',
         fontSize: 14,
         marginBottom: 20,
     },
