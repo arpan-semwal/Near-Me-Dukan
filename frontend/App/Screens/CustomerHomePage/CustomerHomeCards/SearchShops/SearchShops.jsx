@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import dummyData from '../../dummy/dummy';
-import Colors from '../../../utils/Colors';
+import dummyData from "../../../dummy/dummy"
+import Colors from '../../../../utils/Colors';
+
 
 export default function SearchShops({ route, navigation }) {
     const { pincode , name } = route.params || {};
@@ -17,7 +18,7 @@ export default function SearchShops({ route, navigation }) {
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <View style={styles.leftContainer}>
-                    <Image source={require('../../../../assets/logo.png')} style={styles.welcomeImage} />
+                    <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
                 </View>
                 <View style={styles.rightContainer}>
                     <Text style={styles.welcomeText}>Welcome, {name}</Text>

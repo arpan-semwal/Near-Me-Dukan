@@ -15,10 +15,10 @@ import ShopkeeperScreen from './App/Screens/RegisterScreen/ShopkeeperScreen.jsx'
 import RegisterationMainScreen from './App/Screens/RegisterScreen/RegisterationMainScreen.jsx';
 import CustomerScreen from "./App/Screens/RegisterScreen/CustomerScreen.jsx";
 import CustomerHomePage from './App/Screens/CustomerHomePage/CustomerHomePage.jsx';
-import Orders from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders.jsx';
-import MyAddress from './App/Screens/CustomerHomePage/CustomerHomeCards/MyAddress.jsx';
-import SearchShops from './App/Screens/CustomerHomePage/CustomerHomeCards/SearchShops.jsx';
-import PreferredShops from './App/Screens/CustomerHomePage/CustomerHomeCards/PreferredShops.jsx'
+import SearchShops from './App/Screens/CustomerHomePage/CustomerHomeCards/SearchShops/SearchShops.jsx';
+import Orders from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders/Orders.jsx';
+import MyAddress from './App/Screens/CustomerHomePage/CustomerHomeCards/MyAddress/MyAddress.jsx';
+import PreferredShops from './App/Screens/CustomerHomePage/CustomerHomeCards/PreferredShops/PreferredShops.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
