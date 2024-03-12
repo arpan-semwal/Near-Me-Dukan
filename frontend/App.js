@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { View, Modal, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -54,7 +53,7 @@ function StackNavigator() {
 function TabNavigator() {
   return (
     <Tab.Navigator
-    initialRouteName="Home"
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
@@ -70,7 +69,6 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={StackNavigator} options={{ headerShown: false }}  />
-      
     </Tab.Navigator>
   );
 }
@@ -92,9 +90,38 @@ function MyDrawer() {
 }
 
 export default function App() {
+  const [showFourTabs, setShowFourTabs] = useState(false);
+
+  const renderTabs = () => {
+    if (showFourTabs) {
+      return (
+        <Tab.Navigator>
+          <Tab.Screen name="Home" component={CustomerScreen} />
+          <Tab.Screen name="More" component={MoreScreen} />
+          <Tab.Screen name="Another" component={AnotherScreen} />
+          <Tab.Screen name="Options" component={OptionScreen} />
+        </Tab.Navigator>
+      );
+    } else {
+      return (
+        <Drawer.Navigator initialRouteName="NKD" drawerContent={(props) => <CustomDrawer {...props} />}>
+          <Drawer.Screen name="NKD" component={TabNavigator} />
+          <Drawer.Screen name="AboutUs" component={MoreScreen} />
+          <Drawer.Screen name="Register as an Associate" component={MoreScreen} />
+          <Drawer.Screen name="Privacy Policy" component={MoreScreen} />
+          <Drawer.Screen name="Terms & Conditions" component={MoreScreen} />
+          <Drawer.Screen name="Refund & Cancellations" component={MoreScreen} />
+          <Drawer.Screen name="Shipping & Delivery" component={MoreScreen} />
+          <Drawer.Screen name="Contact" component={MoreScreen} />
+          <Drawer.Screen name="Choose Language" component={MoreScreen} />
+        </Drawer.Navigator>
+      );
+    }
+  };
+
   return (
     <NavigationContainer>
-     <MyDrawer/>
+      {renderTabs()}
     </NavigationContainer>
   );
 }
