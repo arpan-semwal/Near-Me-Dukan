@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import dummyData from "../../../dummy/dummy"
 import Colors from '../../../../utils/Colors';
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function SearchShops({ route, navigation }) {
     const { pincode , name } = route.params || {};
+    
+    const handleSubmit = () => {
+        navigation.navigate('Pincode');
+    }
 
     // Filter the dummyData array to only include shops with the matching pin code
     const filteredData = dummyData.filter(item => item.pincode === pincode);
@@ -23,7 +27,7 @@ export default function SearchShops({ route, navigation }) {
                 <View style={styles.rightContainer}>
                     <Text style={styles.welcomeText}>Welcome, {name}</Text>
                     <Text style={styles.pincodeText}>Shops at Pincode: {pincode}</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>
                     </TouchableOpacity>
                 </View>
@@ -57,21 +61,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-		backgroundColor:Colors.BACKGROUND
+        backgroundColor: Colors.BACKGROUND,
     },
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-		 
     },
     leftContainer: {
         marginRight: 40,
-		marginLeft:20
+        marginLeft: 20
     },
     rightContainer: {
         flex: 1,
-		
     },
     welcomeImage: {
         width: 100,
@@ -94,14 +96,13 @@ const styles = StyleSheet.create({
     },
     locationTextContainer: {
         alignItems: 'center',
-        marginBottom:20,
-		borderBottomColor: '#ccc',
-		borderBottomWidth: 1,
+        marginBottom: 20,
+        borderBottomColor: '#ccc',
+        borderBottomWidth: 1,
     },
     locationText: {
         fontSize: 26,
         fontWeight: 'bold',
-		
     },
     itemContainer: {
         flexDirection: 'row',

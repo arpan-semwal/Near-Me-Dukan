@@ -19,6 +19,7 @@ import SearchShops from './App/Screens/CustomerHomePage/CustomerHomeCards/Search
 import Orders from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders/Orders.jsx';
 import MyAddress from './App/Screens/CustomerHomePage/CustomerHomeCards/MyAddress/MyAddress.jsx';
 import PreferredShops from './App/Screens/CustomerHomePage/CustomerHomeCards/PreferredShops/PreferredShops.jsx';
+import ChangePincode from "./App/Screens/CustomerHomePage/CustomerHomeCards/SearchShops/ChangePincode.jsx" 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -39,6 +40,7 @@ function StackNavigator() {
       <Stack.Screen name="Orders" component={Orders} options={{ title: 'Customer' }} />
       <Stack.Screen name="MyAddress" component={MyAddress} options={{ title: 'Customer' }} />
       <Stack.Screen name="SearchShops" component={SearchShops} options={{ title: 'Customer' }} />
+      <Stack.Screen name="Pincode" component={ChangePincode} options={{ title: 'Customer' }} />
     </Stack.Navigator>
   );
 }
