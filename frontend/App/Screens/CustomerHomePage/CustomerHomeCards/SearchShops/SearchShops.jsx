@@ -1,14 +1,15 @@
-import React from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import dummyData from "../../../dummy/dummy"
+import React, { useState } from 'react';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
-import { useNavigation } from '@react-navigation/native';
+ 
 
 export default function SearchShops({ route, navigation }) {
-    const { pincode , name } = route.params || {};
-    
+    const { pincode, name } = route.params || {};
+    const [showChangePincode, setShowChangePincode] = useState(false);
+
     const handleSubmit = () => {
-        navigation.navigate('Pincode');
+        setShowChangePincode(true);
     }
 
     // Filter the dummyData array to only include shops with the matching pin code
@@ -53,6 +54,41 @@ export default function SearchShops({ route, navigation }) {
                 )}
                 keyExtractor={item => item.id.toString()}
             />
+            {/* Render ChangePincode component as a modal */}
+            <Modal
+                visible={showChangePincode}
+                transparent={true}
+                animationType="slide"
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <ChangePincode />
+                        <TouchableOpacity onPress={() => setShowChangePincode(false)}>
+                            <Text style={styles.closeButton}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    );
+}
+
+const ChangePincode = () => {
+    const handleSubmit = () => {
+        console.log('Search shops');
+    }
+
+    return (
+        <View style={styles.card}>
+            <Text style={styles.heading}>Change Pincode</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter new pincode"
+                keyboardType="numeric"
+            />
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Search Shops</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -126,5 +162,48 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
         marginBottom: 10,
+    },
+    // Modal styles
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    heading: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 20,
+        width: '100%',
+    },
+    button: {
+        backgroundColor: 'blue',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    closeButton: {
+        color: 'blue',
+        fontSize: 16,
+        marginTop: 10,
     },
 });
