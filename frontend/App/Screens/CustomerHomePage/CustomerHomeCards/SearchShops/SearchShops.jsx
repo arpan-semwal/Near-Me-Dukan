@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
 import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
@@ -24,6 +24,15 @@ export default function SearchShops({ route, navigation }) {
             Alert.alert('Invalid Pincode', 'No shops found for the entered pincode.');
         }
     }
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('blur', () => {
+            // Reset the newPincode state when the modal closes
+            setNewPincode('');
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     // Filter the dummyData array to only include shops with the matching pin code
     const filteredData = dummyData.filter(item => item.pincode === pincode);
