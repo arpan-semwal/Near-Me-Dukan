@@ -188,10 +188,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginBottom: 20,
-        width: '100%',
+     
     },
     button: {
-        backgroundColor: 'blue',
+        backgroundColor: Colors.BUTTONCOLOR,
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
