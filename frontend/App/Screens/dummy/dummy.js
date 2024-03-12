@@ -1,7 +1,7 @@
 const dummyData = [
     {
         id: 1,
-        name: 'Store A',
+        name: 'Store Abcd',
         shopID: '001',
         location: 'Location A',
         deliveryAvailable: true,

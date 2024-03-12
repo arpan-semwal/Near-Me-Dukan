@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
 import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
- 
 
 export default function SearchShops({ route, navigation }) {
     const { pincode, name } = route.params || {};
     const [showChangePincode, setShowChangePincode] = useState(false);
+    const [newPincode, setNewPincode] = useState('');
 
     const handleSubmit = () => {
         setShowChangePincode(true);
+    }
+
+    const handlePincodeChange = () => {
+        // Check if the new pincode exists in the dummy data
+        const isValidPincode = dummyData.some(item => item.pincode === newPincode);
+        if (isValidPincode) {
+            // If valid, update the pincode and close the modal
+            route.params.pincode = newPincode;
+            setShowChangePincode(false);
+        } else {
+            // If not valid, show an alert
+            Alert.alert('Invalid Pincode', 'No shops found for the entered pincode.');
+        }
     }
 
     // Filter the dummyData array to only include shops with the matching pin code
@@ -62,7 +75,11 @@ export default function SearchShops({ route, navigation }) {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <ChangePincode />
+                        <ChangePincode
+                            newPincode={newPincode}
+                            setNewPincode={setNewPincode}
+                            handlePincodeChange={handlePincodeChange}
+                        />
                         <TouchableOpacity onPress={() => setShowChangePincode(false)}>
                             <Text style={styles.closeButton}>Close</Text>
                         </TouchableOpacity>
@@ -73,11 +90,7 @@ export default function SearchShops({ route, navigation }) {
     );
 }
 
-const ChangePincode = () => {
-    const handleSubmit = () => {
-        console.log('Search shops');
-    }
-
+const ChangePincode = ({ newPincode, setNewPincode, handlePincodeChange }) => {
     return (
         <View style={styles.card}>
             <Text style={styles.heading}>Change Pincode</Text>
@@ -85,8 +98,10 @@ const ChangePincode = () => {
                 style={styles.input}
                 placeholder="Enter new pincode"
                 keyboardType="numeric"
+                value={newPincode}
+                onChangeText={text => setNewPincode(text)}
             />
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <TouchableOpacity style={styles.button} onPress={handlePincodeChange}>
                 <Text style={styles.buttonText}>Search Shops</Text>
             </TouchableOpacity>
         </View>
@@ -188,7 +203,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginBottom: 20,
-     
     },
     button: {
         backgroundColor: Colors.BUTTONCOLOR,
