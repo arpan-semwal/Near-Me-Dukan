@@ -29,7 +29,7 @@ const storeData = {
 		id: 5,
 		name: "Snacks & Beverages",
 		price: "$1.79",
-		image: require("../../../../assets/image.jpg"),
+		image: require("../../../../assets/Image2.png")
 	  },
 	  {
 		id: 6,
@@ -41,13 +41,13 @@ const storeData = {
 		id: 7,
 		name: "Personal Care",
 		price: "$1.79",
-		image: require("../../../../assets/image.jpg"),
+		image: require("../../../../assets/Image2.png")
 	  },
 	  {
 		id: 8,
 		name: "Baby Care",
 		price: "$1.79",
-		image: require("../../../../assets/image.jpg"),
+		image: require("../../../../assets/Image2.png")
 	  },
 	  {
 		id: 9,
@@ -59,19 +59,19 @@ const storeData = {
 		id: 10,
 		name: "Dairy & Eggs",
 		price: "$1.79",
-		image: require("../../../../assets/image.jpg"),
+		image: require("../../../../assets/Image2.png")
 	  },
 	  {
 		id: 11,
 		name: "Home & Kitchen",
 		price: "$1.79",
-		image: require("../../../../assets/image.jpg"),
+		image: require("../../../../assets/Image2.png")
 	  },
 	  {
 		id: 12,
 		name: "Fruits & Vegetables",
 		price: "$1.79",
-		image: require("../../../../assets/image.jpg"),
+		image: require("../../../../assets/Image2.png")
 	  },
 	  {
 		id: 13,

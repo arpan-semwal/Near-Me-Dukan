@@ -1,4 +1,3 @@
-// Import React, useState, useEffect, and other necessary components
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; // Import AntDesign icons from Expo
@@ -51,9 +50,9 @@ export default function StoreScreen({ route }) {
                 <View>
                     <Text style={styles.welcomeText}>Welcome : {customerName}</Text>
                      
-                    <Text style={styles.shoppingAt}>Shopping at: {shopName}</Text>
+                    <Text style={styles.shoppingAt1}>Shopping at: {shopName}</Text>
                     <Text style={styles.shoppingAt}>Change Shop </Text>
-                    <Text style={styles.shoppingAt}>shop id is {shopID} </Text>
+					<Text style={styles.shoppingAt2} >Shopping at: <Text style={styles.shopIDText}>{shopID}</Text></Text>
                 </View>
             </View>
             <View style={styles.searchContainer}>
@@ -89,64 +88,81 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     storeImage: {
-        width: 90,
-        height: 90,
-        borderRadius: 10,
+        width: windowWidth * 0.2, // Adjust image width based on window width
+        height: windowWidth * 0.2, // Adjust image height based on window width
+        borderRadius: windowWidth * 0.03, // Adjust border radius based on window width
         marginRight: 20,
-        marginLeft: 10
+        marginLeft: 10,
     },
     welcomeText: {
-        fontSize: 20,
+        fontSize: windowWidth * 0.06, // Adjust font size based on window width
         fontWeight: 'bold',
         marginBottom: 5,
     },
     customerName: {
-        fontSize: 16,
+        fontSize: windowWidth * 0.04, // Adjust font size based on window width
         marginBottom: 5,
     },
-    shoppingAt: {
-        fontSize: 16,
+	shoppingAt: {
+        fontSize: windowWidth * 0.04,
         fontWeight: 'bold',
-        marginBottom: 5
+		marginTop:3,
+        marginBottom: 3,
+		color: '#9F9F9F',
+       // Change the color to #9F9F9F
+    },
+	shoppingAt1:{
+		fontWeight:'bold',
+		fontSize:17	
+	},
+	shoppingAt2:{
+		fontWeight:'bold',
+		fontSize:17	
+	},
+	shopIDText: {
+        fontSize: windowWidth * 0.04,
+        marginBottom: 5,
     },
     searchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
-        paddingHorizontal: 10, // Add horizontal padding
+        marginBottom: windowWidth * 0.02, // Adjust marginBottom based on window width
+        paddingHorizontal: windowWidth * 0.02, // Adjust paddingHorizontal based on window width
     },
     searchInput: {
         flex: 1,
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 5,
-        paddingVertical: 8,
-        paddingHorizontal: 10,
-        marginRight: 10,
+        borderRadius: windowWidth * 0.02, // Adjust borderRadius based on window width
+        paddingVertical: windowWidth * 0.02, // Adjust paddingVertical based on window width
+        paddingHorizontal: windowWidth * 0.04, // Adjust paddingHorizontal based on window width
+        marginRight: windowWidth * 0.02, // Adjust marginRight based on window width
     },
     searchButton: {
-        padding: 10,
+        padding: windowWidth * 0.02, // Adjust padding based on window width
         backgroundColor: '#ccc',
-        borderRadius: 5,
+        borderRadius: windowWidth * 0.02, // Adjust borderRadius based on window width
     },
     productContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 5,
+        margin: windowWidth * 0.02, // Adjust margin based on window width
         backgroundColor: '#f0f0f0',
-        borderRadius: 10,
-        padding: 10,
-        width: (windowWidth - 30) / 3, // Adjusted width to fit 3 items in a row
+        borderRadius: windowWidth * 0.03, // Adjust borderRadius based on window width
+        padding: windowWidth * 0.02, // Adjust padding based on window width
+        width: (windowWidth - windowWidth * 0.06) / 3, // Adjusted width to fit 3 items in a row
     },
     productImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 50,
-        marginBottom: 5,
-    },
+		width: windowWidth * 0.23, // Adjust image width based on window width
+		height: windowWidth * 0.23, // Adjust image height based on window width
+		borderRadius: (windowWidth * 0.3) / 2, // Set borderRadius to half of the width and height to create a circle
+		marginBottom: windowWidth * 0.02, // Adjust marginBottom based on window width
+		borderWidth: 2, // Add border width
+		borderColor: '#000', // Add border color
+},
     productName: {
-        fontSize: 16,
+        fontSize: windowWidth * 0.04, // Adjust font size based on window width
         fontWeight: 'bold',
     },
 });
