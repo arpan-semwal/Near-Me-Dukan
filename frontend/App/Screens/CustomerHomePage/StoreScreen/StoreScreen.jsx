@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; // Import AntDesign icons from Expo
 import storeData from './StoreDummy'; // Import the dummy data
+import Colors from '../../../utils/Colors';
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function StoreScreen({ route }) {
+export default function StoreScreen({ route, navigation }) {
     const { shopName, customerName , shopID } = route.params; // Get shopName and customerName from route.params
     const [numColumns, setNumColumns] = useState(3); // Initial number of columns
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,6 +25,7 @@ export default function StoreScreen({ route }) {
             setFilteredProducts(filtered);
         }
     };
+    
 
     // Call filterProducts whenever searchQuery changes
     useEffect(() => {
@@ -32,10 +34,12 @@ export default function StoreScreen({ route }) {
 
     // Render product item
     const renderProductItem = ({ item }) => (
-        <View style={styles.productContainer}>
-            <Image source={item.image} style={styles.productImage} />
-            <Text style={styles.productName}>{item.name}</Text>
-        </View>
+        <TouchableOpacity onPress={() => handleProductPress(item)}>
+            <View style={styles.productContainer}>
+                <Image source={item.image} style={styles.productImage} />
+                <Text style={styles.productName}>{item.name}</Text>
+            </View>
+        </TouchableOpacity>
     );
 
     // Handle search button press
@@ -43,16 +47,26 @@ export default function StoreScreen({ route }) {
         filterProducts(); // Call filterProducts function to update filtered products
     };
 
+    // Handle product press
+    const handleProductPress = (item) => {
+        // Navigate to product details screen and pass necessary parameters
+        navigation.navigate('ProductDetails', {
+            product: item,
+            customerName: customerName,
+            shopID: shopID,
+            shopName: shopName
+        });
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
-                <View>
-                    <Text style={styles.welcomeText}>Welcome : {customerName}</Text>
-                     
-                    <Text style={styles.shoppingAt1}>Shopping at: {shopName}</Text>
-                    <Text style={styles.shoppingAt}>Change Shop </Text>
-					<Text style={styles.shoppingAt2} >Shopping at: <Text style={styles.shopIDText}>{shopID}</Text></Text>
+                <View style={styles.headerText}>
+                    <Text style={styles.welcomeText}>Welcome: {customerName}</Text>
+                    <Text style={styles.shoppingAt}>Shopping at: {shopName}</Text>
+                    <Text style={styles.shoppingAt}>Change Shop</Text>
+                    <Text style={styles.shoppingAt}>Shop ID: {shopID}</Text>
                 </View>
             </View>
             <View style={styles.searchContainer}>
@@ -80,89 +94,80 @@ export default function StoreScreen({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 4,
+        backgroundColor:Colors.BACKGROUND
     },
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between', // Align children with equal spacing
         marginBottom: 20,
+        paddingHorizontal: 10, // Add horizontal padding
     },
     storeImage: {
-        width: windowWidth * 0.2, // Adjust image width based on window width
-        height: windowWidth * 0.2, // Adjust image height based on window width
-        borderRadius: windowWidth * 0.03, // Adjust border radius based on window width
-        marginRight: 20,
-        marginLeft: 10,
+        width: 90,
+        height: 90,
+        borderRadius: 10,
+    },
+    headerText: {
+        flex: 1,
+        marginLeft: 20, // Add left margin
     },
     welcomeText: {
-        fontSize: windowWidth * 0.06, // Adjust font size based on window width
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 5,
     },
     customerName: {
-        fontSize: windowWidth * 0.04, // Adjust font size based on window width
+        fontSize: 16,
         marginBottom: 5,
     },
-	shoppingAt: {
-        fontSize: windowWidth * 0.04,
+    shoppingAt: {
+        fontSize: 16,
         fontWeight: 'bold',
-		marginTop:3,
-        marginBottom: 3,
-		color: '#9F9F9F',
-       // Change the color to #9F9F9F
-    },
-	shoppingAt1:{
-		fontWeight:'bold',
-		fontSize:17	
-	},
-	shoppingAt2:{
-		fontWeight:'bold',
-		fontSize:17	
-	},
-	shopIDText: {
-        fontSize: windowWidth * 0.04,
-        marginBottom: 5,
+        marginBottom: 5
     },
     searchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: windowWidth * 0.02, // Adjust marginBottom based on window width
-        paddingHorizontal: windowWidth * 0.02, // Adjust paddingHorizontal based on window width
+        marginBottom: 10,
+        paddingHorizontal: 10, // Add horizontal padding
     },
     searchInput: {
         flex: 1,
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: windowWidth * 0.02, // Adjust borderRadius based on window width
-        paddingVertical: windowWidth * 0.02, // Adjust paddingVertical based on window width
-        paddingHorizontal: windowWidth * 0.04, // Adjust paddingHorizontal based on window width
-        marginRight: windowWidth * 0.02, // Adjust marginRight based on window width
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        marginRight: 10,
     },
     searchButton: {
-        padding: windowWidth * 0.02, // Adjust padding based on window width
+        padding: 10,
         backgroundColor: '#ccc',
-        borderRadius: windowWidth * 0.02, // Adjust borderRadius based on window width
+        borderRadius: 5,
     },
     productContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: windowWidth * 0.02, // Adjust margin based on window width
+        margin: 5,
         backgroundColor: '#f0f0f0',
-        borderRadius: windowWidth * 0.03, // Adjust borderRadius based on window width
-        padding: windowWidth * 0.02, // Adjust padding based on window width
-        width: (windowWidth - windowWidth * 0.06) / 3, // Adjusted width to fit 3 items in a row
+        borderRadius: 10,
+        padding: 10,
+        width: (windowWidth - 30) / 3, // Adjusted width to fit 3 items in a row
     },
     productImage: {
-		width: windowWidth * 0.23, // Adjust image width based on window width
-		height: windowWidth * 0.23, // Adjust image height based on window width
-		borderRadius: (windowWidth * 0.3) / 2, // Set borderRadius to half of the width and height to create a circle
-		marginBottom: windowWidth * 0.02, // Adjust marginBottom based on window width
-		borderWidth: 2, // Add border width
-		borderColor: '#000', // Add border color
-},
+        width: 80,
+        height: 80,
+        borderRadius: 50,
+        marginBottom: 5,
+        borderWidth: 2, 
+        borderColor: '#000',  
+    },
     productName: {
-        fontSize: windowWidth * 0.04, // Adjust font size based on window width
+        fontSize: 16,
         fontWeight: 'bold',
+        textAlign: 'center', // Center align the text
     },
 });
