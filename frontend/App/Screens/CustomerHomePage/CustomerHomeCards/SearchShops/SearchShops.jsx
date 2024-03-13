@@ -1,10 +1,15 @@
+// SearchShops.js
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
+import StoreScreen from '../../StoreScreen/StoreScreen';
 
-export default function SearchShops({ route, navigation }) {
-    const { pincode, name } = route.params || {};
+export default function SearchShops({ route }) {
+    const { pincode, name , shopID } = route.params || {};
+    const navigation = useNavigation(); // Initialize navigation object
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
 
@@ -41,6 +46,12 @@ export default function SearchShops({ route, navigation }) {
         <View style={styles.separator} />
     );
 
+    const handleProductPress = (shopName, customerName) => {
+        // Navigate to the StoreScreen component passing shopName and customerName as parameters
+        navigation.navigate('Store', { shopName: shopName, customerName: name , shopID:shopID});
+    };
+    
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -61,18 +72,20 @@ export default function SearchShops({ route, navigation }) {
             <FlatList
                 data={filteredData}
                 renderItem={({ item }) => (
-                    <View>
-                        <View style={styles.itemContainer}>
-                            <Image source={item.image} style={styles.image} />
-                            <View style={styles.detailsContainer}>
-                                <Text style={styles.name}>{item.name}</Text>
-                                <Text>Shop ID: {item.shopID}</Text>
-                                <Text>Location: {item.location}</Text>
-                                <Text>Delivery Available: {item.deliveryAvailable ? 'Yes' : 'No'}</Text>
+                    <TouchableOpacity onPress={() => handleProductPress(item.name)}>
+                        <View>
+                            <View style={styles.itemContainer}>
+                                <Image source={item.image} style={styles.image} />
+                                <View style={styles.detailsContainer}>
+                                    <Text style={styles.name}>{item.name}</Text>
+                                    <Text>Shop ID: {item.shopID}</Text>
+                                    <Text>Location: {item.location}</Text>
+                                    <Text>Delivery Available: {item.deliveryAvailable ? 'Yes' : 'No'}</Text>
+                                </View>
                             </View>
+                            {renderSeparator()}
                         </View>
-                        {renderSeparator()}
-                    </View>
+                    </TouchableOpacity>
                 )}
                 keyExtractor={item => item.id.toString()}
             />
@@ -230,3 +243,4 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
 });
+ 

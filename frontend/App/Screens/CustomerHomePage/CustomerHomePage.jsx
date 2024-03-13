@@ -5,7 +5,7 @@ import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 export default function CustomerHomePage({ route }) {
-  const { name, pincode } = route.params || {};
+  const { name, pincode,shopID} = route.params || {};
   const navigation = useNavigation();
   
   const navigateToScreen = (screenName, params) => {
@@ -60,7 +60,7 @@ export default function CustomerHomePage({ route }) {
           </View>
           
           <View style={styles.card}>
-          <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name })}>
+          <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name , shopID:shopID })}>
               <View style={styles.cardContent}>
               <View style={styles.iconWrapper}>
               <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />

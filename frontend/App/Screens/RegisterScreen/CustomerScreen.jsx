@@ -6,7 +6,7 @@ import Colors from '../../utils/Colors';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function CustomerScreen({ route }) {
+export default function CustomerScreen({ route, onFormSubmit }) {
     const { phoneNumber } = route.params || {};
     const [name, setName] = useState('');
     const [pincode, setPincode] = useState('');
@@ -19,30 +19,35 @@ export default function CustomerScreen({ route }) {
     const [submitted, setSubmitted] = useState(false); // Track if form submission has been attempted
     const navigation = useNavigation(); // Initialize useNavigation hook
 
-    const handleSubmit = () => {
-        setSubmitted(true); // Set form submission attempt
+   const handleSubmit = () => {
+    setSubmitted(true); // Set form submission attempt
 
-        // Check if all required fields are filled
-        if (!name.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim()) {
-            // Alert or indicate to the user that there are required fields to be filled
-            console.log(alert("Please fill in all required fields."));
-            return;
-        }
+    // Check if all required fields are filled
+    if (!name.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim()) {
+        // Alert or indicate to the user that there are required fields to be filled
+        console.log(alert("Please fill in all required fields."));
+        return;
+    }
 
-        setFormSubmitted(true);
+    setFormSubmitted(true); // Set formSubmitted state to true
 
-        // Perform form submission logic here
-        console.log("Name:", name);
-        console.log("Pincode:", pincode);
-        console.log("Address:", address);
+    // Perform form submission logic here
+    console.log("Name:", name);
+    console.log("Pincode:", pincode);
+    console.log("Address:", address);
 
-        // Navigate to the new screen and pass parameters
-        navigation.navigate('CustomerHomePage', {
-            pincode: pincode,
-            name:name,
-            
-        });
-    };
+    // Call the callback function to inform the application that form is submitted
+    if (onFormSubmit) {
+        onFormSubmit();
+    }
+
+    // Navigate to the new screen and pass parameters
+    navigation.navigate('CustomerHomePage', {
+        pincode: pincode,
+        name: name,
+        shopID: shopID // Passing the shopID
+    });
+};
 
     const handleInputChange = (value, fieldName) => {
         switch (fieldName) {
@@ -198,4 +203,3 @@ const styles = StyleSheet.create({
         borderColor: 'red',
     },
 });
- 

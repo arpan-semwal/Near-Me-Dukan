@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { View, Modal, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -22,13 +23,14 @@ import PreferredShops from './App/Screens/CustomerHomePage/CustomerHomeCards/Pre
 import ChangePincode from './App/Screens/CustomerHomePage/CustomerHomeCards/SearchShops/ChangePincode.jsx';
 import OptionScreen from './App/Screens/OptionScreen/OptionScreen.jsx';
 import CustomDrawer from './App/Components/CustomDrawer/CustomDrawer.jsx';
+import StoreScreen from './App/Screens/CustomerHomePage/StoreScreen/StoreScreen.jsx';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 // Stack Navigator
-function StackNavigator() {
+function StackNavigator({ formSubmitted }) {
   return (
     <Stack.Navigator>
       <Stack.Screen name="HomePage" component={HomeScreen} options={{ headerShown: false }} />
@@ -45,12 +47,13 @@ function StackNavigator() {
       <Stack.Screen name="MyAddress" component={MyAddress}options={{ headerShown: false }} />
       <Stack.Screen name="SearchShops" component={SearchShops}options={{ headerShown: false }} />
       <Stack.Screen name="Pincode" component={ChangePincode}options={{ headerShown: false }} />
+      <Stack.Screen name="Store" component={StoreScreen}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
 
 // Tab Navigator
-function TabNavigator() {
+function TabNavigator({ formSubmitted }) {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -68,6 +71,14 @@ function TabNavigator() {
         },
       })}
     >
+      {formSubmitted && ( 
+        <>
+          <Tab.Screen name="Screen1" component={() => <MoreScreen formSubmitted={formSubmitted} />} options={{ tabBarLabel: 'Screen 1' }} />
+          <Tab.Screen name="Screen2" component={() => <MoreScreen formSubmitted={formSubmitted} />} options={{ tabBarLabel: 'Screen 2' }} />
+          <Tab.Screen name="Screen3" component={() => <MoreScreen formSubmitted={formSubmitted} />} options={{ tabBarLabel: 'Screen 3' }} />
+          <Tab.Screen name="Screen4" component={() => <MoreScreen formSubmitted={formSubmitted} />} options={{ tabBarLabel: 'Screen 4' }} />
+        </>
+      )}
       <Tab.Screen name="Home" component={StackNavigator} options={{ headerShown: false }}  />
     </Tab.Navigator>
   );
@@ -90,38 +101,9 @@ function MyDrawer() {
 }
 
 export default function App() {
-  const [showFourTabs, setShowFourTabs] = useState(false);
-
-  const renderTabs = () => {
-    if (showFourTabs) {
-      return (
-        <Tab.Navigator>
-          <Tab.Screen name="Home" component={CustomerScreen} />
-          <Tab.Screen name="More" component={MoreScreen} />
-          <Tab.Screen name="Another" component={AnotherScreen} />
-          <Tab.Screen name="Options" component={OptionScreen} />
-        </Tab.Navigator>
-      );
-    } else {
-      return (
-        <Drawer.Navigator initialRouteName="NKD" drawerContent={(props) => <CustomDrawer {...props} />}>
-          <Drawer.Screen name="NKD" component={TabNavigator} />
-          <Drawer.Screen name="AboutUs" component={MoreScreen} />
-          <Drawer.Screen name="Register as an Associate" component={MoreScreen} />
-          <Drawer.Screen name="Privacy Policy" component={MoreScreen} />
-          <Drawer.Screen name="Terms & Conditions" component={MoreScreen} />
-          <Drawer.Screen name="Refund & Cancellations" component={MoreScreen} />
-          <Drawer.Screen name="Shipping & Delivery" component={MoreScreen} />
-          <Drawer.Screen name="Contact" component={MoreScreen} />
-          <Drawer.Screen name="Choose Language" component={MoreScreen} />
-        </Drawer.Navigator>
-      );
-    }
-  };
-
   return (
     <NavigationContainer>
-      {renderTabs()}
+     <MyDrawer/>
     </NavigationContainer>
   );
 }
