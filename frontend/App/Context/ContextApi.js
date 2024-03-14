@@ -1,4 +1,3 @@
-// ContextApi.js
 import React, { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
@@ -9,12 +8,14 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (product) => {
-    const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
-    if (existingItemIndex !== -1) {
-      const updatedCartItems = [...cartItems];
-      updatedCartItems[existingItemIndex].quantity++;
-      setCartItems(updatedCartItems);
+    // Check if the product is already in the cart
+    const existingItem = cartItems.find(item => item.id === product.id);
+    if (existingItem) {
+      // If the product already exists, increase its quantity
+      existingItem.quantity++;
+      setCartItems([...cartItems]); // Update the cartItems state
     } else {
+      // If the product is not in the cart, add it with quantity 1
       setCartItems([...cartItems, { ...product, quantity: 1 }]);
     }
   };

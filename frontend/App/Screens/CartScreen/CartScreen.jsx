@@ -41,7 +41,18 @@ const CartScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.cartTitle}>Cart Items:</Text>
+      <View style={styles.headerContainer}>
+        <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
+        <View style={styles.headerText}>
+          <Text style={styles.welcomeText}>Welcome: </Text>
+          <Text style={styles.shoppingAt}>Shopping at </Text>
+          <Text style={styles.shoppingAt}>Change Shop</Text>
+          <Text style={styles.shoppingAt}>Shop ID:  </Text>
+        </View>
+      </View>
+      <View style={styles.line} />
+      <Text style={styles.cartTitle}>My Shopping Cart</Text>
+      <View style={styles.line} />
       <FlatList
         data={cartItems}
         keyExtractor={(item, index) => `${item.id}_${index}`}
@@ -58,13 +69,13 @@ const CartScreen = ({ route }) => {
                 {/* Render product quantity buttons */}
                 <View style={styles.quantityContainer}>
                 <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
-  <Text style={styles.quantityButtonText}>-</Text>
-</TouchableOpacity>
-{/* Render quantity indicator */}
-<Text>{item.quantity}</Text>
-<TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
-  <Text style={styles.quantityButtonText}>+</Text>
-</TouchableOpacity>
+                  <Text style={styles.quantityButtonText}>-</Text>
+                </TouchableOpacity>
+                {/* Render quantity indicator */}
+                <Text>{item.quantity}</Text>
+                <TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
+                  <Text style={styles.quantityButtonText}>+</Text>
+                </TouchableOpacity>
                   {/* Render delete icon */}
                   <TouchableOpacity onPress={() => handleDeleteItem(item.id, item.price, item.quantity)}>
                     <FontAwesome name="trash-o" size={24} color="red" />
@@ -89,9 +100,46 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
-  cartTitle: {
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Align children with equal spacing
+    marginBottom: 20,
+    paddingHorizontal: 10, // Add horizontal padding
+},
+storeImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 10,
+},
+headerText: {
+    flex: 1,
+    marginLeft: 20, // Add left margin
+},
+welcomeText: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 5,
+},
+customerName: {
+    fontSize: 16,
+    marginBottom: 5,
+},
+shoppingAt: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5
+},
+  cartTitle: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign:"center"
+    
+  },
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
     marginBottom: 10,
   },
   productContainer: {
