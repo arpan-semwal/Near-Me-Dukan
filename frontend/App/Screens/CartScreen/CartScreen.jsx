@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useCart } from '../../Context/ContextApi';
 import { FontAwesome } from '@expo/vector-icons'; // Import the delete icon from FontAwesome
+import Colors from '../../utils/Colors';
 
 const CartScreen = ({ route }) => {
   const { cartItems, removeFromCart } = useCart(); // Add removeFromCart function from context
@@ -52,9 +53,9 @@ const CartScreen = ({ route }) => {
               <View style={styles.productDetails}>
                 {/* Render product title */}
                 <Text style={styles.title}>{item.title}</Text>
-                {/* Render product price */}
-                <Text style={styles.info}>Price: ₹{item.price}</Text>
-                {/* Render product quantity and buttons */}
+                {/* Render product price and quantity */}
+                <Text style={styles.info}>₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}</Text>
+                {/* Render product quantity buttons */}
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
                     <Text>-</Text>
@@ -85,7 +86,7 @@ const CartScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
     backgroundColor: '#fff',
   },
   cartTitle: {
@@ -118,8 +119,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   info: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
+    color: Colors.LABELcCOLOR,
   },
   quantityContainer: {
     flexDirection: 'row',
@@ -129,9 +131,13 @@ const styles = StyleSheet.create({
   quantityButton: {
     borderWidth: 1,
     borderColor: 'black',
+    paddingVertical: 6, // Adjusted height
+    paddingHorizontal: 12, // Adjusted width
     borderRadius: 5,
-    padding: 5,
-    marginHorizontal: 5,
+    marginHorizontal: 10,
+  },
+  deleteIcon: {
+    marginLeft: 'auto',
   },
   totalPriceContainer: {
     borderTopWidth: 1,
