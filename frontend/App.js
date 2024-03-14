@@ -27,6 +27,7 @@ import StoreScreen from './App/Screens/CustomerHomePage/StoreScreen/StoreScreen.
 import CartScreen from './App/Screens/CartScreen/CartScreen.jsx';
 import ProductDetails from './App/Screens/CustomerHomePage/StoreScreen/ProductDetails/ProductDetails.jsx';
 import { CartProvider } from './App/Context/ContextApi.js'; 
+import ChangeAddress from './App/Screens/CartScreen/ChangeAddress/ChangeAddress.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -51,6 +52,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="Pincode" component={ChangePincode}options={{ headerShown: false }} />
       <Stack.Screen name="Store" component={StoreScreen}options={{ headerShown: false }} />
       <Stack.Screen name="ProductDetails" component={ProductDetails}options={{ headerShown: false }} />
+      <Stack.Screen name="ChangeAddress" component={ChangeAddress}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

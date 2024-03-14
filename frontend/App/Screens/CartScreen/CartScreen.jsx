@@ -4,10 +4,12 @@ import { useCart } from '../../Context/ContextApi';
 import { FontAwesome } from '@expo/vector-icons'; // Import the delete icon from FontAwesome
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
+
 const CartScreen = ({ route }) => {
   const { cartItems, removeFromCart } = useCart(); // Add removeFromCart function from context
   const [totalPrice, setTotalPrice] = useState(0); // Initialize totalPrice with 0
   const [itemCount, setItemCount] = useState(0); // Initialize itemCount with 0
+  const navigation = useNavigation();
 
   // Function to calculate the total price of items in the cart
   function calculateTotalPrice(items) {
@@ -48,10 +50,14 @@ const CartScreen = ({ route }) => {
     setTotalPrice(totalPrice - itemTotalPrice);
     setItemCount(itemCount - itemQuantity);
   };
+
   const handleContinueShopping = () => {
     navigation.goBack(); // Go back to the previous screen
   };
-  const navigation = useNavigation();
+  
+  const changeAddress = () => {
+    navigation.navigate("ChangeAddress")
+  }
 
   return (
     <View style={styles.container}>
@@ -103,22 +109,22 @@ const CartScreen = ({ route }) => {
         )}
         ListFooterComponent={
           <View style={styles.totalPriceContainer}>
-          <Text style={styles.totalPriceText}>Total Price: <Text style={styles.bold}>{totalPrice}</Text></Text>
-          <Text style={styles.deliveryText}>Deliver to address below</Text>
-          {/* Address */}
-          <Text style={styles.addressText}>123 Main St, City, Country</Text>
-          {/* Change Address button */}
-          <TouchableOpacity style={styles.changeAddressButton}>
-            <Text style={styles.changeAddressButtonText}>Change Address</Text>
-          </TouchableOpacity>
-          {/* Continue Shopping and Proceed to Pay buttons */}
-          <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
+            <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
+            <Text style={styles.deliveryText}>Deliver to address below</Text>
+            {/* Address */}
+            <Text style={styles.addressText}>123 Main St, City, Country</Text>
+            {/* Change Address button */}
+            <TouchableOpacity style={styles.changeAddressButton} onPress={changeAddress}>
+              <Text style={styles.changeAddressButtonText}>Change Address</Text>
+            </TouchableOpacity>
+            {/* Continue Shopping and Proceed to Pay buttons */}
+            <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
               <Text style={styles.buttonText}>Continue Shopping</Text>
             </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Proceed to Pay</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Proceed to Pay</Text>
+            </TouchableOpacity>
+          </View>
         }
       />
     </View>
@@ -134,9 +140,9 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Align children with equal spacing
+    justifyContent: 'space-between',
     marginBottom: 20,
-    paddingHorizontal: 10, // Add horizontal padding
+    paddingHorizontal: 10,
   },
   storeImage: {
     width: 90,
@@ -145,7 +151,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     flex: 1,
-    marginLeft: 20, // Add left margin
+    marginLeft: 20,
   },
   welcomeText: {
     fontSize: 20,
@@ -165,13 +171,13 @@ const styles = StyleSheet.create({
     fontSize: 21,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign:"center"
+    textAlign: "center"
   },
   cartSubTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign:"center"
+    textAlign: "center"
   },
   line: {
     borderBottomWidth: 1,
@@ -219,11 +225,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 5,
     marginHorizontal: 10,
-    backgroundColor:Colors.BUTTONCOLOR
+    backgroundColor: Colors.BUTTONCOLOR
   },
   quantityButtonText: {
-    color: 'white', // White color
-    fontWeight: 'bold', // Bold text
+    color: 'white',
+    fontWeight: 'bold',
   },
   deleteIcon: {
     marginLeft: 'auto',
@@ -241,15 +247,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
-    width: '100%', // Set width to 100%
+    width: '50%',
   },
-  
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
   },
   totalPriceText: {
     marginBottom: 10,
+    fontSize: 18, // Increase font size
   },
   bold: {
     fontWeight: 'bold',
@@ -263,15 +269,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   changeAddressButton: {
-    backgroundColor: Colors.BUTTONCOLOR,
+    
     padding: 13,
-    borderRadius: 10,
+   
     alignItems: 'center',
     marginTop: 10,
     width: '40%',
   },
   changeAddressButtonText: {
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
   },
 });
