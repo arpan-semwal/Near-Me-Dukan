@@ -57,14 +57,14 @@ const CartScreen = ({ route }) => {
                 <Text style={styles.info}>₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}</Text>
                 {/* Render product quantity buttons */}
                 <View style={styles.quantityContainer}>
-                  <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
-                    <Text>-</Text>
-                  </TouchableOpacity>
-                  {/* Render quantity indicator */}
-                  <Text>{item.quantity}</Text>
-                  <TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
-                    <Text>+</Text>
-                  </TouchableOpacity>
+                <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
+  <Text style={styles.quantityButtonText}>-</Text>
+</TouchableOpacity>
+{/* Render quantity indicator */}
+<Text>{item.quantity}</Text>
+<TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
+  <Text style={styles.quantityButtonText}>+</Text>
+</TouchableOpacity>
                   {/* Render delete icon */}
                   <TouchableOpacity onPress={() => handleDeleteItem(item.id, item.price, item.quantity)}>
                     <FontAwesome name="trash-o" size={24} color="red" />
@@ -127,14 +127,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 5,
+    
   },
   quantityButton: {
     borderWidth: 1,
     borderColor: 'black',
-    paddingVertical: 6, // Adjusted height
-    paddingHorizontal: 12, // Adjusted width
+    paddingVertical: 7,
+    paddingHorizontal: 15,
     borderRadius: 5,
     marginHorizontal: 10,
+    backgroundColor:Colors.BUTTONCOLOR
+  },
+  quantityButtonText: {
+    color: 'white', // White color
+    fontWeight: 'bold', // Bold text
   },
   deleteIcon: {
     marginLeft: 'auto',
