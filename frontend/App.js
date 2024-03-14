@@ -68,6 +68,9 @@ function TabNavigator({ formSubmitted }) {
             iconName = 'home';
          
           }
+          else {
+            iconName="cart"
+          }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },

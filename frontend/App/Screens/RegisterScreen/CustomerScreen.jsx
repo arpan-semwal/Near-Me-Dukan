@@ -45,7 +45,8 @@ export default function CustomerScreen({ route, onFormSubmit }) {
     navigation.navigate('CustomerHomePage', {
         pincode: pincode,
         name: name,
-        shopID: shopID // Passing the shopID
+        shopID: shopID,// Passing the shopID
+        address:address
     });
 };
 

@@ -3,25 +3,33 @@ import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react
 import { useCart } from '../../Context/ContextApi';
 import { FontAwesome } from '@expo/vector-icons'; // Import the delete icon from FontAwesome
 import Colors from '../../utils/Colors';
-
+import { useNavigation } from '@react-navigation/native';
 const CartScreen = ({ route }) => {
   const { cartItems, removeFromCart } = useCart(); // Add removeFromCart function from context
   const [totalPrice, setTotalPrice] = useState(0); // Initialize totalPrice with 0
+  const [itemCount, setItemCount] = useState(0); // Initialize itemCount with 0
 
   // Function to calculate the total price of items in the cart
   function calculateTotalPrice(items) {
     return items.reduce((total, item) => total + (item.price * item.quantity), 0);
   }
 
-  // Recalculate total price whenever cartItems change
+  // Function to calculate the total count of items in the cart
+  function calculateItemCount(items) {
+    return items.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  // Recalculate total price and item count whenever cartItems change
   useEffect(() => {
     setTotalPrice(calculateTotalPrice(cartItems));
+    setItemCount(calculateItemCount(cartItems));
   }, [cartItems]);
 
   // Function to handle increasing quantity
   const handleIncreaseQuantity = (item) => {
     item.quantity++;
     setTotalPrice(calculateTotalPrice(cartItems));
+    setItemCount(calculateItemCount(cartItems));
   };
 
   // Function to handle decreasing quantity
@@ -29,6 +37,7 @@ const CartScreen = ({ route }) => {
     if (item.quantity > 1) {
       item.quantity--;
       setTotalPrice(calculateTotalPrice(cartItems));
+      setItemCount(calculateItemCount(cartItems));
     }
   };
 
@@ -37,21 +46,28 @@ const CartScreen = ({ route }) => {
     removeFromCart(itemId); // Pass itemId instead of item
     const itemTotalPrice = itemPrice * itemQuantity;
     setTotalPrice(totalPrice - itemTotalPrice);
+    setItemCount(itemCount - itemQuantity);
   };
+  const handleContinueShopping = () => {
+    navigation.goBack(); // Go back to the previous screen
+  };
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
         <View style={styles.headerText}>
-          <Text style={styles.welcomeText}>Welcome: </Text>
-          <Text style={styles.shoppingAt}>Shopping at </Text>
+          <Text style={styles.welcomeText}>Welcome: Arpan</Text>
+          <Text style={styles.shoppingAt}>Shopping at: Store ABCD</Text>
           <Text style={styles.shoppingAt}>Change Shop</Text>
-          <Text style={styles.shoppingAt}>Shop ID:  </Text>
+          <Text style={styles.shoppingAt}>Shop ID: 1234</Text>
         </View>
       </View>
       <View style={styles.line} />
-      <Text style={styles.cartTitle}>My Shopping Cart</Text>
+      <Text style={styles.cartTitle}>My Shopping Cart  </Text>
+      <Text style={styles.cartSubTitle}> Items {itemCount}  </Text>
+      
       <View style={styles.line} />
       <FlatList
         data={cartItems}
@@ -68,14 +84,14 @@ const CartScreen = ({ route }) => {
                 <Text style={styles.info}>₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}</Text>
                 {/* Render product quantity buttons */}
                 <View style={styles.quantityContainer}>
-                <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
-                  <Text style={styles.quantityButtonText}>-</Text>
-                </TouchableOpacity>
-                {/* Render quantity indicator */}
-                <Text>{item.quantity}</Text>
-                <TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
-                  <Text style={styles.quantityButtonText}>+</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
+                    <Text style={styles.quantityButtonText}>-</Text>
+                  </TouchableOpacity>
+                  {/* Render quantity indicator */}
+                  <Text>{item.quantity}</Text>
+                  <TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
+                    <Text style={styles.quantityButtonText}>+</Text>
+                  </TouchableOpacity>
                   {/* Render delete icon */}
                   <TouchableOpacity onPress={() => handleDeleteItem(item.id, item.price, item.quantity)}>
                     <FontAwesome name="trash-o" size={24} color="red" />
@@ -85,11 +101,26 @@ const CartScreen = ({ route }) => {
             </View>
           </View>
         )}
+        ListFooterComponent={
+          <View style={styles.totalPriceContainer}>
+          <Text style={styles.totalPriceText}>Total Price: <Text style={styles.bold}>{totalPrice}</Text></Text>
+          <Text style={styles.deliveryText}>Deliver to address below</Text>
+          {/* Address */}
+          <Text style={styles.addressText}>123 Main St, City, Country</Text>
+          {/* Change Address button */}
+          <TouchableOpacity style={styles.changeAddressButton}>
+            <Text style={styles.changeAddressButtonText}>Change Address</Text>
+          </TouchableOpacity>
+          {/* Continue Shopping and Proceed to Pay buttons */}
+          <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
+              <Text style={styles.buttonText}>Continue Shopping</Text>
+            </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Proceed to Pay</Text>
+          </TouchableOpacity>
+        </View>
+        }
       />
-      {/* Render total price */}
-      <View style={styles.totalPriceContainer}>
-        <Text>Total Price: ₹{totalPrice}</Text>
-      </View>
     </View>
   );
 };
@@ -106,36 +137,41 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // Align children with equal spacing
     marginBottom: 20,
     paddingHorizontal: 10, // Add horizontal padding
-},
-storeImage: {
+  },
+  storeImage: {
     width: 90,
     height: 90,
     borderRadius: 10,
-},
-headerText: {
+  },
+  headerText: {
     flex: 1,
     marginLeft: 20, // Add left margin
-},
-welcomeText: {
+  },
+  welcomeText: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
-},
-customerName: {
+  },
+  customerName: {
     fontSize: 16,
     marginBottom: 5,
-},
-shoppingAt: {
+  },
+  shoppingAt: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5
-},
+  },
   cartTitle: {
-    fontSize: 26,
+    fontSize: 21,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign:"center"
-    
+  },
+  cartSubTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign:"center"
   },
   line: {
     borderBottomWidth: 1,
@@ -175,7 +211,6 @@ shoppingAt: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 5,
-    
   },
   quantityButton: {
     borderWidth: 1,
@@ -199,6 +234,45 @@ shoppingAt: {
     paddingTop: 10,
     marginTop: 10,
     alignItems: 'center',
+  },
+  button: {
+    backgroundColor: Colors.BUTTONCOLOR,
+    padding: 13,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+    width: '100%', // Set width to 100%
+  },
+  
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  totalPriceText: {
+    marginBottom: 10,
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  deliveryText: {
+    marginTop: 10,
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  addressText: {
+    marginBottom: 10,
+  },
+  changeAddressButton: {
+    backgroundColor: Colors.BUTTONCOLOR,
+    padding: 13,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+    width: '40%',
+  },
+  changeAddressButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
