@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, Button, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
@@ -7,15 +7,21 @@ import { useCart } from '../../../../Context/ContextApi'; // Import the CartCont
 
 const ProductDetails = ({ route }) => {
   const { customerName, shopID, shopName } = route.params;
-  const { addToCart } = useCart(); 
+  const { addToCart, cartItems } = useCart(); // Updated to get cartItems from context
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState(productData);
+  const [addedToCartItems, setAddedToCartItems] = useState([]);
+
+  useEffect(() => {
+    // Listen for changes in cartItems and update addedToCartItems accordingly
+    const addedItems = cartItems.map(item => item.id);
+    setAddedToCartItems(addedItems);
+  }, [cartItems]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
-      // If search query is empty, show all products
       setFilteredProducts(productData);
       return;
     }
@@ -27,8 +33,6 @@ const ProductDetails = ({ route }) => {
     );
     setFilteredProducts(filtered);
   };
-
-  const [addedToCartItems, setAddedToCartItems] = useState([]);
 
   const handleAddToCart = (item) => {
     addToCart(item);
