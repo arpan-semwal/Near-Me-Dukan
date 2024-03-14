@@ -67,9 +67,9 @@ const CartScreen = ({ route }) => {
       <View style={styles.headerContainer}>
         <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
         <View style={styles.headerText}>
-          <Text style={styles.welcomeText}>Welcome: Arpan</Text>
-          <Text style={styles.shoppingAt}>Shopping at: Store ABCD</Text>
-          <Text style={styles.shoppingAt}>Change Shop</Text>
+          <Text style={styles.welcomeText}>Welcome:  </Text>
+          <Text style={styles.shoppingAt}>Shopping at:  </Text>
+          <Text style={styles.shoppingAt}>Change  </Text>
           <Text style={styles.shoppingAt}>Shop ID: 1234</Text>
         </View>
       </View>
