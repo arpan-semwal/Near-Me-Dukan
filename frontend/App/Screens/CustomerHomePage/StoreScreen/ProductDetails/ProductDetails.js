@@ -5,6 +5,7 @@ export const productData = [
 	  image: require('../../../../../assets/image.jpg'),
 	  weight: '100g',
 	  price: 10,
+	  quantity: 10,
 	},
 	{
 	  id: 2,
@@ -12,6 +13,7 @@ export const productData = [
 	  image: require('../../../../../assets/image.jpg'),
 	  weight: '200g',
 	  price: 20,
+	  quantity: 20,
 	},
 	{
 	  id: 3,
@@ -19,6 +21,7 @@ export const productData = [
 	  image: require('../../../../../assets/Image2.png'),
 	  weight: '300g',
 	  price: 30,
+	  quantity: 30,
 	},
 	{
 	  id: 4,
@@ -26,6 +29,7 @@ export const productData = [
 	  image: require('../../../../../assets/Image2.png'),
 	  weight: '300g',
 	  price: 30,
+	  quantity: 40,
 	},
 	{
 	  id: 5,
@@ -33,6 +37,7 @@ export const productData = [
 	  image: require('../../../../../assets/Image2.png'),
 	  weight: '300g',
 	  price: 30,
+	  quantity: 50,
 	},
 	{
 	  id: 6,
@@ -40,13 +45,23 @@ export const productData = [
 	  image: require('../../../../../assets/Image2.png'),
 	  weight: '300g',
 	  price: 30,
+	  quantity: 60,
 	},
 	{
 	  id: 7,
+	  title: 'Product 7',
+	  image: require('../../../../../assets/Image2.png'),
+	  weight: '300g',
+	  price: 30,
+	  quantity: 70,
+	},
+	{
+	  id: 8,
 	  title: 'Product 8',
 	  image: require('../../../../../assets/Image2.png'),
 	  weight: '300g',
 	  price: 30,
+	  quantity: 80,
 	},
 	{
 	  id: 9,
@@ -54,7 +69,7 @@ export const productData = [
 	  image: require('../../../../../assets/Image2.png'),
 	  weight: '300g',
 	  price: 30,
+	  quantity: 90,
 	},
 	// Add more products as needed
   ];
-  

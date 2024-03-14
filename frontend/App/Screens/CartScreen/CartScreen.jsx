@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useCart } from '../../Context/ContextApi';
 import { FontAwesome } from '@expo/vector-icons'; // Import the delete icon from FontAwesome
 
 const CartScreen = ({ route }) => {
   const { cartItems, removeFromCart } = useCart(); // Add removeFromCart function from context
-  const [totalPrice, setTotalPrice] = useState(calculateTotalPrice(cartItems));
+  const [totalPrice, setTotalPrice] = useState(0); // Initialize totalPrice with 0
 
   // Function to calculate the total price of items in the cart
   function calculateTotalPrice(items) {
     return items.reduce((total, item) => total + (item.price * item.quantity), 0);
   }
+
+  // Recalculate total price whenever cartItems change
+  useEffect(() => {
+    setTotalPrice(calculateTotalPrice(cartItems));
+  }, [cartItems]);
 
   // Function to handle increasing quantity
   const handleIncreaseQuantity = (item) => {
@@ -27,9 +32,10 @@ const CartScreen = ({ route }) => {
   };
 
   // Function to handle deleting item from the cart
-  const handleDeleteItem = (itemId) => {
-	removeFromCart(itemId); // Pass itemId instead of item
-	setTotalPrice(calculateTotalPrice(cartItems));
+  const handleDeleteItem = (itemId, itemPrice, itemQuantity) => {
+    removeFromCart(itemId); // Pass itemId instead of item
+    const itemTotalPrice = itemPrice * itemQuantity;
+    setTotalPrice(totalPrice - itemTotalPrice);
   };
 
   return (
@@ -53,14 +59,15 @@ const CartScreen = ({ route }) => {
                   <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
                     <Text>-</Text>
                   </TouchableOpacity>
+                  {/* Render quantity indicator */}
                   <Text>{item.quantity}</Text>
                   <TouchableOpacity style={styles.quantityButton} onPress={() => handleIncreaseQuantity(item)}>
                     <Text>+</Text>
                   </TouchableOpacity>
                   {/* Render delete icon */}
-				  <TouchableOpacity onPress={() => handleDeleteItem(item.id)}>
-					<FontAwesome name="trash-o" size={24} color="red" />
-				</TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleDeleteItem(item.id, item.price, item.quantity)}>
+                    <FontAwesome name="trash-o" size={24} color="red" />
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
