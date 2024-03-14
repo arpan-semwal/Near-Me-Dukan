@@ -58,6 +58,9 @@ const CartScreen = ({ route }) => {
   const changeAddress = () => {
     navigation.navigate("ChangeAddress")
   }
+  const handleCheckout = () => {
+    navigation.navigate("Checkout")
+  }
 
   return (
     <View style={styles.container}>
@@ -121,7 +124,7 @@ const CartScreen = ({ route }) => {
             <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
               <Text style={styles.buttonText}>Continue Shopping</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleCheckout}>
               <Text style={styles.buttonText}>Proceed to Pay</Text>
             </TouchableOpacity>
           </View>
