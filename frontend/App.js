@@ -26,7 +26,7 @@ import CustomDrawer from './App/Components/CustomDrawer/CustomDrawer.jsx';
 import StoreScreen from './App/Screens/CustomerHomePage/StoreScreen/StoreScreen.jsx';
 import CartScreen from './App/Screens/CartScreen/CartScreen.jsx';
 import ProductDetails from './App/Screens/CustomerHomePage/StoreScreen/ProductDetails/ProductDetails.jsx';
-
+import { CartProvider } from './App/Context/ContextApi.js'; 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -50,7 +50,6 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="SearchShops" component={SearchShops}options={{ headerShown: false }} />
       <Stack.Screen name="Pincode" component={ChangePincode}options={{ headerShown: false }} />
       <Stack.Screen name="Store" component={StoreScreen}options={{ headerShown: false }} />
-      <Stack.Screen name="Cart" component={CartScreen}options={{ headerShown: false }} />
       <Stack.Screen name="ProductDetails" component={ProductDetails}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
@@ -67,8 +66,7 @@ function TabNavigator({ formSubmitted }) {
 
           if (route.name === 'Home') {
             iconName = 'home';
-          } else if (route.name === 'Home') {
-            iconName = 'Home';
+         
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -101,7 +99,10 @@ function MyDrawer() {
 export default function App() {
   return (
     <NavigationContainer>
-     <MyDrawer/>
+      <CartProvider>
+      <MyDrawer/>
+      </CartProvider>
+   
     </NavigationContainer>
   );
 }

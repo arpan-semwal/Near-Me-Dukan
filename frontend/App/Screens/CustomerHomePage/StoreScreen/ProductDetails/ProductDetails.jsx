@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, Image, Button, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
-import { productData } from './ProductDetails'; // Import the dummy product data
+import { productData } from './ProductDetails'; 
+import { useCart } from '../../../../Context/ContextApi'; // Import the CartContext 
 
 const ProductDetails = ({ route }) => {
   const { customerName, shopID, shopName } = route.params;
+  const { addToCart } = useCart(); 
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState(productData);
@@ -26,9 +28,15 @@ const ProductDetails = ({ route }) => {
     setFilteredProducts(filtered);
   };
 
-  const addToCart = (selectedProduct) => {
-    console.log('Product added to cart:', selectedProduct.title);
-    // Implement logic for adding the product to the cart
+  const [addedToCartItems, setAddedToCartItems] = useState([]);
+
+  const handleAddToCart = (item) => {
+    addToCart(item);
+    setAddedToCartItems([...addedToCartItems, item.id]);
+  };
+
+  const isAddedToCart = (itemId) => {
+    return addedToCartItems.includes(itemId);
   };
 
   const renderProductItem = ({ item }) => (
@@ -40,7 +48,18 @@ const ProductDetails = ({ route }) => {
           <Text style={styles.info}>{item.weight}</Text>
           <View style={styles.priceAndButtonContainer}>
             <Text style={styles.price}>₹{item.price}</Text>
-            <Button title="Add to Cart" onPress={() => addToCart(item)} />
+            <TouchableOpacity
+              style={[
+                styles.addToCartButton,
+                addedToCartItems.includes(item.id) ? styles.addedToCartButton : null
+              ]}
+              onPress={() => handleAddToCart(item)}
+              disabled={addedToCartItems.includes(item.id)}
+            >
+              <Text style={styles.buttonText}>
+                {addedToCartItems.includes(item.id) ? "Added to Cart" : "Add to Cart"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -71,7 +90,6 @@ const ProductDetails = ({ route }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        {/* Render filtered products */}
         {filteredProducts.map((item) => (
           <View key={item.id} style={styles.productContainer}>
             {renderProductItem({ item })}
@@ -81,7 +99,6 @@ const ProductDetails = ({ route }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
 	container: {
         flex: 1,
@@ -183,6 +200,19 @@ const styles = StyleSheet.create({
         fontSize: 19,
         fontWeight: 'bold',
         marginRight: 10,
+    },
+    addToCartButton: {
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+    },
+    addedToCartButton: {
+        backgroundColor: '#28a745',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
     },
 });
 
