@@ -1,11 +1,22 @@
 import React, { createContext, useContext, useState } from 'react';
 
+// Create CartContext
 const CartContext = createContext();
 
-export const useCart = () => useContext(CartContext);
+// Create CustomerContext
+export const CustomerContext = createContext();
 
+// Define custom hooks for using contexts
+export const useCart = () => useContext(CartContext);
+export const useCustomer = () => useContext(CustomerContext);
+
+// Create CartProvider component
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [customerName, setCustomerName] = useState('');
+  const [shopID, setShopID] = useState('');
+  const [shopName, setShopName] = useState('');
+  const [custAddress , setCustAddress] = useState('');
 
   const addToCart = (product) => {
     // Check if the product is already in the cart
@@ -29,8 +40,23 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
-      {children}
+    <CartContext.Provider value={{ 
+      cartItems, 
+      addToCart, 
+      removeFromCart, 
+      clearCart, 
+      customerName, 
+      setCustomerName, 
+      shopID, 
+      setShopID,  // This is where you set shopId
+      shopName, 
+      setShopName,
+      custAddress,
+      setCustAddress
+    }}>
+      <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress }}>
+        {children}
+      </CustomerContext.Provider>
     </CartContext.Provider>
   );
 };

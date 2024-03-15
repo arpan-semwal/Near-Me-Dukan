@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation } from '@react-navigation/native';
 import Colors from '../../utils/Colors';
+import { CustomerContext } from '../../Context/ContextApi'; // Import CustomerContext
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function CustomerScreen({ route, onFormSubmit }) {
+    const { setCustomerName,setShopID,setShopName,setCustAddress } = useContext(CustomerContext); // Access setCustomerName from CustomerContext
     const { phoneNumber } = route.params || {};
     const [name, setName] = useState('');
     const [pincode, setPincode] = useState('');
@@ -16,39 +18,41 @@ export default function CustomerScreen({ route, onFormSubmit }) {
     const [address, setAddress] = useState('');
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
-    const [submitted, setSubmitted] = useState(false); // Track if form submission has been attempted
-    const navigation = useNavigation(); // Initialize useNavigation hook
+    const [submitted, setSubmitted] = useState(false);
 
-   const handleSubmit = () => {
-    setSubmitted(true); // Set form submission attempt
+    const navigation = useNavigation();
 
-    // Check if all required fields are filled
-    if (!name.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim()) {
-        // Alert or indicate to the user that there are required fields to be filled
-        console.log(alert("Please fill in all required fields."));
-        return;
-    }
+    const handleSubmit = () => {
+        setSubmitted(true);
 
-    setFormSubmitted(true); // Set formSubmitted state to true
+        if (!name.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim()) {
+            console.log(alert("Please fill in all required fields."));
+            return;
+        }
 
-    // Perform form submission logic here
-    console.log("Name:", name);
-    console.log("Pincode:", pincode);
-    console.log("Address:", address);
+        setFormSubmitted(true);
 
-    // Call the callback function to inform the application that form is submitted
-    if (onFormSubmit) {
-        onFormSubmit();
-    }
+        console.log("Name:", name);
+        console.log("Pincode:", pincode);
+        console.log("Address:", address);
 
-    // Navigate to the new screen and pass parameters
-    navigation.navigate('CustomerHomePage', {
-        pincode: pincode,
-        name: name,
-        shopID: shopID,// Passing the shopID
-        address:address
-    });
-};
+        if (onFormSubmit) {
+            onFormSubmit();
+        }
+        
+        setCustomerName(name); // Set customer name using the context
+        setShopID(shopID);
+        setCustAddress(address);
+       
+        
+
+        navigation.navigate('CustomerHomePage', {
+            pincode: pincode,
+            name: name,
+            shopID: shopID,
+            address: address
+        });
+    };
 
     const handleInputChange = (value, fieldName) => {
         switch (fieldName) {
@@ -71,6 +75,10 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             case 'address':
                 setAddress(value);
                 setRequiredFields({ ...requiredFields, address: value.trim() !== '' });
+                break;
+            case 'shopID':
+                setShopId(value);
+                setShopID(value); // Update shopID in the context
                 break;
             default:
                 break;
@@ -202,5 +210,8 @@ const styles = StyleSheet.create({
     },
     requiredInput: {
         borderColor: 'red',
-    },
+    }
 });
+ 
+
+
