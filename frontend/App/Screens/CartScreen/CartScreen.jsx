@@ -49,8 +49,8 @@ const CartScreen = ({ route }) => {
     navigation.goBack();
   };
 
-  const changeAddress = () => {
-    navigation.navigate("ChangeAddress")
+  const changeAddress = (address) => {
+    navigation.navigate("ChangeAddress", { address });
   };
   
   const handleCheckout = () => {
@@ -107,9 +107,9 @@ const CartScreen = ({ route }) => {
             <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
             <Text style={styles.deliveryText}>Deliver to address below</Text>
             <Text style={styles.addressText}>{custAddress}</Text>
-            <TouchableOpacity style={styles.changeAddressButton} onPress={changeAddress}>
-              <Text style={styles.changeAddressButtonText}>Change Address</Text>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={() => changeAddress(custAddress)}>
+  <Text style={styles.shoppingAt}>Change Address</Text>
+</TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
               <Text style={styles.buttonText}>Continue Shopping</Text>
             </TouchableOpacity>
