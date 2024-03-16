@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ChangeAddress({ route }) {
-	
-
   const { address, isDefault } = route.params;
   const navigation = useNavigation();
-  
-  
-  const addNewAdress = () => {
-	navigation.navigate("AddNewAddress")
+
+  const addNewAddress = () => {
+    navigation.navigate("AddNewAddress", { handleAddNewAddress });
+  }
+
+  const [addresses, setAddresses] = useState([]);
+
+  const handleAddNewAddress = (newAddress) => {
+    setAddresses([newAddress, ...addresses]);
   }
 
   return (
@@ -25,11 +28,11 @@ export default function ChangeAddress({ route }) {
         <View style={styles.headerText}>
           <Text style={styles.welcomeText}>Welcome: </Text>
           <Text style={styles.shoppingAt}>Shopping at: </Text>
-          
-          <TouchableOpacity >
+
+          <TouchableOpacity>
             <Text style={styles.shoppingAt}>Change Address</Text>
           </TouchableOpacity>
-          
+
           <Text style={styles.shoppingAt}>Shop ID: </Text>
         </View>
       </View>
@@ -37,28 +40,28 @@ export default function ChangeAddress({ route }) {
       {/* Heading: Manage Addresses */}
       <Text style={styles.heading}>Manage Addresses</Text>
 
-      {/* Address section */}
+      {/* Display previous address */}
       <View style={styles.addressSection}>
-        {/* Address text */}
         <View style={styles.addressContainer}>
           <Text style={styles.addressText}>{address}</Text>
         </View>
-
-        {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>{isDefault ? 'Default Address' : 'Select This'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Make Default</Text>
-          </TouchableOpacity>
-        </View>
       </View>
-      
+
+      {/* Display added addresses */}
+      {addresses.map((newAddress, index) => (
+        <View key={index} style={styles.addressSection}>
+          <View style={styles.addressContainer}>
+            <Text style={styles.addressText}>{newAddress}</Text>
+          </View>
+          {/* Other buttons for the address */}
+        </View>
+      ))}
+
       {/* Add New Address Button */}
-      <TouchableOpacity style={styles.buttonAdd} onPress={addNewAdress}>
+      <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress}>
         <Text style={styles.buttonAddText}>+ Add New Address</Text>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.buttonUpdate}>
         <Text style={styles.buttonUpdateText}>Update Address</Text>
       </TouchableOpacity>
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 26,
-	textAlign:"center",
+    textAlign: "center",
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -119,22 +122,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 10,
   },
-  buttonContainer: {
-    alignItems: 'flex-end',
-  },
-  button: {
-    width: "100%",
-    backgroundColor: Colors.BUTTONCOLOR,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  buttonText: {
-    textAlign: "center",
-    color: 'white',
-    fontWeight: 'bold',
-  },
   buttonAdd: {
     width: "100%",
     backgroundColor: Colors.BUTTONCOLOR,
@@ -148,17 +135,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  buttonUpdate:{
-	width: "100%",
-	 
+  buttonUpdate: {
+    width: "100%",
     backgroundColor: "#0A7E00",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
     marginBottom: 10,
   },
-  buttonUpdateText:{
-	textAlign: "center",
+  buttonUpdateText: {
+    textAlign: "center",
     color: 'white',
     fontWeight: 'bold',
   }
