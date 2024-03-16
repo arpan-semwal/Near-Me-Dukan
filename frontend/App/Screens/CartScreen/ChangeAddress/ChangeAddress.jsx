@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
+import {AddressContext} from "../../../Context/ContextApi"
 
 export default function ChangeAddress({ route }) {
   const { address, isDefault } = route.params;
+  const { handleAddNewAddress } = AddressContext();
+ 
+  
   const navigation = useNavigation();
 
   const addNewAddress = () => {
     navigation.navigate("AddNewAddress", { handleAddNewAddress });
   }
-
-  const [addresses, setAddresses] = useState([]);
-
-  const handleAddNewAddress = (newAddress) => {
-    setAddresses([newAddress, ...addresses]);
-  }
+  
+   
+  
 
   return (
     <View style={styles.container}>

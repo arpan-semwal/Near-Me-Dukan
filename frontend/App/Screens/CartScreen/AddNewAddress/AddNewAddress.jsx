@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Colors from '../../../utils/Colors';
 
 export default function AddNewAddress({ navigation, route }) {
   const { handleAddNewAddress } = route.params;
   const [newAddress, setNewAddress] = useState('');
+
+  useEffect(() => {
+    // Set the new address if initially provided
+    if (route.params && route.params.newAddress) {
+      setNewAddress(route.params.newAddress);
+    }
+  }, [route.params]);
 
   const handleAddAddress = () => {
     handleAddNewAddress(newAddress);
