@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 
 // Create CartContext
 const CartContext = createContext();
-export const AddressContext = createContext();
+ 
 // Create CustomerContext
 export const CustomerContext = createContext();
 
@@ -17,12 +17,9 @@ export const CartProvider = ({ children }) => {
   const [shopID, setShopID] = useState('');
   const [shopName, setShopName] = useState('');
   const [custAddress , setCustAddress] = useState('');
-  const [addresses, setAddresses] = useState([]);
+ 
   
-  const handleAddNewAddress = (newAddress) => {
-    setAddresses([newAddress, ...addresses]);
-  };
-
+ 
   const addToCart = (product) => {
     // Check if the product is already in the cart
     const existingItem = cartItems.find(item => item.id === product.id);
@@ -58,10 +55,9 @@ export const CartProvider = ({ children }) => {
       setShopName,
       custAddress,
       setCustAddress,
-      addresses, 
-      handleAddNewAddress
+      
     }}>
-      <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress,addresses,handleAddNewAddress }}>
+      <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress   }}>
         {children}
       </CustomerContext.Provider>
     </CartContext.Provider>

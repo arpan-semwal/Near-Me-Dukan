@@ -1,22 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
-import {AddressContext} from "../../../Context/ContextApi"
+
 
 export default function ChangeAddress({ route }) {
   const { address, isDefault } = route.params;
-  const { handleAddNewAddress } = AddressContext();
- 
-  
   const navigation = useNavigation();
+   
 
   const addNewAddress = () => {
-    navigation.navigate("AddNewAddress", { handleAddNewAddress });
+    navigation.navigate("AddNewAddress",  );
   }
-  
-   
-  
 
   return (
     <View style={styles.container}>
@@ -48,18 +43,18 @@ export default function ChangeAddress({ route }) {
         </View>
       </View>
 
-      {/* Display added addresses */}
-      {addresses.map((newAddress, index) => (
+      
+      {/*{addresses.map((newAddress, index) => (
         <View key={index} style={styles.addressSection}>
           <View style={styles.addressContainer}>
             <Text style={styles.addressText}>{newAddress}</Text>
           </View>
-          {/* Other buttons for the address */}
+        
         </View>
-      ))}
+      ))}*/}
 
-      {/* Add New Address Button */}
-      <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress}>
+ 
+      <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress} >
         <Text style={styles.buttonAddText}>+ Add New Address</Text>
       </TouchableOpacity>
 
