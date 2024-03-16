@@ -1,16 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
-
 export default function ChangeAddress({ route }) {
-  const { address, isDefault } = route.params;
+  const { addresses } = route.params;
   const navigation = useNavigation();
-   
-
+  
   const addNewAddress = () => {
-    navigation.navigate("AddNewAddress",  );
+    navigation.navigate("AddNewAddress");
   }
 
   return (
@@ -37,23 +35,18 @@ export default function ChangeAddress({ route }) {
       <Text style={styles.heading}>Manage Addresses</Text>
 
       {/* Display previous address */}
-      <View style={styles.addressSection}>
-        <View style={styles.addressContainer}>
-          <Text style={styles.addressText}>{address}</Text>
-        </View>
-      </View>
-
-      
-      {/*{addresses.map((newAddress, index) => (
+      {addresses?.map((address, index) => (
         <View key={index} style={styles.addressSection}>
           <View style={styles.addressContainer}>
-            <Text style={styles.addressText}>{newAddress}</Text>
+            <Text style={styles.addressText}>{address.fullName}</Text>
+            <Text style={styles.addressText}>{address.doorNo}, {address.streetArea}</Text>
+            <Text style={styles.addressText}>{address.city}, {address.state}</Text>
+            <Text style={styles.addressText}>Landmark: {address.landmark}</Text>
+            <Text style={styles.addressText}>Phone: {address.phone}</Text>
           </View>
-        
         </View>
-      ))}*/}
-
- 
+      ))}
+      
       <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress} >
         <Text style={styles.buttonAddText}>+ Add New Address</Text>
       </TouchableOpacity>
