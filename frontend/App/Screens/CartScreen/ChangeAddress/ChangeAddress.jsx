@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
@@ -6,9 +6,21 @@ import { useNavigation } from '@react-navigation/native';
 export default function ChangeAddress({ route }) {
   const { custAddress, addresses } = route.params;
   const navigation = useNavigation();
-  
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState(-1); // Initial state, no address selected
+  const [selectedCustAddress, setSelectedCustAddress] = useState(false); // Initial state, customer address not selected
+
   const addNewAddress = () => {
     navigation.navigate("AddNewAddress", { addresses, custAddress });
+  };
+
+  const handleSelectAddress = (index) => {
+    // Toggle selected address index
+    setSelectedAddressIndex(index === selectedAddressIndex ? -1 : index);
+  };
+
+  const handleSelectCustAddress = () => {
+    // Toggle selection of the customer address
+    setSelectedCustAddress(!selectedCustAddress);
   };
 
   return (
@@ -36,87 +48,92 @@ export default function ChangeAddress({ route }) {
         <Text style={styles.heading}>Manage Addresses</Text>
         {/* Render custAddress first */}
         <View style={styles.addressWrapper}>
-  <View style={styles.addressContainer}>
-    <View style={styles.row}>
-      {/* Customer Address */}
-      <View style={styles.leftColumn}>
-        <View style={styles.row}>
-          <Text style={[styles.address, styles.boldText]}>
-            {custAddress}
-          </Text>
-        </View>
-         
-         
-         
-         
-      </View>
+          <View style={styles.addressContainer}>
+            <View style={styles.row}>
+              {/* Customer Address */}
+              <View style={styles.leftColumn}>
+                <View style={styles.row}>
+                  <Text style={[styles.address, styles.boldText]}>
+                    {custAddress}
+                  </Text>
+                </View>
+              </View>
 
-      {/* Buttons */}
-      <View style={styles.rightColumn}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.buttonUpdate}>
-            <Text style={styles.buttonUpdateText}>Update Address</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonDelete}>
-            <Text style={styles.buttonDeleteText}>Delete Address</Text>
-          </TouchableOpacity>
+              {/* Buttons */}
+              <View style={styles.rightColumn}>
+                <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonUpdate}>
+                      <Text style={styles.buttonUpdateText}>Make Default</Text>
+                    </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.buttonUpdate, selectedCustAddress && styles.selectedButton]} // Apply additional style if selected
+                    onPress={handleSelectCustAddress}
+                  >
+                    <Text style={styles.buttonUpdateText}>
+                      {selectedCustAddress ? "Selected" : "Select This"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
-  </View>
-</View>
         
         {/* Render existing addresses */}
         {addresses?.map((address, index) => (
-  <View key={index} style={styles.addressWrapper}>
-    <View style={styles.addressContainer}>
-      <View style={styles.row}>
-        {/* Address */}
-        <View style={styles.leftColumn}>
-          <View style={styles.row}>
-            <Text style={[styles.address, styles.boldText]}>
-              {address.fullName}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={[styles.address]}>
-              {address.doorNo}, {address.streetArea}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.address}>
-              {address.state} , {address.city}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.address}>
-              {address.landmark}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.address}>
-              {address.phone}
-            </Text>
-          </View>
-        </View>
+          <View key={index} style={styles.addressWrapper}>
+            <View style={styles.addressContainer}>
+              <View style={styles.row}>
+                {/* Address */}
+                <View style={styles.leftColumn}>
+                  <View style={styles.row}>
+                    <Text style={[styles.address, styles.boldText]}>
+                      {address.fullName}
+                    </Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Text style={[styles.address]}>
+                      {address.doorNo}, {address.streetArea}
+                    </Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Text style={styles.address}>
+                      {address.state} , {address.city}
+                    </Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Text style={styles.address}>
+                      {address.landmark}
+                    </Text>
+                  </View>
+                  <View style={styles.row}>
+                    <Text style={styles.address}>
+                      {address.phone}
+                    </Text>
+                  </View>
+                </View>
 
-        {/* Buttons */}
-        <View style={styles.rightColumn}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonUpdate}>
-              <Text style={styles.buttonUpdateText}>Update Address</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonDelete}>
-              <Text style={styles.buttonDeleteText}>Delete Address</Text>
-            </TouchableOpacity>
+                {/* Buttons */}
+                <View style={styles.rightColumn}>
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.buttonUpdate}>
+                      <Text style={styles.buttonUpdateText}>Make Default</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.buttonUpdate, selectedAddressIndex === index && styles.selectedButton]} // Apply additional style if selected
+                      onPress={() => handleSelectAddress(index)}
+                    >
+                      <Text style={styles.buttonUpdateText}>
+                        {selectedAddressIndex === index ? "Selected" : "Select This"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
           </View>
-        </View>
-      </View>
-    </View>
-  </View>
-))}
+        ))}
 
-      
         <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress}>
           <Text style={styles.buttonAddText}>+ Add New Address</Text>
         </TouchableOpacity>
@@ -136,7 +153,6 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
-    fontSize:18
   },
   leftColumn: {
     flex: 2,
@@ -204,7 +220,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   buttonUpdate: {
-    backgroundColor: "#0A7E00",
+    backgroundColor: Colors.BUTTONCOLOR,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
@@ -216,7 +232,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonDelete: {
-    backgroundColor: "red",
+    backgroundColor: Colors.BUTTONCOLOR,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
@@ -239,5 +255,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: 'white',
     fontWeight: 'bold',
+  },
+  selectedButton: {
+    backgroundColor: 'green', // Change the color to indicate selection
   },
 });

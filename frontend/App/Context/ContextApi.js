@@ -17,6 +17,9 @@ export const CartProvider = ({ children }) => {
   const [shopID, setShopID] = useState('');
   const [shopName, setShopName] = useState('');
   const [custAddress , setCustAddress] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
  
   
  
@@ -55,9 +58,15 @@ export const CartProvider = ({ children }) => {
       setShopName,
       custAddress,
       setCustAddress,
+      pincode,
+      setPincode,
+      state,
+      setState,
+      city,
+      setCity,
       
     }}>
-      <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress   }}>
+      <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress, pincode,setPincode, state, setState, city,setCity }}>
         {children}
       </CustomerContext.Provider>
     </CartContext.Provider>

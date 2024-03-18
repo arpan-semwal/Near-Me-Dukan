@@ -8,13 +8,13 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function CustomerScreen({ route, onFormSubmit }) {
-    const { setCustomerName,setShopID,setShopName,setCustAddress } = useContext(CustomerContext); // Access setCustomerName from CustomerContext
+    const { setCustomerName, setShopID, setShopName, setCustAddress, setPincode, setState, setCity } = useContext(CustomerContext); // Access context setters
     const { phoneNumber } = route.params || {};
     const [name, setName] = useState('');
-    const [pincode, setPincode] = useState('');
+    const [pincode, setPincodeLocal] = useState(''); // Local state for pincode
     const [shopID, setShopId] = useState('');
-    const [state, setState] = useState('');
-    const [city, setCity] = useState('');
+    const [state, setStateLocal] = useState(''); // Local state for state
+    const [city, setCityLocal] = useState(''); // Local state for city
     const [address, setAddress] = useState('');
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
@@ -40,11 +40,12 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             onFormSubmit();
         }
         
-        setCustomerName(name); // Set customer name using the context
+        setCustomerName(name);
         setShopID(shopID);
         setCustAddress(address);
-       
-        
+        setPincode(pincode); // Set pincode using context
+        setState(state); // Set state using context
+        setCity(city); // Set city using context
 
         navigation.navigate('CustomerHomePage', {
             pincode: pincode,
@@ -61,15 +62,15 @@ export default function CustomerScreen({ route, onFormSubmit }) {
                 setRequiredFields({ ...requiredFields, name: value.trim() !== '' });
                 break;
             case 'pincode':
-                setPincode(value);
+                setPincodeLocal(value); // Update local state
                 setRequiredFields({ ...requiredFields, pincode: value.trim() !== '' });
                 break;
             case 'state':
-                setState(value);
+                setStateLocal(value); // Update local state
                 setRequiredFields({ ...requiredFields, state: value.trim() !== '' });
                 break;
             case 'city':
-                setCity(value);
+                setCityLocal(value); // Update local state
                 setRequiredFields({ ...requiredFields, city: value.trim() !== '' });
                 break;
             case 'address':
@@ -212,6 +213,3 @@ const styles = StyleSheet.create({
         borderColor: 'red',
     }
 });
- 
-
-

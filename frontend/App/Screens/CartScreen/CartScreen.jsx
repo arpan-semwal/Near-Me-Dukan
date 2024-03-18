@@ -6,7 +6,7 @@ import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = ({ route }) => {
-  const { cartItems, removeFromCart, customerName, shopID, shopName,custAddress } = useCart(); // Access customerName and shopName from useCart hook
+  const { cartItems, removeFromCart, customerName, shopID, shopName,custAddress , pincode , setPincode , state,setState,city,setCity } = useCart(); // Access customerName and shopName from useCart hook
   const [totalPrice, setTotalPrice] = useState(0);
   const [itemCount, setItemCount] = useState(0);
   const navigation = useNavigation();
@@ -50,7 +50,7 @@ const CartScreen = ({ route }) => {
   };
 
   const changeAddress = (address) => {
-    navigation.navigate("ChangeAddress", { custAddress });
+    navigation.navigate("ChangeAddress", { custAddress},{pincode},{state},{city});
   };
   
   const handleCheckout = () => {
@@ -107,9 +107,12 @@ const CartScreen = ({ route }) => {
             <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
             <Text style={styles.deliveryText}>Deliver to address below</Text>
             <Text style={styles.addressText}>{custAddress}</Text>
+            <Text style={styles.addressText}>Pincode: {pincode}</Text>
+            <Text style={styles.addressText}> {city} ,{state}</Text>
+             
             <TouchableOpacity onPress={() => changeAddress(custAddress)}>
-  <Text style={styles.shoppingAt}>Change Address</Text>
-</TouchableOpacity>
+              <Text style={styles.shoppingAt}>Change Address</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
               <Text style={styles.buttonText}>Continue Shopping</Text>
             </TouchableOpacity>
