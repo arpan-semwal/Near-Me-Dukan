@@ -50,7 +50,7 @@ const CartScreen = ({ route }) => {
   };
 
   const changeAddress = (address) => {
-    navigation.navigate("ChangeAddress", { address });
+    navigation.navigate("ChangeAddress", { custAddress });
   };
   
   const handleCheckout = () => {

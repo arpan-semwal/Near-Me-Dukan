@@ -4,11 +4,11 @@ import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ChangeAddress({ route }) {
-  const { addresses } = route.params;
+  const { custAddress, addresses } = route.params;
   const navigation = useNavigation();
   
   const addNewAddress = () => {
-    navigation.navigate("AddNewAddress");
+    navigation.navigate("AddNewAddress", { addresses });
   }
 
   return (
@@ -33,21 +33,19 @@ export default function ChangeAddress({ route }) {
 
       {/* Heading: Manage Addresses */}
       <Text style={styles.heading}>Manage Addresses</Text>
-
-      {/* Display previous address */}
+      {/* Render custAddress first */}
+      <Text style={styles.heading}>{custAddress}</Text>
+      
+      {/* Render existing addresses */}
       {addresses?.map((address, index) => (
-        <View key={index} style={styles.addressSection}>
-          <View style={styles.addressContainer}>
-            <Text style={styles.addressText}>{address.fullName}</Text>
-            <Text style={styles.addressText}>{address.doorNo}, {address.streetArea}</Text>
-            <Text style={styles.addressText}>{address.city}, {address.state}</Text>
-            <Text style={styles.addressText}>Landmark: {address.landmark}</Text>
-            <Text style={styles.addressText}>Phone: {address.phone}</Text>
-          </View>
+        <View key={index} style={styles.addressContainer}>
+          <Text style={styles.address}>
+            {address.fullName} {address.city}, {address.state}, {address.landmark}, {address.phone}
+          </Text>
         </View>
       ))}
-      
-      <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress} >
+    
+      <TouchableOpacity style={styles.buttonAdd} onPress={addNewAddress}>
         <Text style={styles.buttonAddText}>+ Add New Address</Text>
       </TouchableOpacity>
 
@@ -94,22 +92,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  addressSection: {
-    backgroundColor: "#E4E4E4",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    marginBottom: 20,
-    borderRadius: 30,
-  },
   addressContainer: {
-    flex: 1,
+    backgroundColor: '#E4E4E4',
+    padding: 20,
+    marginBottom: 10,
+    borderRadius: 10,
   },
-  addressText: {
-    fontSize: 16,
-    marginRight: 10,
+  address: {
+    fontSize: 18,
   },
   buttonAdd: {
     width: "100%",
