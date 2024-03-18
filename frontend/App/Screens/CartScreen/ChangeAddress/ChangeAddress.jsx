@@ -8,8 +8,8 @@ export default function ChangeAddress({ route }) {
   const navigation = useNavigation();
   
   const addNewAddress = () => {
-    navigation.navigate("AddNewAddress", { addresses });
-  }
+    navigation.navigate("AddNewAddress", { addresses, custAddress });
+  };
 
   return (
     <View style={styles.container}>
@@ -34,7 +34,7 @@ export default function ChangeAddress({ route }) {
       {/* Heading: Manage Addresses */}
       <Text style={styles.heading}>Manage Addresses</Text>
       {/* Render custAddress first */}
-      <Text style={styles.heading}>{custAddress}</Text>
+      <Text style={styles.addressContainer}>{custAddress}</Text>
       
       {/* Render existing addresses */}
       {addresses?.map((address, index) => (

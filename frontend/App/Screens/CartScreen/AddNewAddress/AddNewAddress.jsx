@@ -15,7 +15,7 @@ export default function AddNewAddress({ route }) {
   const [landmark, setLandmark] = useState('');
   const [phone, setPhone] = useState('');
   const navigation = useNavigation();
-  const { addresses } = route.params;
+  const { addresses = [], custAddress = '' } = route.params || {};
 
   const handleSubmit = () => {
     // Handle form submission logic here
@@ -41,8 +41,9 @@ export default function AddNewAddress({ route }) {
     // Merge the existing addresses with the new one
     const updatedAddresses = [...addresses, newAddress];
 
-    // Pass the updated list of addresses back to the ChangeAddress screen
+    // Pass the updated list of addresses and custAddress back to the ChangeAddress screen
     navigation.navigate('ChangeAddress', {
+      custAddress: custAddress,
       addresses: updatedAddresses,
     });
   };
