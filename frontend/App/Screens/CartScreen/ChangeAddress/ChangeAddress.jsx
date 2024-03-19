@@ -4,7 +4,7 @@ import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ChangeAddress({ route }) {
-  const { custAddress, addresses } = route.params;
+  const { custAddress, addresses,customerName,shopID } = route.params;
   const navigation = useNavigation();
   const [selectedAddressIndex, setSelectedAddressIndex] = useState(-1); // Initial state, no address selected
   const [selectedCustAddress, setSelectedCustAddress] = useState(false); // Initial state, customer address not selected
@@ -33,14 +33,14 @@ export default function ChangeAddress({ route }) {
 
           {/* User Info */}
           <View style={styles.headerText}>
-            <Text style={styles.welcomeText}>Welcome: </Text>
+            <Text style={styles.welcomeText}>Welcome:{customerName} </Text>
             <Text style={styles.shoppingAt}>Shopping at: </Text>
 
             <TouchableOpacity>
               <Text style={styles.shoppingAt}>Change Address</Text>
             </TouchableOpacity>
 
-            <Text style={styles.shoppingAt}>Shop ID: </Text>
+            <Text style={styles.shoppingAt}>Shop ID: {shopID}</Text>
           </View>
         </View>
 

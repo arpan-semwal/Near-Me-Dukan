@@ -54,7 +54,7 @@ const CartScreen = ({ route }) => {
   };
   
   const handleCheckout = () => {
-    navigation.navigate("Checkout")
+    navigation.navigate("Checkout", { cartItems, totalPrice }); // Pass cartItems and totalPrice to Checkout screen
   };
 
   return (
@@ -117,7 +117,7 @@ const CartScreen = ({ route }) => {
               <Text style={styles.buttonText}>Continue Shopping</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleCheckout}>
-              <Text style={styles.buttonText}>Proceed to Pay</Text>
+               <Text style={styles.buttonText}>Proceed to Pay</Text>
             </TouchableOpacity>
           </View>
         }
