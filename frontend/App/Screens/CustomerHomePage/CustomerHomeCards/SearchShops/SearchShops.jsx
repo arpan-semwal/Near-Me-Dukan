@@ -5,13 +5,16 @@ import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, M
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
+
 import StoreScreen from '../../StoreScreen/StoreScreen';
+import {useCart} from '../../../../Context/ContextApi';
 
 export default function SearchShops({ route }) {
     const { pincode, name , shopID } = route.params || {};
     const navigation = useNavigation(); // Initialize navigation object
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
+    const { storeName, setStoreName } = useCart();
 
     const handleSubmit = () => {
         setShowChangePincode(true);
@@ -47,8 +50,10 @@ export default function SearchShops({ route }) {
     );
 
     const handleProductPress = (shopName, customerName) => {
+        // Set the store name to the global state
+        setStoreName(shopName);
         // Navigate to the StoreScreen component passing shopName and customerName as parameters
-        navigation.navigate('Store', { shopName: shopName, customerName: name , shopID:shopID});
+        navigation.navigate('Store', { shopName: shopName, customerName: name, shopID: shopID });
     };
     
 

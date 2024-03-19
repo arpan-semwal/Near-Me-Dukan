@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useCart } from '../../Context/ContextApi'; // Import useCart hook
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = ({ route }) => {
-  const { cartItems, removeFromCart, customerName, shopID, shopName,custAddress , pincode , setPincode , state,setState,city,setCity } = useCart(); // Access customerName and shopName from useCart hook
+  const { cartItems, removeFromCart, customerName, shopID, shopName, custAddress, pincode, setPincode, state, setState, city, setCity, storeName } = useCart();
   const [totalPrice, setTotalPrice] = useState(0);
   const [itemCount, setItemCount] = useState(0);
   const navigation = useNavigation();
@@ -58,12 +58,13 @@ const CartScreen = ({ route }) => {
   };
 
   return (
+    
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
         <View style={styles.headerText}>
           <Text style={styles.welcomeText}>Welcome: {customerName}</Text>
-          <Text style={styles.shoppingAt}>Shopping at: {shopName}</Text>
+          <Text style={styles.shoppingAt}>Shopping at: {storeName}</Text>
           
           <TouchableOpacity onPress={changeAddress}>
             <Text style={styles.shoppingAt}>Change Address</Text>
@@ -123,6 +124,7 @@ const CartScreen = ({ route }) => {
         }
       />
     </View>
+   
   );
 };
 

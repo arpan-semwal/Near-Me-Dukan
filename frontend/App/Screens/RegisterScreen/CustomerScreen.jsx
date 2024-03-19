@@ -19,6 +19,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    
 
     const navigation = useNavigation();
 

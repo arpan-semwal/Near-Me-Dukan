@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
+import {useCart} from '../../../Context/ContextApi';
 
 const Checkout = ({ route }) => {
   const { cartItems, totalPrice } = route.params; // Receive cartItems and totalPrice from route params
+  const {customerName,shopID ,storeName } = useCart();
   const navigation = useNavigation();
   return (
     <ScrollView>
@@ -12,12 +14,12 @@ const Checkout = ({ route }) => {
         <View style={styles.headerContainer}>
           <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
           <View style={styles.headerText}>
-            <Text style={styles.welcomeText}>Welcome: </Text>
-            <Text style={styles.shoppingAt}>Shopping at:  </Text>
+            <Text style={styles.welcomeText}>Welcome:{customerName} </Text>
+            <Text style={styles.shoppingAt}>Shopping at:{storeName}  </Text>
             <TouchableOpacity>
               <Text style={styles.shoppingAt}>Change Address</Text>
             </TouchableOpacity>
-            <Text style={styles.shoppingAt}>Shop ID: </Text>
+            <Text style={styles.shoppingAt}>Shop ID:{shopID} </Text>
           </View>
         </View>
 		<View>

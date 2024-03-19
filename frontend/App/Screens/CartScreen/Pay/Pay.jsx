@@ -1,9 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Animated } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 const Pay = () => {
   const scaleValue = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation(); // Initialize navigation object
 
   useEffect(() => {
     startAnimation();
@@ -19,6 +21,11 @@ const Pay = () => {
 
   const animatedStyle = {
     transform: [{ scale: scaleValue }],
+  };
+
+  const goToOrderPage = () => {
+    // Navigate to the order page when the button is pressed
+    navigation.navigate('Orders');
   };
 
   return (
@@ -38,7 +45,7 @@ const Pay = () => {
       <Text style={styles.orderPlacedText}>Order Placed Successfully</Text>
 
       {/* Button */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={goToOrderPage}>
         <Text style={styles.buttonText}>Go to Order</Text>
       </TouchableOpacity>
     </View>

@@ -20,6 +20,7 @@ export const CartProvider = ({ children }) => {
   const [pincode, setPincode] = useState('');
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
+  const [storeName, setStoreName] = useState('');
  
   
  
@@ -64,6 +65,8 @@ export const CartProvider = ({ children }) => {
       setState,
       city,
       setCity,
+      storeName,  
+      setStoreName,  
       
     }}>
       <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress, pincode,setPincode, state, setState, city,setCity }}>

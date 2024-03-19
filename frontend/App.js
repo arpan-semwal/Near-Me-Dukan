@@ -31,6 +31,7 @@ import ChangeAddress from './App/Screens/CartScreen/ChangeAddress/ChangeAddress.
 import Checkout from './App/Screens/CartScreen/Checkout/Checkout.jsx';
 import AddNewAddress from './App/Screens/CartScreen/AddNewAddress/AddNewAddress.jsx';
 import Pay from './App/Screens/CartScreen/Pay/Pay.jsx';
+import ViewOrder from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders/ViewOrder/ViewOrder.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -59,6 +60,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="Checkout" component={Checkout}options={{ headerShown: false }} />
       <Stack.Screen name="AddNewAddress" component={AddNewAddress}options={{ headerShown: false }} />
       <Stack.Screen name="Pay" component={Pay}options={{ headerShown: false }} />
+      <Stack.Screen name="ViewOrder" component={ViewOrder}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
