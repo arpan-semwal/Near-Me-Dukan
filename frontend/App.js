@@ -32,6 +32,10 @@ import Checkout from './App/Screens/CartScreen/Checkout/Checkout.jsx';
 import AddNewAddress from './App/Screens/CartScreen/AddNewAddress/AddNewAddress.jsx';
 import Pay from './App/Screens/CartScreen/Pay/Pay.jsx';
 import ViewOrder from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders/ViewOrder/ViewOrder.jsx';
+import SweetsHomePage from "./App/Screens/CustomerHomePage/SweetsHomePage/SweetsHomePage.jsx"
+import SnacksHomePage from './App/Screens/CustomerHomePage/SnacksHomePage/SnacksHomePage.jsx';
+import VegetablesHomePage from './App/Screens/CustomerHomePage/VegetablesHomePage/VegetablesHomePage.jsx';
+import BarberHomePage from './App/Screens/CustomerHomePage/BarberHomePage/BarberHomePage.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -61,6 +65,10 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="AddNewAddress" component={AddNewAddress}options={{ headerShown: false }} />
       <Stack.Screen name="Pay" component={Pay}options={{ headerShown: false }} />
       <Stack.Screen name="ViewOrder" component={ViewOrder}options={{ headerShown: false }} />
+      <Stack.Screen name="Sweets" component={SnacksHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="Snacks" component={SnacksHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="Vegetables" component={VegetablesHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="Barber" component={BarberHomePage}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
