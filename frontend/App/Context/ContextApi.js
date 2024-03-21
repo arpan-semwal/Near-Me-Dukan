@@ -22,8 +22,6 @@ export const CartProvider = ({ children }) => {
   const [city, setCity] = useState('');
   const [storeName, setStoreName] = useState('');
  
-  
- 
   const addToCart = (product) => {
     // Check if the product is already in the cart
     const existingItem = cartItems.find(item => item.id === product.id);

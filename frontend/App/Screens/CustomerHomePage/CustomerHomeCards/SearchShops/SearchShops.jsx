@@ -10,11 +10,11 @@ import StoreScreen from '../../StoreScreen/StoreScreen';
 import {useCart} from '../../../../Context/ContextApi';
 
 export default function SearchShops({ route }) {
-    const { pincode, name , shopID } = route.params || {};
+    const {   name , shopID } = route.params || {};
     const navigation = useNavigation(); // Initialize navigation object
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
-    const { storeName, setStoreName } = useCart();
+    const { storeName, setStoreName,pincode } = useCart();
 
     const handleSubmit = () => {
         setShowChangePincode(true);
@@ -49,7 +49,7 @@ export default function SearchShops({ route }) {
         <View style={styles.separator} />
     );
 
-    const handleProductPress = (shopName, customerName) => {
+    const handleProductPress = (shopName ) => {
         // Set the store name to the global state
         setStoreName(shopName);
         // Navigate to the StoreScreen component passing shopName and customerName as parameters

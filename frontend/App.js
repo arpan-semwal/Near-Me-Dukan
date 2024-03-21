@@ -36,6 +36,7 @@ import SweetsHomePage from "./App/Screens/CustomerHomePage/SweetsHomePage/Sweets
 import SnacksHomePage from './App/Screens/CustomerHomePage/SnacksHomePage/SnacksHomePage.jsx';
 import VegetablesHomePage from './App/Screens/CustomerHomePage/VegetablesHomePage/VegetablesHomePage.jsx';
 import BarberHomePage from './App/Screens/CustomerHomePage/BarberHomePage/BarberHomePage.jsx';
+import BarberSearchShops from './App/Screens/CustomerHomePage/BarberHomePage/BarberSearchShops.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -69,6 +70,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="Snacks" component={SnacksHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="Vegetables" component={VegetablesHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="Barber" component={BarberHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="BarberSearchShops" component={BarberSearchShops}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
