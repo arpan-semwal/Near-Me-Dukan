@@ -12,6 +12,7 @@ export default function BarberSearchShops() {
   
   const renderShopItem = ({ item }) => (
     <View>
+      <TouchableOpacity onPress={() => navigation.navigate('Salons', { salon: item })}>
       <View style={styles.shopItem}>
         <Image source={item.image} style={styles.shopImage} />
         <View style={styles.shopDetails}>
@@ -20,6 +21,8 @@ export default function BarberSearchShops() {
           <Text style={styles.shopStatus}>Status: {item.isOpen ? 'Open' : 'Closed'}</Text>
         </View>
       </View>
+      </TouchableOpacity>
+      
       <View style={styles.separator} />
     </View>
   );
