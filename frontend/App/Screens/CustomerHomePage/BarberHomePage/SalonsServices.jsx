@@ -32,7 +32,8 @@ export default function SalonsServices( ) {
         </View>
 		 
         <Text style={styles.welcomeText1}>Hello , {customerName}</Text>
-        <Text> Select a Service to Book</Text>
+        <Text style={styles.selectServiceText}>Select a Service to Book</Text>
+        <View style={styles.line}></View>
        
         <View style={styles.cardRow}>
           <View style={styles.card}>
@@ -226,5 +227,16 @@ const styles = StyleSheet.create({
   headingText:{
     fontSize:16,
     fontWeight:"bold"
-  }
+  },
+  selectServiceText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  line: {
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+    width: '100%',
+    marginBottom: 10,
+  },
 });
