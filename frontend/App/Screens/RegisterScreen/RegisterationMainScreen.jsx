@@ -15,6 +15,10 @@ export default function RegisterationMainScreen({ route }) {
         // Navigate to the customer screen and pass the phone number as a parameter
         navigation.navigate('Customer', { phoneNumber: phoneNumber });
     };
+    const handleShopKeeperPress = () => {
+        // Navigate to the customer screen and pass the phone number as a parameter
+        navigation.navigate('Shopkeeper', { phoneNumber: phoneNumber });
+    };
 
     return (
         <View style={styles.container}>
@@ -23,7 +27,7 @@ export default function RegisterationMainScreen({ route }) {
                 style={styles.logo}
             />
             <Text style={styles.registerText}>Register Now</Text>
-            <TouchableOpacity style={styles.card} onPress={() => console.log('Shopkeeper pressed')}>
+            <TouchableOpacity style={styles.card} onPress={handleShopKeeperPress}>
                 <Fontisto name="person" size={windowWidth * 0.2} color="black" />
                 <Text style={styles.cardText}>Shopkeeper</Text>
             </TouchableOpacity>

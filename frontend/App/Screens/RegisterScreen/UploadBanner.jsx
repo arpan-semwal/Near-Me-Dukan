@@ -1,50 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image  } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function ShopkeeperScreen({route}) {
-    const [shopkeeperName, setShopKeeperName] = useState('');
+export default function UploadBanner({route}) {
+    const [name, setName] = useState('');
     const [shopID, setShopId] = useState('');
     const [pincode, setPincode] = useState('');
-    const [shopState, setShopState] = useState('');
+    const [state, setState] = useState('');
     const [city, setCity] = useState('');
     const [address, setAddress] = useState('');
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-	const navigation = useNavigation();
-    
-    const { phoneNumber } = route.params;
+    const [shopBanner, setShopBanner] = useState(null);
+    const [profilePicture, setProfilePicture] = useState(null);
+    const navigation = useNavigation();
+	
+	const { phoneNumber } = route.params;
 
     const handleSubmit = () => {
         setSubmitted(true);
 
-        if (!shopkeeperName.trim() || !shopID.trim() || !pincode.trim() || !shopState.trim() || !city.trim() || !address.trim()) {
-            alert("Please fill in all required fields.");
-            return;
-        }
+        //if (!name.trim() || !shopID.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim() || !shopBanner || !profilePicture) {
+        //    alert("Please fill in all required fields and upload both shop banner and profile picture.");
+        //    return;
+        //}
 
         setFormSubmitted(true);
 
-        console.log("Name:", shopkeeperName);
+        console.log("Name:", name);
         console.log("Shop ID:", shopID);
         console.log("Pincode:", pincode);
-        console.log("State:", shopState);
-        console.log("City:", city);
-        console.log("Address:", address);
+        console.log("Shop Banner:", shopBanner.uri);
+        console.log("Profile Picture:", profilePicture.uri);
 
-		navigation.navigate('Upload',{phoneNumber});
-
+        // Navigate to the next screen
+        navigation.navigate('Subscription');
     };
 
     const handleInputChange = (value, fieldName) => {
         switch (fieldName) {
-            case 'shopkeeperName':
-                setShopKeeperName(value);
-                setRequiredFields({ ...requiredFields, shopkeeperName: value.trim() !== '' });
+            case 'name':
+                setName(value);
+                setRequiredFields({ ...requiredFields, name: value.trim() !== '' });
                 break;
             case 'shopID':
                 setShopId(value);
@@ -54,9 +56,9 @@ export default function ShopkeeperScreen({route}) {
                 setPincode(value);
                 setRequiredFields({ ...requiredFields, pincode: value.trim() !== '' });
                 break;
-            case 'shopState':
-                setShopState(value);
-                setRequiredFields({ ...requiredFields, shopState: value.trim() !== '' });
+            case 'state':
+                setState(value);
+                setRequiredFields({ ...requiredFields, state: value.trim() !== '' });
                 break;
             case 'city':
                 setCity(value);
@@ -71,31 +73,52 @@ export default function ShopkeeperScreen({route}) {
         }
     };
 
+	const handleShopBannerUpload = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+	
+		console.log("Shop Banner Result:", result);
+	
+		if (!result.cancelled) {
+			setShopBanner(result);
+		}
+	};
+	
+	const handleProfilePictureUpload = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 1,
+		});
+	
+		console.log("Profile Picture Result:", result);
+	
+		if (!result.cancelled) {
+			setProfilePicture(result);
+		}
+	};
+
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
             <View style={styles.container}>
                 <Text style={styles.heading}>Shopkeeper Registration</Text>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Phn number</Text>
+                    <Text style={styles.label}>Your Phone (Can’t Edit)</Text>
                     <TextInput
-                        style={[styles.input, !requiredFields.shopkeeperName && submitted && styles.requiredInput]}
+                        style={[styles.input, !requiredFields.name && submitted && styles.requiredInput]}
                         placeholder="Your Name"
                         value={phoneNumber}
-                        onChangeText={(value) => handleInputChange(value, 'phoneNumber')}
-                        editable={false}
+                        onChangeText={(value) => handleInputChange(value, 'name')}
+						editable={false}
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Your Name *</Text>
-                    <TextInput
-                        style={[styles.input, !requiredFields.shopkeeperName && submitted && styles.requiredInput]}
-                        placeholder="Your Name"
-                        value={shopkeeperName}
-                        onChangeText={(value) => handleInputChange(value, 'shopkeeperName')}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Your Store Name*</Text>
+                    <Text style={styles.label}>Sales Associate’s Number</Text>
                     <TextInput
                         style={[styles.input, !requiredFields.shopID && submitted && styles.requiredInput]}
                         placeholder="Your Store Name"
@@ -104,7 +127,7 @@ export default function ShopkeeperScreen({route}) {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Your Pincode*</Text>
+                    <Text style={styles.label}>Your Shop Category*</Text>
                     <TextInput
                         style={[styles.input, !requiredFields.pincode && submitted && styles.requiredInput]}
                         placeholder="Your Pincode"
@@ -113,39 +136,28 @@ export default function ShopkeeperScreen({route}) {
                         keyboardType="numeric"
                     />
                 </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>State*</Text>
-                    <TextInput
-                        style={[styles.input, !requiredFields.shopState && submitted && styles.requiredInput]}
-                        placeholder="Your State"
-                        value={shopState}
-                        onChangeText={(value) => handleInputChange(value, 'shopState')}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>City*</Text>
-                    <TextInput
-                        style={[styles.input, !requiredFields.city && submitted && styles.requiredInput]}
-                        placeholder="Your City"
-                        value={city}
-                        onChangeText={(value) => handleInputChange(value, 'city')}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Complete Address *</Text>
-                    <TextInput
-                        style={[styles.input, { height: windowHeight * 0.1, textAlignVertical: 'top' }, !requiredFields.address && submitted && styles.requiredInput]}
-                        placeholder="Complete Address"
-                        value={address}
-                        onChangeText={(value) => handleInputChange(value, 'address')}
-                        multiline
-                    />
-                </View>
-                <Button
-                    title="Proceed"
-                    onPress={handleSubmit}
-                    disabled={!Object.values(requiredFields).every(field => field)}
-                />
+					<View style={styles.inputContainer}>
+						<Text style={styles.label}>Upload Shop Banner*</Text>
+						<Button
+							title="Upload Shop Banner"
+							onPress={handleShopBannerUpload}
+						/>
+						{shopBanner && <Image source={{ uri: shopBanner.uri }} style={styles.uploadedImage} />}
+					</View>
+					<View style={styles.inputContainer}>
+						<Text style={styles.label}>Upload Profile Picture*</Text>
+						<Button
+							title="Upload Profile Picture"
+							onPress={handleProfilePictureUpload}
+						/>
+						{profilePicture && <Image source={{ uri: profilePicture.uri }} style={styles.uploadedImage} />}
+					</View>
+				<Button
+					title="Submit"
+					onPress={handleSubmit}
+					//disabled={!Object.values(requiredFields).every(field => field) || !shopBanner || !profilePicture}
+					style={styles.submitButton}
+				/>
             </View>
         </ScrollView>
     );
@@ -187,5 +199,10 @@ const styles = StyleSheet.create({
     },
     requiredInput: {
         borderColor: 'red',
-    }
+    },
+	submitButton: {
+		marginTop: 40, // Adjust this value to change the vertical spacing
+	}
+	 
+	
 });

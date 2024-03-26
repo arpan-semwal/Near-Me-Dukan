@@ -39,6 +39,9 @@ import BarberHomePage from './App/Screens/CustomerHomePage/BarberHomePage/Barber
 import BarberSearchShops from './App/Screens/CustomerHomePage/BarberHomePage/BarberSearchShops.jsx';
 import SalonsServices from './App/Screens/CustomerHomePage/BarberHomePage/SalonsServices.jsx';
 import SalonProducts from './App/Screens/CustomerHomePage/BarberHomePage/SalonProducts.jsx';
+import UploadBanner from './App/Screens/RegisterScreen/UploadBanner.jsx';
+import Subscription from './App/Screens/Subscription/Subscription.jsx';
+import ShopkeeperPay from './App/Screens/RegisterScreen/ShopkeeperPay/ShopkeeperPay.jsx';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -75,6 +78,9 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="BarberSearchShops" component={BarberSearchShops}options={{ headerShown: false }} />
       <Stack.Screen name="Salons" component={SalonsServices}options={{ headerShown: false }} />
       <Stack.Screen name="SalonProduct" component={SalonProducts}options={{ headerShown: false }} />
+      <Stack.Screen name="Upload" component={UploadBanner}options={{ headerShown: false }} />
+      <Stack.Screen name="Subscription" component={Subscription}options={{ headerShown: false }} />
+      <Stack.Screen name="ShopkeeperPay" component={ShopkeeperPay}options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

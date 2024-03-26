@@ -37,7 +37,7 @@ export default function SalonsServices( ) {
        
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops')}>
+            <TouchableOpacity onPress={() => navigateToScreen('SalonProduct')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
@@ -48,7 +48,7 @@ export default function SalonsServices( ) {
           </View>
           
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('Orders')}>
+            <TouchableOpacity onPress={() => navigateToScreen('SalonProduct')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
@@ -61,7 +61,7 @@ export default function SalonsServices( ) {
         
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('MyAddress')}>
+            <TouchableOpacity onPress={() => navigateToScreen('SalonProduct')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />
@@ -84,7 +84,7 @@ export default function SalonsServices( ) {
         </View>
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('MyAddress')}>
+            <TouchableOpacity onPress={() => navigateToScreen('SalonProduct')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />
@@ -95,7 +95,7 @@ export default function SalonsServices( ) {
           </View>
           
           <View style={styles.card}>
-            <TouchableOpacity >
+            <TouchableOpacity onPress={() => navigateToScreen('SalonProduct')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
