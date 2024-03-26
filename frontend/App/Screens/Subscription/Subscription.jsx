@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
-export default function Subscription() {
+export default function Subscription({route}) {
 	const navigation = useNavigation(); 
 	const handleNavigation = () => {
 		navigation.navigate("ShopkeeperPay");
 	}
+    const { phoneNumber, name, shopID, pincode, state, city, address, shopBanner, profilePicture } = route.params;
 	
 	
     return (
@@ -15,7 +16,8 @@ export default function Subscription() {
             <Text style={styles.heading}>Subscription Plan</Text>
             <Text style={styles.price}>₹3650</Text>
           
-            
+           
+
             <View style={styles.bulletPoints}>
                 <Text style={styles.details}> 12 Months + 2 Months FREE</Text>
                 <Text style={styles.bullet}>• Per Day Cost Less Than a Cup of Tea</Text>

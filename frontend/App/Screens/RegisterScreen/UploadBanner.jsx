@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image  } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -21,26 +21,33 @@ export default function UploadBanner({route}) {
     const navigation = useNavigation();
 	
 	const { phoneNumber } = route.params;
+    
+     
 
     const handleSubmit = () => {
-        setSubmitted(true);
+    setSubmitted(true);
 
-        //if (!name.trim() || !shopID.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim() || !shopBanner || !profilePicture) {
-        //    alert("Please fill in all required fields and upload both shop banner and profile picture.");
-        //    return;
-        //}
+    // Check if all required fields are filled and images are uploaded
+    //if (!name.trim() || !shopID.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim() || !shopBanner || !profilePicture) {
+    //    alert("Please fill in all required fields and upload both shop banner and profile picture.");
+    //    return;
+    //}
 
-        setFormSubmitted(true);
+    setFormSubmitted(true);
 
-        console.log("Name:", name);
-        console.log("Shop ID:", shopID);
-        console.log("Pincode:", pincode);
-        console.log("Shop Banner:", shopBanner.uri);
-        console.log("Profile Picture:", profilePicture.uri);
-
-        // Navigate to the next screen
-        navigation.navigate('Subscription');
-    };
+    // Pass data to the next screen
+    navigation.navigate('Subscription', {
+        phoneNumber: phoneNumber,
+        name: name,
+        shopID: shopID,
+        pincode: pincode,
+        state: state,
+        city: city,
+        address: address,
+        shopBanner: shopBanner.uri,
+        profilePicture: profilePicture.uri,
+    });
+};
 
     const handleInputChange = (value, fieldName) => {
         switch (fieldName) {
@@ -110,7 +117,7 @@ export default function UploadBanner({route}) {
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Phone (Can’t Edit)</Text>
                     <TextInput
-                        style={[styles.input, !requiredFields.name && submitted && styles.requiredInput]}
+                        style={styles.input}
                         placeholder="Your Name"
                         value={phoneNumber}
                         onChangeText={(value) => handleInputChange(value, 'name')}
