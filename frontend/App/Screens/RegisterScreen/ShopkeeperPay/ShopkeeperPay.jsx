@@ -23,9 +23,9 @@ const ShopkeeperPay = () => {
     transform: [{ scale: scaleValue }],
   };
 
-  const goToOrderPage = () => {
+  const handleNavigation = () => {
     // Navigate to the order page when the button is pressed
-    navigation.navigate('Orders');
+    navigation.navigate('ShopkeeperHome');
   };
 
   return (
@@ -45,7 +45,7 @@ const ShopkeeperPay = () => {
       <Text style={styles.orderPlacedText}>Your Store Profile is Ready</Text>
 
       {/* Button */}
-      <TouchableOpacity style={styles.button} onPress={goToOrderPage}>
+      <TouchableOpacity style={styles.button} onPress={handleNavigation}>
         <Text style={styles.buttonText}>Customize</Text>
       </TouchableOpacity>
     </View>

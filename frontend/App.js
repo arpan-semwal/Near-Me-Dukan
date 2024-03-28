@@ -42,6 +42,10 @@ import SalonProducts from './App/Screens/CustomerHomePage/BarberHomePage/SalonPr
 import UploadBanner from './App/Screens/RegisterScreen/UploadBanner.jsx';
 import Subscription from './App/Screens/Subscription/Subscription.jsx';
 import ShopkeeperPay from './App/Screens/RegisterScreen/ShopkeeperPay/ShopkeeperPay.jsx';
+import ShopkeeperHome from './App/Screens/RegisterScreen/ShopkeeperHome/ShopkeeperHome.jsx';
+import ShopkeeperOrders from './App/Screens/RegisterScreen/ShopkeeperOrders/ShopkeeperOrders.jsx';
+ 
+ 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -81,6 +85,10 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="Upload" component={UploadBanner}options={{ headerShown: false }} />
       <Stack.Screen name="Subscription" component={Subscription}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperPay" component={ShopkeeperPay}options={{ headerShown: false }} />
+      <Stack.Screen name="ShopkeeperHome" component={ShopkeeperHome}options={{ headerShown: false }} />
+      <Stack.Screen name="ShopkeeperOrders" component={ShopkeeperOrders}options={{ headerShown: false }} />
+     
+    
     </Stack.Navigator>
   );
 }
