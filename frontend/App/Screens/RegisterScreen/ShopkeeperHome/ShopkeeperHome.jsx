@@ -8,9 +8,9 @@ export default function ShopkeeperHome() {
     const [isVisible1, setIsVisible1] = useState(true); // State for toggle button
     const buttonsData = [
         { id: 1, title: 'My Orders', screen: 'ShopkeeperOrders' },
-        { id: 2, title: 'Manage Products', screen: 'Another' },
-        { id: 3, title: 'My Customers', screen: 'Another' },
-        { id: 4, title: 'Discount Codes', screen: 'Another' },
+        { id: 2, title: 'Manage Products', screen: 'ShopkeeperManageProduct' },
+        { id: 3, title: 'My Customers', screen: 'ShopkeeperCustomer' },
+        { id: 4, title: 'Discount Codes', screen: 'ShopkeeperDiscountCode' },
         { id: 5, title: 'Inventory', screen: 'Another' },
         { id: 6, title: 'My Payments', screen: 'Another' },
         { id: 7, title: 'My Profile', screen: 'Another' },

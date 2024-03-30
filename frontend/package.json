@@ -11,7 +11,7 @@
   "dependencies": {
     "@react-native-community/blur": "^4.4.0",
     "@react-native-community/checkbox": "^0.5.17",
-    "@react-native-picker/picker": "^2.7.0",
+    "@react-native-picker/picker": "^2.6.1",
     "@react-navigation/bottom-tabs": "^6.5.16",
     "@react-navigation/drawer": "^6.6.13",
     "@react-navigation/material-bottom-tabs": "^6.2.24",
