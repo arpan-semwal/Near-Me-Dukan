@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { dummyCustomers } from './dummyCustomers'; // Importing dummyCustomers object
+import { dummyData } from '../ShopkeeperManageProducts/dummydata';
 
-export default function ShopkeeperCustomer() {
+export default function ShopkeeperManageProduct() {
     const [selectedButton, setSelectedButton] = useState('Today');
+    const [page, setPage] = useState(1);
+    const [isLoading, setIsLoading] = useState(false);
 
     const buttonsData = [
-        { id: 1, title: 'Today' },
-        { id: 2, title: 'Yesterday' },
-        { id: 3, title: 'One Week' },
-        { id: 4, title: '30 Days' },
-        { id: 5, title: 'All Time' },
-        { id: 6, title: 'Select Date Range' },
+        { id: 1, title: 'Category 1' },
+        { id: 2, title: 'Category 2' },
+        { id: 3, title: 'Category 3' },
+        { id: 4, title: 'Category 4' },
+        { id: 5, title: 'Category 5' },
+        { id: 6, title: 'Category 6' },
+        { id: 7, title: 'Category 7' },
+        { id: 8, title: 'Category 8' },
+        { id: 9, title: 'Category 9' },
     ];
 
     const renderItem = ({ item, index }) => (
@@ -24,8 +29,14 @@ export default function ShopkeeperCustomer() {
         </TouchableOpacity>
     );
 
-    const renderCustomers = () => {
-        return dummyCustomers;
+    const renderProductsByCategory = () => {
+        // Retrieve products based on the selected category and current page
+        const selectedCategoryProducts = dummyData[selectedButton]?.slice(0, page * 10);
+        return selectedCategoryProducts || [];
+    };
+
+    const handleProductAction = (action) => {
+        console.log('Action:', action);
     };
 
     const renderProductItem = ({ item }) => (
@@ -41,73 +52,67 @@ export default function ShopkeeperCustomer() {
             <View style={styles.productButtonsRow}>
                 <TouchableOpacity
                     style={[styles.productButton, styles.fullFillButton]}
-                    onPress={() => handleProductAction('Update')}>
+                    onPress={() => handleProductAction('Full Fill Order')}>
                     <Text style={styles.productButtonText}>Update</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.productButton, styles.viewDetailsButton]}
-                    onPress={() => handleProductAction('Hold')}>
+                    onPress={() => handleProductAction('View Details')}>
                     <Text style={styles.productButtonText}>Hold</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.productButton, styles.cancelButton]}
-                    onPress={() => handleProductAction('Remove')}>
+                    onPress={() => handleProductAction('Cancel Order')}>
                     <Text style={styles.productButtonText}>Remove</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
 
-    const handleProductAction = (action) => {
-        console.log('Action:', action);
+    const handleEndReached = () => {
+        if (!isLoading) {
+            setIsLoading(true);
+            setPage(page + 1);
+            setIsLoading(false);
+        }
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
-                <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome: </Text>
-                    <Text style={styles.shoppingAt}>Shop ID: </Text>
-                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
-                </View>
-            </View>
-
-            <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
-
-            <View style={[styles.circularImageContainer, { marginBottom: 20 }]}>
-                <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
-            </View>
-
-            <FlatList
-                data={buttonsData}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={3}
-                contentContainerStyle={styles.buttonContainer}
-            />
-
-            <FlatList
-                data={renderCustomers()}
-                renderItem={({ item }) => (
-                    <View style={styles.customerContainer}>
-                        <Image source={item.image} style={styles.customerImage} />
-                        <View style={styles.customerDetails}>
-                            <Text style={styles.customerName}>{item.name}</Text>
-                            <Text style={styles.customerInfo}>Address: {item.address}</Text>
-                            <Text style={styles.customerInfo}>Mobile: {item.mobile}</Text>
+        <FlatList
+            style={styles.container}
+            data={[{ key: 'content' }]}
+            renderItem={() => (
+                <>
+                    <View style={styles.headerContainer}>
+                        <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
+                        <View style={styles.headerText}>
+                            <Text style={styles.welcomeText}>Welcome: </Text>
+                            <Text style={styles.shoppingAt}>Shop ID: </Text>
+                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>
                     </View>
-                )}
-                keyExtractor={(item) => item.id.toString()}
-            />
-
-            <FlatList
-                data={dummyProducts}
-                renderItem={renderProductItem}
-                keyExtractor={(item) => item.id.toString()}
-            />
-        </View>
+                    <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
+                    <View style={styles.circularImageContainer}>
+                        <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
+                    </View>
+                    <Text style={styles.ordersHeading}>My Customers</Text>
+                    <FlatList
+                        data={buttonsData}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        numColumns={3}
+                        contentContainerStyle={styles.buttonContainer}
+                    />
+                    <FlatList
+                        data={renderProductsByCategory()}
+                        renderItem={renderProductItem}
+                        keyExtractor={(item) => item.id.toString()}
+                        onEndReached={handleEndReached}
+                        onEndReachedThreshold={0.1} // Trigger onEndReached when 10% from the bottom
+                    />
+                </>
+            )}
+        />
     );
 }
 
@@ -138,10 +143,34 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 5,
     },
+    customerName: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
     shoppingAt: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
+    },
+    fullWidthImage: {
+        width: '100%',
+        height: 150,
+        marginBottom: 20,
+    },
+    circularImageContainer: {
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    circularImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 60,
+        borderWidth: 3,
+        borderColor: 'white',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: [{ translateX: -60 }, { translateY: -60 }],
     },
     buttonContainer: {
         justifyContent: 'center',
@@ -153,7 +182,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#C7BC00',
         margin: 5,
-        width: '30%', // Adjust the width according to your preference
+        width: '30%',
         height: 25,
         borderRadius: 50,
     },
@@ -163,51 +192,25 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     selectedButton: {
-        backgroundColor: '#333', // Change background color when selected
+        backgroundColor: '#333',
     },
     selectedButtonText: {
-        color: '#fff', // Change text color when selected
+        color: '#fff',
     },
-    customerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    customerImage: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        marginRight: 10,
-    },
-    customerDetails: {
-        flex: 1,
-    },
-    customerName: {
-        fontSize: 18,
+    ordersHeading: {
+        marginTop: 20,
+        fontSize: 26,
         fontWeight: 'bold',
+        textAlign: 'center',
     },
-    customerInfo: {
-        fontSize: 16,
-    },
-    fullWidthImage: {
-        width: '100%',
-        height: 150,
-        marginBottom: 20,
-    },
-    circularImageContainer: {
+    orderItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingBottom:25
-    },
-    circularImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        borderWidth: 3,
-        borderColor: 'white',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: [{ translateX: -60 }, { translateY: -60 }],
+        borderBottomWidth: 1,
+        borderColor: '#ccc',
+        paddingVertical: 10,
+        paddingHorizontal: 5,
     },
     productContainer: {
         marginVertical: 7,
@@ -227,47 +230,70 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    productImage: {
-        width: 80,
-        height: 80,
-        borderRadius: 10,
-        marginRight: 10,
-    },
     productDetails: {
         flex: 1,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    info: {
-        fontSize: 16,
+        marginLeft: 10,
     },
     productButtonsRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 10,
     },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    info: {
+        fontSize: 17,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    productButtons: {
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+    },
+    productImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginRight: 10,
+    },
     productButton: {
-        borderRadius: 8,
-        paddingVertical: 8,
-        paddingHorizontal: 15,
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: 5,
+        paddingVertical: 5,
+        marginVertical: 5,
+        minWidth: 100,
+        maxWidth: '100%',
     },
     productButtonText: {
-        fontSize: 16,
+        color: '#fff',
         fontWeight: 'bold',
     },
     fullFillButton: {
-        backgroundColor: '#4CAF50',
-        marginRight: 5,
+        backgroundColor: '#28a745',
     },
     viewDetailsButton: {
-        backgroundColor: '#2196F3',
-        marginRight: 5,
+        backgroundColor: '#007bff',
     },
     cancelButton: {
-        backgroundColor: '#f44336',
+        backgroundColor: '#dc3545',
+    },
+    quantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    quantityButton: {
+        fontSize: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        backgroundColor: '#ddd',
+        borderRadius: 5,
+    },
+    quantityText: {
+        fontSize: 18,
+        marginHorizontal: 10,
     },
 });

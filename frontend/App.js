@@ -44,9 +44,10 @@ import Subscription from './App/Screens/Subscription/Subscription.jsx';
 import ShopkeeperPay from './App/Screens/RegisterScreen/ShopkeeperPay/ShopkeeperPay.jsx';
 import ShopkeeperHome from './App/Screens/RegisterScreen/ShopkeeperHome/ShopkeeperHome.jsx';
 import ShopkeeperOrders from './App/Screens/RegisterScreen/ShopkeeperOrders/ShopkeeperOrders.jsx';
-import ShopkeeperManageProduct from './App/Screens/RegisterScreen/ShopkeeperManageProducts.jsx/ShopkeeperManageProduct.jsx';
 import ShopkeeperDiscountCode from './App/Screens/RegisterScreen/ShopkeeperDiscountCode/ShopkeeperDiscountCode.jsx';
 import ShopkeeperCustomer from './App/Screens/RegisterScreen/ShopkeeperCustomer/ShopkeeperCustomer.jsx';
+import ShopkeeperManageProduct from './App/Screens/RegisterScreen/ShopkeeperCustomer/ShopkeeperCustomer.jsx';
+import ShopkeeperPayments from './App/Screens/RegisterScreen/ShopkeeperPay/ShopkeeperPyaments/ShopkeeperPayments.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -93,6 +94,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="ShopkeeperManageProduct" component={ShopkeeperManageProduct}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperDiscountCode" component={ShopkeeperDiscountCode}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperCustomer" component={ShopkeeperCustomer}options={{ headerShown: false }} />
+      <Stack.Screen name="ShopkeeperPayments" component={ShopkeeperPayments}options={{ headerShown: false }} />
      
     
     </Stack.Navigator>

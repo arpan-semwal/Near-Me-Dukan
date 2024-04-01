@@ -1,38 +1,33 @@
-export const dummyCustomers = [
+export const dummyData = [
     {
         id: 1,
         name: 'John Doe',
-        address: '123 Main St, Cityville, ABC',
-        mobile: '123-456-7890',
-		image: require('../../../../assets/name.png') // Example image path
+        image: require('../../../../assets/name.png'), // Example path to the image
+        mobile: '+1234567890',
     },
     {
         id: 2,
         name: 'Jane Smith',
-        address: '456 Elm St, Townsville, XYZ',
-        mobile: '987-654-3210',
-        image: require('../../../../assets/name.png') // Example image path
+        image: require('../../../../assets/name.png'), // Example path to the image
+        mobile: '+1987654321',
     },
     {
         id: 3,
         name: 'Jane Smith',
-        address: '456 Elm St, Townsville, XYZ',
-        mobile: '987-654-3210',
-        image: require('../../../../assets/name.png') // Example image path
+        image: require('../../../../assets/name.png'), // Example path to the image
+        mobile: '+1987654321',
     },
     {
         id: 4,
         name: 'Jane Smith',
-        address: '456 Elm St, Townsville, XYZ',
-        mobile: '987-654-3210',
-        image: require('../../../../assets/name.png') // Example image path
+        image: require('../../../../assets/name.png'), // Example path to the image
+        mobile: '+1987654321',
     },
     {
         id: 5,
         name: 'Jane Smith',
-        address: '456 Elm St, Townsville, XYZ',
-        mobile: '987-654-3210',
-        image: require('../../../../assets/name.png') // Example image path
+        image: require('../../../../assets/name.png'), // Example path to the image
+        mobile: '+1987654321',
     },
     // Add more dummy data as needed
 ];
