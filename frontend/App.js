@@ -81,7 +81,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="AddNewAddress" component={AddNewAddress}options={{ headerShown: false }} />
       <Stack.Screen name="Pay" component={Pay}options={{ headerShown: false }} />
       <Stack.Screen name="ViewOrder" component={ViewOrder}options={{ headerShown: false }} />
-      <Stack.Screen name="Sweets" component={SnacksHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="Sweets" component={SweetsHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="Snacks" component={SnacksHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="Vegetables" component={VegetablesHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="Barber" component={BarberHomePage}options={{ headerShown: false }} />
