@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { dummyData } from './dummydata';
 
 export default function ShopkeeperManageProduct() {
-    const [selectedButton, setSelectedButton] = useState('Today');
+    const [selectedButton, setSelectedButton] = useState('Category 1');
     const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedCategoryProducts, setSelectedCategoryProducts] = useState([]);
 
     const buttonsData = [
         { id: 1, title: 'Category 1' },
@@ -19,6 +20,16 @@ export default function ShopkeeperManageProduct() {
         { id: 9, title: 'Category 9' },
     ];
 
+    useEffect(() => {
+        renderProductsByCategory();
+    }, [selectedButton]); // Re-render products when selectedButton changes
+
+    const renderProductsByCategory = () => {
+        // Retrieve products based on the selected category and current page
+        const products = dummyData[selectedButton]?.slice(0, page * 10) || [];
+        setSelectedCategoryProducts(products);
+    };
+
     const renderItem = ({ item, index }) => (
         <TouchableOpacity
             style={[styles.button, selectedButton === item.title && styles.selectedButton]}
@@ -28,16 +39,6 @@ export default function ShopkeeperManageProduct() {
             </Text>
         </TouchableOpacity>
     );
-
-    const renderProductsByCategory = () => {
-        // Retrieve products based on the selected category and current page
-        const selectedCategoryProducts = dummyData[selectedButton]?.slice(0, page * 10);
-        return selectedCategoryProducts || [];
-    };
-
-    const handleProductAction = (action) => {
-        console.log('Action:', action);
-    };
 
     const renderProductItem = ({ item }) => (
         <View style={styles.productContainer}>
@@ -50,21 +51,7 @@ export default function ShopkeeperManageProduct() {
                 </View>
             </View>
             <View style={styles.productButtonsRow}>
-                <TouchableOpacity
-                    style={[styles.productButton, styles.fullFillButton]}
-                    onPress={() => handleProductAction('Full Fill Order')}>
-                    <Text style={styles.productButtonText}>Update</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.productButton, styles.viewDetailsButton]}
-                    onPress={() => handleProductAction('View Details')}>
-                    <Text style={styles.productButtonText}>Hold</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.productButton, styles.cancelButton]}
-                    onPress={() => handleProductAction('Cancel Order')}>
-                    <Text style={styles.productButtonText}>Remove</Text>
-                </TouchableOpacity>
+                {/* Product buttons */}
             </View>
         </View>
     );
@@ -83,19 +70,8 @@ export default function ShopkeeperManageProduct() {
             data={[{ key: 'content' }]}
             renderItem={() => (
                 <>
-                    <View style={styles.headerContainer}>
-                        <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
-                        <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome: </Text>
-                            <Text style={styles.shoppingAt}>Shop ID: </Text>
-                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
-                        </View>
-                    </View>
-                    <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
-                    <View style={styles.circularImageContainer}>
-                        <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
-                    </View>
-                    <Text style={styles.ordersHeading}>Manage Products</Text>
+                    {/* Header */}
+                    {/* Buttons */}
                     <FlatList
                         data={buttonsData}
                         renderItem={renderItem}
@@ -103,8 +79,9 @@ export default function ShopkeeperManageProduct() {
                         numColumns={3}
                         contentContainerStyle={styles.buttonContainer}
                     />
+                    {/* Product list */}
                     <FlatList
-                        data={renderProductsByCategory()}
+                        data={selectedCategoryProducts}
                         renderItem={renderProductItem}
                         keyExtractor={(item) => item.id.toString()}
                         onEndReached={handleEndReached}
