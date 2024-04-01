@@ -48,6 +48,8 @@ import ShopkeeperDiscountCode from './App/Screens/RegisterScreen/ShopkeeperDisco
 import ShopkeeperCustomer from './App/Screens/RegisterScreen/ShopkeeperCustomer/ShopkeeperCustomer.jsx';
 import ShopkeeperManageProduct from './App/Screens/RegisterScreen/ShopkeeperCustomer/ShopkeeperCustomer.jsx';
 import ShopkeeperPayments from './App/Screens/RegisterScreen/ShopkeeperPay/ShopkeeperPyaments/ShopkeeperPayments.jsx';
+import Privacy from './App/Screens/PrivacyAndConditions/Privacy.jsx';
+import Conditions from './App/Screens/PrivacyAndConditions/Conditions.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -95,6 +97,8 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="ShopkeeperDiscountCode" component={ShopkeeperDiscountCode}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperCustomer" component={ShopkeeperCustomer}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperPayments" component={ShopkeeperPayments}options={{ headerShown: false }} />
+      <Stack.Screen name="Privacy" component={Privacy}options={{ headerShown: false }} />
+      <Stack.Screen name="Conditions" component={Conditions}options={{ headerShown: false }} />
      
     
     </Stack.Navigator>

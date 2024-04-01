@@ -1,11 +1,30 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../utils/Colors';
 import { CustomerContext } from '../../Context/ContextApi'; // Import CustomerContext
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
+// PrivacyCheckbox component
+const PrivacyCheckbox = ({ onCheckboxChange }) => {
+    const [isChecked, setIsChecked] = useState(false);
+
+    const toggleCheckbox = () => {
+        setIsChecked(!isChecked);
+        if (onCheckboxChange) {
+            onCheckboxChange(!isChecked); // Notify parent component about the change
+        }
+    };
+
+    return (
+        <TouchableOpacity onPress={toggleCheckbox} style={styles.checkboxContainer}>
+            <View style={[styles.checkbox, isChecked && styles.checked]} />
+            <Text style={styles.checkboxText}>I have read and agree to the Privacy Policy</Text>
+        </TouchableOpacity>
+    );
+}
 
 export default function CustomerScreen({ route, onFormSubmit }) {
     const { setCustomerName, setShopID, setShopName, setCustAddress, setPincode, setState, setCity } = useContext(CustomerContext); // Access context setters
@@ -19,15 +38,15 @@ export default function CustomerScreen({ route, onFormSubmit }) {
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [isChecked, setIsChecked] = useState(false); // State for the checkbox
     
-
     const navigation = useNavigation();
 
     const handleSubmit = () => {
         setSubmitted(true);
 
-        if (!name.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim()) {
-            console.log(alert("Please fill in all required fields."));
+        if (!name.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim() || !isChecked) {
+            alert("Please fill in all required fields and agree to the Privacy Policy.");
             return;
         }
 
@@ -160,6 +179,13 @@ export default function CustomerScreen({ route, onFormSubmit }) {
                         multiline
                     />
                 </View>
+                <PrivacyCheckbox onCheckboxChange={setIsChecked} />  
+                <TouchableOpacity onPress={() => navigation.navigate('Privacy')}>
+                    <Text style={styles.linkText}>Privacy License</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Conditions')}>
+                    <Text style={styles.linkText}>Terms and Conditions</Text>
+                </TouchableOpacity>
                 <Button
                     title="Submit"
                     onPress={handleSubmit}
@@ -212,5 +238,29 @@ const styles = StyleSheet.create({
     },
     requiredInput: {
         borderColor: 'red',
-    }
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#000',
+        marginRight: 8,
+    },
+    checked: {
+        backgroundColor: '#000',
+    },
+    checkboxText: {
+        fontSize: 16,
+    },
+    linkText: {
+        color: 'blue',
+        textDecorationLine: 'underline',
+        marginBottom: 10,
+    },
 });
