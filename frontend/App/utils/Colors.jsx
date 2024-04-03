@@ -4,3 +4,6 @@ export default{
 	CARDCOLOR:"#44C7F4",
 	LABELcOLOR:"#484848",
 }
+
+ 
+ 
