@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 export default function MoreScreen() {
@@ -19,8 +19,41 @@ export default function MoreScreen() {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {data ? <Text>{data}</Text> : <Text>Loading...</Text>}
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        {data ? (
+          data.map(item => (
+            <View key={item.id} style={styles.itemContainer}>
+              <Text style={styles.stateName}>{item.state_name}</Text>
+              <Text style={styles.stateCode}>{item.state_code}</Text>
+            </View>
+          ))
+        ) : (
+          <Text>Loading...</Text>
+        )}
+      </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollViewContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  itemContainer: {
+    marginBottom: 10,
+  },
+  stateName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  stateCode: {
+    fontSize: 16,
+  },
+});

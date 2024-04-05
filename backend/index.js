@@ -1,16 +1,33 @@
 const express = require('express');
-const cors = require('cors');
+const mysql = require('mysql');
+
 
 const app = express();
 
-app.use(cors());
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'Noodle@123',
+  database: 'nkd'
+});
+
+db.connect(err => {
+  if (err) {
+    throw err;
+  }
+  console.log('Connected to MySQL database');
+});
 
 app.get('/', (req, res) => {
-  res.send('Hello World noice u did it');
+  db.query('SELECT * FROM all_states', (err, results) => {
+    if (err) {
+      throw err;
+    }
+    res.json(results);
+  });
 });
 
 const port = 3000;
-
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
