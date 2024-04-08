@@ -1,7 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
-
-
+const bodyParser = require('body-parser'); // Import body-parser
 const app = express();
 
 const db = mysql.createConnection({
@@ -11,6 +10,8 @@ const db = mysql.createConnection({
   database: 'nkd'
 });
 
+app.use(bodyParser.json());
+
 db.connect(err => {
   if (err) {
     throw err;
@@ -18,12 +19,28 @@ db.connect(err => {
   console.log('Connected to MySQL database');
 });
 
-app.get('/', (req, res) => {
-  db.query('SELECT * FROM all_states', (err, results) => {
+// API endpoint for user registration
+app.post('/register', (req, res) => {
+  const { phoneNumber, name, pincode, state, city, address } = req.body;
+
+  // Check if user already exists
+  db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
     if (err) {
       throw err;
     }
-    res.json(results);
+    if (results.length > 0) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Insert new user into the database
+    db.query('INSERT INTO newcustomers (name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?)',
+      [name, pincode, state, city, address],
+      (err, result) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json({ message: 'User registered successfully' });
+      });
   });
 });
 
