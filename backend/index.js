@@ -47,6 +47,23 @@ app.post('/register', (req, res) => {
     });
 });
 
+app.post('/checkPhoneNumber', (req, res) => {
+  const { phoneNumber } = req.body;
+
+  // Check if user already exists
+  db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
+      if (err) {
+          console.error('Error checking user existence:', err);
+          return res.status(500).json({ message: 'Internal server error' });
+      }
+      if (results.length > 0) {
+          return res.status(400).json({ message: 'Phone number already exists' });
+      }
+      // If phone number doesn't exist, return success
+      return res.status(200).json({ message: 'Phone number available' });
+  });
+});
+
 
 
 

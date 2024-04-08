@@ -12,17 +12,17 @@ export default function OtpScreen1() {
 
     const handleSubmitPhoneNumber = () => {
         // Send a request to check if any user exists with the provided phone number
-        fetch('http://192.168.29.68:3000/register', {
+        fetch('http://192.168.29.68:3000/checkPhoneNumber', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({}),
+            body: JSON.stringify({ phoneNumber }),
         })
         .then(response => {
             if (response.ok) {
                 // Phone number does not exist, navigate to another screen
-              navigation.navigate('Otp2', { phoneNumber: phoneNumber });
+                navigation.navigate('Otp2', { phoneNumber });
             } else {
                 throw new Error('Phone number already exists');
             }
@@ -30,7 +30,7 @@ export default function OtpScreen1() {
         .catch(error => {
             if (error.message === 'Phone number already exists') {
                 // Phone number already exists, display alert
-                alert('Already registered');
+                alert('Phone number already exists');
             } else {
                 console.error('An error occurred while checking the phone number:', error);
                 alert('An error occurred while checking the phone number.');
