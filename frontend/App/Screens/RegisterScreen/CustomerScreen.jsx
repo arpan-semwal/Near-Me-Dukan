@@ -49,9 +49,6 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             return;
         }
     
-        // Ensure phoneNumber is properly retrieved from route.params
-        const { phoneNumber } = route.params;
-    
         // Call the API to register the user
         fetch('http://192.168.29.68:3000/register', {
             method: 'POST',
@@ -59,21 +56,15 @@ export default function CustomerScreen({ route, onFormSubmit }) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                phoneNumber, // Include phoneNumber in the request body
                 name,
                 pincode,
                 state,
                 city,
                 address,
+                phoneNumber,
             }),
         })
         .then(response => {
-            if (response.status === 400) {
-                return response.json().then(data => {
-                    alert(data.message); // Display the "User already exists" message
-                    throw new Error(data.message);
-                });
-            }
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -85,13 +76,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             navigation.navigate('CustomerHomePage');
             // You can navigate to the next screen or perform any other action here
         })
-        .catch(error => {
          
-            // Alert user only if the error is not "User already exists"
-            if (error.message !== 'User already exists') {
-                alert('Error registering user');
-            }
-        });
     };
 
     const handleInputChange = (value, fieldName) => {

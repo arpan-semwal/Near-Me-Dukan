@@ -20,31 +20,34 @@ db.connect(err => {
 });
 
 // API endpoint for user registration
+// API endpoint for user registration
 app.post('/register', (req, res) => {
-  const { phoneNumber, name, pincode, state, city, address } = req.body;
+    const { phoneNumber, name, pincode, state, city, address } = req.body;
 
-  // Check if user already exists
-  db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
-    if (err) {
-      console.error('Error checking user existence:', err);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-    if (results.length > 0) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Insert new user into the database
-    db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?, ?)',
-      [phoneNumber, name, pincode, state, city, address],
-      (err, result) => {
+    // Check if user already exists
+    db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
         if (err) {
-          console.error('Error registering user:', err);
-          return res.status(500).json({ message: 'Internal server error' });
+            console.error('Error checking user existence:', err);
+            return res.status(500).json({ message: 'Internal server error' });
         }
-        res.status(200).json({ message: 'User registered successfully' });
-      });
-  });
+        if (results.length > 0) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Insert new user into the database
+        db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?, ?)',
+            [phoneNumber, name, pincode, state, city, address],
+            (err, result) => {
+                if (err) {
+                    console.error('Error registering user:', err);
+                    return res.status(500).json({ message: 'Internal server error' });
+                }
+                res.status(200).json({ message: 'User registered successfully' });
+            });
+    });
 });
+
+
 
 
 const port = 3000;

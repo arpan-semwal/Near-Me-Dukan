@@ -8,16 +8,21 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function OtpScreen1() {
     const [phoneNumber, setPhoneNumber] = useState('');
-    const navigation = useNavigation();
+    const [name, setName] = useState('');
+    const [pincode, setPincode] = useState('');
+    const [state, setState] = useState('');
+    const [city, setCity] = useState('');
+    const [address, setAddress] = useState('');
+        const navigation = useNavigation();
 
-    const handleSubmitPhoneNumber = () => {
-        // Validate phone number format and navigate to OTP screen 2
-        if (phoneNumber.length === 10) { // Assuming Indian phone numbers with 10 digits
-            navigation.navigate('Otp2', { phoneNumber });
-        } else {
-            alert('Please enter a valid phone number.');
-        }
-    };
+        const handleSubmitPhoneNumber = () => {
+            // Validate phone number format
+            if (phoneNumber.length === 10) { // Assuming Indian phone numbers with 10 digits
+                navigation.navigate('Otp2', { phoneNumber }); // Navigate to CustomerScreen with phoneNumber
+            } else {
+                alert('Please enter a valid phone number.');
+            }
+        };
 
     return (
         <View style={styles.container}>
