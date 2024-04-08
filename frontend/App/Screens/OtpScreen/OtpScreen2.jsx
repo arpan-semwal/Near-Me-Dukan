@@ -25,7 +25,7 @@ export default function OtpScreen2({ route }) {
         if (otp === correctOtp) {
             setIsCorrectOtp(true);
             // Navigate to RegisterationMainScreen with phoneNumber as a parameter
-            navigation.navigate('Register', { phoneNumber  });
+            navigation.navigate('Register', { phoneNumber });
         } else {
             setIsCorrectOtp(false);
         }

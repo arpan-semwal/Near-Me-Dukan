@@ -76,7 +76,10 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             navigation.navigate('CustomerHomePage');
             // You can navigate to the next screen or perform any other action here
         })
-         
+        .catch(error => {
+          
+            alert('User already registered.');
+        });
     };
 
     const handleInputChange = (value, fieldName) => {

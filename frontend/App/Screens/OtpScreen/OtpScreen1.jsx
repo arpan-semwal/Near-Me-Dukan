@@ -8,21 +8,35 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function OtpScreen1() {
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [name, setName] = useState('');
-    const [pincode, setPincode] = useState('');
-    const [state, setState] = useState('');
-    const [city, setCity] = useState('');
-    const [address, setAddress] = useState('');
-        const navigation = useNavigation();
+    const navigation = useNavigation();
 
-        const handleSubmitPhoneNumber = () => {
-            // Validate phone number format
-            if (phoneNumber.length === 10) { // Assuming Indian phone numbers with 10 digits
-                navigation.navigate('Otp2', { phoneNumber }); // Navigate to CustomerScreen with phoneNumber
+    const handleSubmitPhoneNumber = () => {
+        // Send a request to check if any user exists with the provided phone number
+        fetch('http://192.168.29.68:3000/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        })
+        .then(response => {
+            if (response.ok) {
+                // Phone number does not exist, navigate to another screen
+              navigation.navigate('Otp2', { phoneNumber: phoneNumber });
             } else {
-                alert('Please enter a valid phone number.');
+                throw new Error('Phone number already exists');
             }
-        };
+        })
+        .catch(error => {
+            if (error.message === 'Phone number already exists') {
+                // Phone number already exists, display alert
+                alert('Already registered');
+            } else {
+                console.error('An error occurred while checking the phone number:', error);
+                alert('An error occurred while checking the phone number.');
+            }
+        });
+    };
 
     return (
         <View style={styles.container}>
