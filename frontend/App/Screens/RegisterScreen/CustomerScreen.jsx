@@ -86,7 +86,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             // You can navigate to the next screen or perform any other action here
         })
         .catch(error => {
-            
+         
             // Alert user only if the error is not "User already exists"
             if (error.message !== 'User already exists') {
                 alert('Error registering user');
