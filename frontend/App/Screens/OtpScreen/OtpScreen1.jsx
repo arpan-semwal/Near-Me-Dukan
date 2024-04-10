@@ -12,7 +12,7 @@ export default function OtpScreen1() {
 
     const handleSubmitPhoneNumber = () => {
         // Send a request to check if any user exists with the provided phone number
-        fetch('http://172.16.16.141:3000/checkPhoneNumber', {
+        fetch('http://192.168.29.68:3000/checkPhoneNumber', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
