@@ -50,7 +50,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
         }
     
         // Call the API to register the user
-        fetch('http://192.168.29.68:3000/register', {
+        fetch('http://172.16.16.141:3000/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
