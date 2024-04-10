@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image, Alert, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
@@ -21,27 +21,59 @@ export default function ShopkeeperScreen({ route }) {
     const [shopBanner, setShopBanner] = useState(null);
     const [profilePicture, setProfilePicture] = useState(null);
     const navigation = useNavigation();
+    
+    const { phoneNumber } = route.params || {};
+
 
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
                 const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
                 if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
+                    Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to make this work!');
                 }
             }
         })();
     }, []);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setSubmitted(true);
-
+    
         if (!shopkeeperName.trim() || !shopID.trim() || !pincode.trim() || !shopState.trim() || !city.trim() || !address.trim() || !shopBanner || !profilePicture || !salesAssociateNumber || !selectedCategory) {
-            alert("Please fill in all required fields and upload both shop banner and profile picture.");
+            Alert.alert("Missing Fields", "Please fill in all required fields and upload both shop banner and profile picture.");
             return;
         }
-
-        navigation.navigate('NextScreen');
+    
+        try {
+            const response = await fetch('http://192.168.29.68:3000/shopkeeperRegister', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phoneNumber,
+                    shopkeeperName,
+                    shopID,
+                    pincode,
+                    shopState,
+                    city,
+                    address,
+                    salesAssociateNumber,
+                    selectedCategory,
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to register shopkeeper');
+            }
+    
+            const responseData = await response.json();
+            console.log(responseData.message);
+            navigation.navigate('Subscription');
+        } catch (error) {
+            console.error('Error registering shopkeeper:', error);
+            Alert.alert('Error', 'Failed to register shopkeeper. Please try again later.');
+        }
     };
 
     const handleInputChange = (value, fieldName) => {
@@ -80,32 +112,40 @@ export default function ShopkeeperScreen({ route }) {
     };
 
     const handleShopBannerUpload = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        console.log("Shop Banner Result:", result);
-
-        if (!result.cancelled) {
-            setShopBanner(result);
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+    
+            console.log("Shop Banner Result:", result);
+    
+            if (!result.cancelled) {
+                setShopBanner(result);
+            }
+        } catch (error) {
+            console.error("Error while uploading shop banner:", error);
         }
     };
-
+    
     const handleProfilePictureUpload = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-
-        console.log("Profile Picture Result:", result);
-
-        if (!result.cancelled) {
-            setProfilePicture(result);
+        try {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1,
+            });
+    
+            console.log("Profile Picture Result:", result);
+    
+            if (!result.cancelled) {
+                setProfilePicture(result);
+            }
+        } catch (error) {
+            console.error("Error while uploading profile picture:", error);
         }
     };
 
@@ -113,6 +153,16 @@ export default function ShopkeeperScreen({ route }) {
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
             <View style={styles.container}>
                 <Text style={styles.heading}>Shopkeeper Registration</Text>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Phone Number</Text>
+                    <TextInput
+                        style={[styles.input, !requiredFields.pincode && submitted && styles.requiredInput]}
+                        placeholder={phoneNumber}
+                        value={phoneNumber}
+                        editable={false}
+                        keyboardType="numeric"
+                    />
+                </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Name *</Text>
                     <TextInput
@@ -129,6 +179,16 @@ export default function ShopkeeperScreen({ route }) {
                         placeholder="Your Store Name"
                         value={shopID}
                         onChangeText={(value) => handleInputChange(value, 'shopID')}
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    <Text style={styles.label}>Sales Associate's Number (Optional)</Text>
+                    <TextInput
+                        style={[styles.input, !requiredFields.salesAssociateNumber && submitted && styles.requiredInput]}
+                        placeholder="Sales Associate's Number"
+                        value={salesAssociateNumber}
+                        onChangeText={(value) => handleInputChange(value, 'salesAssociateNumber')}
+                        keyboardType="numeric"
                     />
                 </View>
                 <View style={styles.inputContainer}>
@@ -169,16 +229,7 @@ export default function ShopkeeperScreen({ route }) {
                         multiline
                     />
                 </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Sales Associate's Number *</Text>
-                    <TextInput
-                        style={[styles.input, !requiredFields.salesAssociateNumber && submitted && styles.requiredInput]}
-                        placeholder="Sales Associate's Number"
-                        value={salesAssociateNumber}
-                        onChangeText={(value) => handleInputChange(value, 'salesAssociateNumber')}
-                        keyboardType="numeric"
-                    />
-                </View>
+                
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>
                     <Picker
@@ -187,10 +238,10 @@ export default function ShopkeeperScreen({ route }) {
                         onValueChange={(itemValue, itemIndex) =>
                             setSelectedCategory(itemValue)
                         }>
-                        <Picker.Item label="Option 1" value="option1" />
-                        <Picker.Item label="Option 2" value="option2" />
-                        <Picker.Item label="Option 3" value="option3" />
-                        <Picker.Item label="Option 4" value="option4" />
+                        <Picker.Item label="Grocery Shop" value="Grocery Shop" />
+                        <Picker.Item label="Stationary Shop" value="Stationary Shop" />
+                        <Picker.Item label="Sweets and Namkeen Shop" value="Sweets and Namkeen Shop" />
+                        <Picker.Item label="Vegetables Shop" value="Vegetables Shop" />
                     </Picker>
                 </View>
                 <View style={styles.inputContainer}>

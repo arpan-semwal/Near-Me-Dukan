@@ -22,7 +22,7 @@ export default function OtpScreen1() {
         .then(response => {
             if (response.ok) {
                 // Phone number does not exist, navigate to another screen
-                navigation.navigate('Otp2', { phoneNumber });
+                navigation.navigate('Otp2', { phoneNumber:phoneNumber });
             } else {
                 throw new Error('Phone number already exists');
             }
