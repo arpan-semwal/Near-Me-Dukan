@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image } from 'react-native';
+import React, { useState , useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Image  } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Picker } from '@react-native-picker/picker';
+
 import { useNavigation } from '@react-navigation/native';
-import {Picker} from '@react-native-picker/picker';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function UploadBanner({ route }) {
+export default function UploadBanner({route}) {
     const [name, setName] = useState('');
     const [shopID, setShopId] = useState('');
     const [pincode, setPincode] = useState('');
@@ -17,31 +18,37 @@ export default function UploadBanner({ route }) {
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const [shopBanner, setShopBanner] = useState(null);
-    const [profilePicture, setProfilePicture] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    
     const navigation = useNavigation();
-
-    const { phoneNumber } = route.params;
+	
+	const { phoneNumber } = route.params;
+    
+     
 
     const handleSubmit = () => {
-        setSubmitted(true);
-        setFormSubmitted(true);
+    setSubmitted(true);
 
-        // Pass data to the next screen
-        navigation.navigate('Subscription', {
-            phoneNumber: phoneNumber,
-            name: name,
-            shopID: shopID,
-            pincode: pincode,
-            state: state,
-            city: city,
-            address: address,
-            shopBanner: shopBanner.uri,
-            profilePicture: profilePicture.uri,
-            category: selectedCategory // Add selected category to the navigation params
-        });
-    };
+    // Check if all required fields are filled and images are uploaded
+    //if (!name.trim() || !shopID.trim() || !pincode.trim() || !state.trim() || !city.trim() || !address.trim() || !shopBanner || !profilePicture) {
+    //    alert("Please fill in all required fields and upload both shop banner and profile picture.");
+    //    return;
+    //}
+
+    setFormSubmitted(true);
+
+    // Pass data to the next screen
+    navigation.navigate('Subscription', {
+        phoneNumber: phoneNumber,
+        name: name,
+        shopID: shopID,
+        pincode: pincode,
+        state: state,
+        city: city,
+        address: address,
+        shopBanner: shopBanner.uri,
+        profilePicture: profilePicture.uri,
+    });
+};
 
     const handleInputChange = (value, fieldName) => {
         switch (fieldName) {
@@ -74,35 +81,35 @@ export default function UploadBanner({ route }) {
         }
     };
 
-    const handleShopBannerUpload = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        console.log("Shop Banner Result:", result);
-
-        if (!result.cancelled) {
-            setShopBanner(result);
-        }
-    };
-
-    const handleProfilePictureUpload = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-
-        console.log("Profile Picture Result:", result);
-
-        if (!result.cancelled) {
-            setProfilePicture(result);
-        }
-    };
+	const handleShopBannerUpload = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+	
+		console.log("Shop Banner Result:", result);
+	
+		if (!result.cancelled) {
+			setShopBanner(result);
+		}
+	};
+	
+	const handleProfilePictureUpload = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 1,
+		});
+	
+		console.log("Profile Picture Result:", result);
+	
+		if (!result.cancelled) {
+			setProfilePicture(result);
+		}
+	};
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
@@ -115,11 +122,11 @@ export default function UploadBanner({ route }) {
                         placeholder="Your Name"
                         value={phoneNumber}
                         onChangeText={(value) => handleInputChange(value, 'name')}
-                        editable={false}
+						editable={false}
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Sales Associate’s Number(Optional)</Text>
+                    <Text style={styles.label}>Sales Associate’s Number</Text>
                     <TextInput
                         style={[styles.input, !requiredFields.shopID && submitted && styles.requiredInput]}
                         placeholder="Your Store Name"
@@ -129,20 +136,6 @@ export default function UploadBanner({ route }) {
                 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>
-                    <Picker
-                        selectedValue={selectedCategory}
-                        style={[styles.input, styles.picker]}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setSelectedCategory(itemValue)
-                        }>
-                        <Picker.Item label="Grocery shop" value="option1" />
-                        <Picker.Item label="Stationary shop" value="option2" />
-                        <Picker.Item label="Sweets and Namkeen shop" value="option3" />
-                        <Picker.Item label="Vegetable shop" value="option4" />
-                    </Picker>
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Your Pincode*</Text>
                     <TextInput
                         style={[styles.input, !requiredFields.pincode && submitted && styles.requiredInput]}
                         placeholder="Your Pincode"
@@ -151,28 +144,39 @@ export default function UploadBanner({ route }) {
                         keyboardType="numeric"
                     />
                 </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Upload Shop Banner*</Text>
-                    <Button
-                        title="Upload Shop Banner"
-                        onPress={handleShopBannerUpload}
-                    />
-                    {shopBanner && <Image source={{ uri: shopBanner.uri }} style={styles.uploadedImage} />}
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Upload Profile Picture*</Text>
-                    <Button
-                        title="Upload Profile Picture"
-                        onPress={handleProfilePictureUpload}
-                    />
-                    {profilePicture && <Image source={{ uri: profilePicture.uri }} style={styles.uploadedImage} />}
-                </View>
-                <Button
-                    title="Submit"
-                    onPress={handleSubmit}
-                    //disabled={!Object.values(requiredFields).every(field => field) || !shopBanner || !profilePicture}
-                    style={styles.submitButton}
-                />
+                <Picker
+    selectedValue={selectedCategory}
+    style={styles.input}
+    onValueChange={(itemValue, itemIndex) =>
+        setSelectedCategory(itemValue)
+    }>
+    <Picker.Item label="Option 1" value="option1" />
+    <Picker.Item label="Option 2" value="option2" />
+    <Picker.Item label="Option 3" value="option3" />
+    <Picker.Item label="Option 4" value="option4" />
+</Picker>
+					<View style={styles.inputContainer}>
+						<Text style={styles.label}>Upload Shop Banner*</Text>
+						<Button
+							title="Upload Shop Banner"
+							onPress={handleShopBannerUpload}
+						/>
+						{shopBanner && <Image source={{ uri: shopBanner.uri }} style={styles.uploadedImage} />}
+					</View>
+					<View style={styles.inputContainer}>
+						<Text style={styles.label}>Upload Profile Picture*</Text>
+						<Button
+							title="Upload Profile Picture"
+							onPress={handleProfilePictureUpload}
+						/>
+						{profilePicture && <Image source={{ uri: profilePicture.uri }} style={styles.uploadedImage} />}
+					</View>
+				<Button
+					title="Submit"
+					onPress={handleSubmit}
+					//disabled={!Object.values(requiredFields).every(field => field) || !shopBanner || !profilePicture}
+					style={styles.submitButton}
+				/>
             </View>
         </ScrollView>
     );
@@ -188,12 +192,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
         alignItems: 'center',
-    },
-    picker: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        backgroundColor: 'white', // Add background color here
     },
     heading: {
         fontSize: windowWidth * 0.06,
@@ -221,12 +219,9 @@ const styles = StyleSheet.create({
     requiredInput: {
         borderColor: 'red',
     },
-    submitButton: {
-        marginTop: 40, // Adjust this value to change the vertical spacing
-    },
-    uploadedImage: {
-        width: 200,
-        height: 200,
-        marginTop: 10,
-    }
+	submitButton: {
+		marginTop: 40, // Adjust this value to change the vertical spacing
+	}
+	 
+	
 });

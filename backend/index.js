@@ -63,6 +63,20 @@ app.post('/checkPhoneNumber', (req, res) => {
       return res.status(200).json({ message: 'Phone number available' });
   });
 });
+app.post('/shopkeeperregistration', (req, res) => {
+  const { phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address } = req.body;
+
+  // Insert new shopkeeper into the database
+  db.query('INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address],
+      (err, result) => {
+          if (err) {
+              console.error('Error registering shopkeeper:', err);
+              return res.status(500).json({ message: 'Internal server error' });
+          }
+          res.status(200).json({ message: 'Shopkeeper registered successfully' });
+      });
+});
 
 
 
