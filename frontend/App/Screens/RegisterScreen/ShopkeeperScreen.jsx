@@ -68,7 +68,7 @@ export default function ShopkeeperScreen({ route }) {
             }
     
             const responseData = await response.json();
-            alert("Shopkeeper Registered")
+            alert("Shopkeeper registered")
             console.log(responseData.message);
             navigation.navigate('Subscription' , {phoneNumber:phoneNumber});
         } catch (error) {

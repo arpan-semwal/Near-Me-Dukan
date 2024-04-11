@@ -2,6 +2,11 @@ const mysql = require('mysql');
 const express = require('express');
 const bodyParser = require('body-parser'); // Import body-parser
 const app = express();
+ 
+
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // Specify a folder to temporarily store uploaded files
+
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -9,6 +14,8 @@ const db = mysql.createConnection({
   password: 'Noodle@123',
   database: 'nkd'
 });
+
+
 
 app.use(bodyParser.json());
 
@@ -63,6 +70,14 @@ app.post('/checkPhoneNumber', (req, res) => {
       return res.status(200).json({ message: 'Phone number available' });
   });
 });
+
+const saveImage = (base64String, filename) => {
+    const filepath = path.join(__dirname, 'uploads', filename);
+    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+    const buffer = Buffer.from(base64Data, 'base64');
+    fs.writeFileSync(filepath, buffer);
+    return filepath;
+};
 
 
 // API endpoint for shopkeeper registration
