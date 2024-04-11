@@ -7,7 +7,7 @@ export default function Subscription({route}) {
 	const handleNavigation = () => {
 		navigation.navigate("ShopkeeperPay");
 	}
-    const { phoneNumber, name, shopID, pincode, state, city, address, shopBanner, profilePicture } = route.params;
+    const { phoneNumber } = route.params;
 	
 	
     return (
