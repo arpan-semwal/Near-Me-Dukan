@@ -11,7 +11,9 @@ export default function ShopkeeperHome() {
         { id: 2, title: 'Manage Products', screen: 'ShopkeeperManageProduct' },
         { id: 3, title: 'My Customers', screen: 'ShopkeeperCustomer' },
         { id: 4, title: 'Discount Codes', screen: 'ShopkeeperDiscountCode' },
-        { id: 6, title: 'My Payments', screen: 'ShopkeeperPayments' },
+        { id: 5, title: 'My Payments', screen: 'ShopkeeperPayments' },
+        { id: 6, title: 'My Inventory', screen: 'ShopkeeperPayments' },
+        { id: 7, title: 'My Profile', screen: 'ShopkeeperPayments' },
         { id: 8, title: 'Log Out', screen: 'Another' },
     ];
 
