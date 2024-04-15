@@ -115,7 +115,7 @@ app.get('/subcategories/:categoryId', (req, res) => {
     console.log('Category ID:', categoryId); // Log the categoryId
 
     // Fetch sub-categories from the database based on the category ID
-    db.query('SELECT * FROM nkd.tbl_salon_subcategory WHERE category_id = 5', [categoryId], (err, results) => {
+    db.query('SELECT * FROM nkd.tbl_salon_subcategory WHERE category_id = ?', [categoryId], (err, results) => {
         if (err) {
             console.error('Error fetching sub-categories:', err);
             return res.status(500).json({ message: 'Internal server error' });

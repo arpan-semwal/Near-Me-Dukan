@@ -289,20 +289,22 @@ export default function ShopkeeperScreen({ route }) {
                     <Picker.Item key={index} label={category.name} value={category.name} />
                 ))}
             </Picker>
-                            </View>
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Sub Category</Text>
-                                <Picker
-                selectedValue={selectedSubCategory}
-                onValueChange={(itemValue) => setSelectedSubCategory(itemValue)}
-                style={styles.picker}
-                enabled={!!subCategories.length} // Disable the picker if no subcategories are available
-            >
-                {subCategories.map((subCategory, index) => (
-                    <Picker.Item key={index} label={subCategory.sub_category} value={subCategory.sub_category} />
-                ))}
-            </Picker>
-                </View>
+        </View>
+        {selectedCategory === 'Salon shop' && (
+    <View style={styles.inputContainer}>
+        <Text style={styles.label}>Sub Category</Text>
+        <Picker
+            selectedValue={selectedSubCategory}
+            onValueChange={(itemValue) => setSelectedSubCategory(itemValue)}
+            style={styles.picker}
+            enabled={!!subCategories.length} // Disable the picker if no subcategories are available
+        >
+            {subCategories.map((subCategory, index) => (
+                <Picker.Item key={index} label={subCategory.sub_category} value={subCategory.sub_category} />
+            ))}
+        </Picker>
+    </View>
+)}
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Upload Shop Banner*</Text>
                     <Button
