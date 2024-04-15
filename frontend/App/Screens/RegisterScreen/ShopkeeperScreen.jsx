@@ -240,9 +240,10 @@ export default function ShopkeeperScreen({ route }) {
                             setSelectedCategory(itemValue)
                         }>
                         <Picker.Item label="Grocery Shop" value="Grocery Shop" />
-                        <Picker.Item label="Stationary Shop" value="Stationary Shop" />
-                        <Picker.Item label="Sweets and Namkeen Shop" value="Sweets and Namkeen Shop" />
-                        <Picker.Item label="Vegetables Shop" value="Vegetables Shop" />
+                        <Picker.Item label="Sweets Shop" value="Stationary Shop" />
+                        <Picker.Item label="Barber" value="Sweets and Namkeen Shop" />
+                        <Picker.Item label="Vegetables shop  " value="Vegetables Shop" />
+                        <Picker.Item label="Snacks Shop" value="Vegetables Shop" />
                     </Picker>
                 </View>
                 <View style={styles.inputContainer}>
