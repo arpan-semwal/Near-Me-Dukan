@@ -20,7 +20,12 @@ export default function ShopkeeperScreen({ route }) {
     const [submitted, setSubmitted] = useState(false);
     const [shopBanner, setShopBanner] = useState(null);
     const [profilePicture, setProfilePicture] = useState(null);
+    const [selectedSubCategory, setSelectedSubCategory] = useState('');
+    const [subCategories, setSubCategories] = useState([]);
     const navigation = useNavigation();
+    const [categories, setCategories] = useState([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    
     
     const { phoneNumber } = route.params || {};
 
@@ -35,6 +40,43 @@ export default function ShopkeeperScreen({ route }) {
             }
         })();
     }, []);
+    
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('http://192.168.38.249:3000/categories'); // Change to your server's endpoint
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data);
+                } else {
+                    console.error('Failed to fetch categories');
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
+    
+    useEffect(() => {
+        const fetchSubCategories = async () => {
+            try {
+                if (selectedCategoryId) {
+                    const response = await fetch(`http://192.168.38.249:3000/subcategories/${selectedCategoryId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setSubCategories(data);
+                    } else {
+                        console.error('Failed to fetch sub-categories');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching sub-categories:', error);
+            }
+        };
+    
+        fetchSubCategories();
+    }, [selectedCategoryId]);
 
     const handleSubmit = async () => {
         setSubmitted(true);
@@ -45,7 +87,7 @@ export default function ShopkeeperScreen({ route }) {
         }
     
         try {
-            const response = await fetch('http://192.168.29.68:3000/shopkeeperRegister', {
+            const response = await fetch('http://192.168.38.249:3000/shopkeeperRegister', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -235,16 +277,31 @@ export default function ShopkeeperScreen({ route }) {
                     <Text style={styles.label}>Your Shop Category*</Text>
                     <Picker
                         selectedValue={selectedCategory}
-                        style={[styles.input, styles.picker]}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setSelectedCategory(itemValue)
-                        }>
-                        <Picker.Item label="Grocery Shop" value="Grocery Shop" />
-                        <Picker.Item label="Sweets Shop" value="Stationary Shop" />
-                        <Picker.Item label="Barber" value="Sweets and Namkeen Shop" />
-                        <Picker.Item label="Vegetables shop  " value="Vegetables Shop" />
-                        <Picker.Item label="Snacks Shop" value="Vegetables Shop" />
-                    </Picker>
+                        onValueChange={(itemValue, itemIndex) => {
+                            setSelectedCategory(itemValue);
+                            // Find the ID of the selected category
+                            const category = categories.find(cat => cat.name === itemValue);
+                            setSelectedCategoryId(category ? category.id : ''); // Update the selected category ID state
+                        }}
+                     style={styles.picker}
+                      >
+                {categories.map((category, index) => (
+                    <Picker.Item key={index} label={category.name} value={category.name} />
+                ))}
+            </Picker>
+                            </View>
+                            <View style={styles.inputContainer}>
+                                <Text style={styles.label}>Sub Category</Text>
+                                <Picker
+                selectedValue={selectedSubCategory}
+                onValueChange={(itemValue) => setSelectedSubCategory(itemValue)}
+                style={styles.picker}
+                enabled={!!subCategories.length} // Disable the picker if no subcategories are available
+            >
+                {subCategories.map((subCategory, index) => (
+                    <Picker.Item key={index} label={subCategory.sub_category} value={subCategory.sub_category} />
+                ))}
+            </Picker>
                 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Upload Shop Banner*</Text>

@@ -5,7 +5,7 @@ const app = express();
  
 
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Specify a folder to temporarily store uploaded files
+const path = require('path');
 
 
 const db = mysql.createConnection({
@@ -25,6 +25,9 @@ db.connect(err => {
   }
   console.log('Connected to MySQL database');
 });
+
+
+
 
 // API endpoint for user registration
 // API endpoint for user registration
@@ -95,6 +98,35 @@ app.post('/shopkeeperRegister', (req, res) => {
             res.status(200).json({ message: 'Shopkeeper registered successfully' });
         });
 });
+
+
+app.get('/categories', (req, res) => {
+    db.query('SELECT * FROM nkd.category', (err, results) => {
+        if (err) {
+            console.error('Error fetching categories:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+        res.status(200).json(results);
+    });
+});
+
+app.get('/subcategories/:categoryId', (req, res) => {
+    const categoryId = req.params.categoryId;
+    console.log('Category ID:', categoryId); // Log the categoryId
+
+    // Fetch sub-categories from the database based on the category ID
+    db.query('SELECT * FROM nkd.tbl_salon_subcategory WHERE category_id = 5', [categoryId], (err, results) => {
+        if (err) {
+            console.error('Error fetching sub-categories:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+        console.log('Results:', results); // Log the results
+        res.status(200).json(results);
+    });
+});
+
+
+
 
  
 
