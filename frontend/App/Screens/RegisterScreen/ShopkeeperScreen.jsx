@@ -102,6 +102,7 @@ export default function ShopkeeperScreen({ route }) {
                     address,
                     salesAssociateNumber,
                     selectedCategory,
+                    selectedSubCategory,
                 }),
             });
     
@@ -292,7 +293,7 @@ export default function ShopkeeperScreen({ route }) {
         </View>
         {selectedCategory === 'Salon shop' && (
     <View style={styles.inputContainer}>
-        <Text style={styles.label}>Sub Category</Text>
+        <Text style={styles.label}>Type of shop</Text>
         <Picker
             selectedValue={selectedSubCategory}
             onValueChange={(itemValue) => setSelectedSubCategory(itemValue)}

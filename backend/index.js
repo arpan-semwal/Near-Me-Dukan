@@ -86,17 +86,31 @@ const saveImage = (base64String, filename) => {
 // API endpoint for shopkeeper registration
  
 app.post('/shopkeeperRegister', (req, res) => {
-    const { phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory } = req.body;
+    const {
+        phoneNumber,
+        shopkeeperName,
+        shopID,
+        pincode,
+        shopState,
+        city,
+        address,
+        salesAssociateNumber,
+        selectedCategory,
+        selectedSubCategory,  // Add this line to handle the subcategory
+    } = req.body;
+
     // Insert new shopkeeper into the database
-    db.query('INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory],
+    db.query(
+        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',  // Update query to include selectedSubCategory
+        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],  // Add selectedSubCategory in the array
         (err, result) => {
             if (err) {
                 console.error('Error registering shopkeeper:', err);
                 return res.status(500).json({ message: 'Internal server error' });
             }
             res.status(200).json({ message: 'Shopkeeper registered successfully' });
-        });
+        }
+    );
 });
 
 
