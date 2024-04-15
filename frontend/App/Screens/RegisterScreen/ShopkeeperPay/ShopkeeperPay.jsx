@@ -3,10 +3,10 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Animated }
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
-const ShopkeeperPay = () => {
+const ShopkeeperPay = ({route}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-
+  const { phoneNumber } = route.params;
   useEffect(() => {
     startAnimation();
   }, []);
@@ -25,7 +25,7 @@ const ShopkeeperPay = () => {
 
   const handleNavigation = () => {
     // Navigate to the order page when the button is pressed
-    navigation.navigate('ShopkeeperHome');
+    navigation.navigate('ShopkeeperHome',{phoneNumber:phoneNumber});
   };
 
   return (

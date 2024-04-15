@@ -51,6 +51,12 @@ import ShopkeeperPayments from './App/Screens/RegisterScreen/ShopkeeperPay/Shopk
 import Privacy from './App/Screens/PrivacyAndConditions/Privacy.jsx';
 import Conditions from './App/Screens/PrivacyAndConditions/Conditions.jsx';
 import Inventory from './App/Screens/RegisterScreen/Inventory/Inventory.jsx';
+import GroceryShop from './App/Screens/shops/GroceryShop/GroceryShop.jsx';
+import SalonShop from './App/Screens/shops/SalonShop/SalonShop.jsx';
+import BeautyPalor from './App/Screens/shops/BeautyPalor/BeautyPalor.jsx';
+import VegetableShop from './App/Screens/shops/VegetableShop/VegetableShop.jsx';
+import SweetsAndNamkeenShop from './App/Screens/shops/SweetsAndNamkeenShop/SweetsAndNamkeenShop.jsx';
+import StationaryShop from './App/Screens/shops/StationaryShop/StationaryShop.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -101,6 +107,12 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="Privacy" component={Privacy}options={{ headerShown: false }} />
       <Stack.Screen name="Conditions" component={Conditions}options={{ headerShown: false }} />
       <Stack.Screen name="Inventory" component={Inventory}options={{ headerShown: false }} />
+      <Stack.Screen name="GroceryShop" component={GroceryShop}options={{ headerShown: false }} />
+      <Stack.Screen name="SalonShop" component={SalonShop}options={{ headerShown: false }} />
+      <Stack.Screen name="BeautyPalor" component={BeautyPalor}options={{ headerShown: false }} />
+      <Stack.Screen name="VegetableShop" component={VegetableShop}options={{ headerShown: false }} />
+      <Stack.Screen name="SweetsAndNamkeenShop" component={SweetsAndNamkeenShop}options={{ headerShown: false }} />
+      <Stack.Screen name="StationaryShop" component={StationaryShop}options={{ headerShown: false }} />
      
     
     </Stack.Navigator>

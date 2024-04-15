@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 export default function Subscription({route}) {
 	const navigation = useNavigation(); 
 	const handleNavigation = () => {
-		navigation.navigate("ShopkeeperPay");
+		navigation.navigate("ShopkeeperPay" , {phoneNumber:phoneNumber});
 	}
     const { phoneNumber } = route.params;
 	

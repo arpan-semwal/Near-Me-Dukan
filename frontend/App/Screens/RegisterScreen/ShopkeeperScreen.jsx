@@ -113,7 +113,7 @@ export default function ShopkeeperScreen({ route }) {
             const responseData = await response.json();
             alert("Shopkeeper registered")
             console.log(responseData.message);
-            navigation.navigate('Subscription' , {phoneNumber:phoneNumber});
+            navigation.navigate('Subscription' , {phoneNumber:phoneNumber  });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);
             Alert.alert('Error', 'Failed to register shopkeeper. Please try again later.');

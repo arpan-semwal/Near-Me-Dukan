@@ -139,6 +139,29 @@ app.get('/subcategories/:categoryId', (req, res) => {
     });
 });
 
+app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+
+    // Fetch shopkeeper details from the database based on the phone number
+    db.query(
+        'SELECT shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory FROM shopkeepers WHERE phoneNumber = ?',
+        [phoneNumber],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching shopkeeper details:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (results.length > 0) {
+                res.status(200).json(results[0]);
+            } else {
+                res.status(404).json({ message: 'Shopkeeper not found' });
+            }
+        }
+    );
+});
+
+
 
 
 
