@@ -44,7 +44,7 @@ export default function ShopkeeperScreen({ route }) {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://192.168.38.249:3000/categories'); // Change to your server's endpoint
+                const response = await fetch('http://192.168.29.68:3000/categories'); // Change to your server's endpoint
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -62,7 +62,7 @@ export default function ShopkeeperScreen({ route }) {
         const fetchSubCategories = async () => {
             try {
                 if (selectedCategoryId) {
-                    const response = await fetch(`http://192.168.38.249:3000/subcategories/${selectedCategoryId}`);
+                    const response = await fetch(`http://192.168.29.68:3000/subcategories/${selectedCategoryId}`);
                     if (response.ok) {
                         const data = await response.json();
                         setSubCategories(data);
@@ -87,7 +87,7 @@ export default function ShopkeeperScreen({ route }) {
         }
     
         try {
-            const response = await fetch('http://192.168.38.249:3000/shopkeeperRegister', {
+            const response = await fetch('http://192.168.29.68:3000/shopkeeperRegister', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export default function ShopkeeperScreen({ route }) {
             const responseData = await response.json();
             alert("Shopkeeper registered")
             console.log(responseData.message);
-            navigation.navigate('Subscription' , {phoneNumber:phoneNumber  });
+            navigation.navigate('Subscription' , {phoneNumber:phoneNumber ,   });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);
             Alert.alert('Error', 'Failed to register shopkeeper. Please try again later.');
@@ -274,6 +274,17 @@ export default function ShopkeeperScreen({ route }) {
                     />
                 </View>
                 
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>
                     <Picker
@@ -291,7 +302,11 @@ export default function ShopkeeperScreen({ route }) {
                 ))}
             </Picker>
         </View>
-        {selectedCategory === 'Salon shop' && (
+        
+        
+        
+        
+        {selectedCategory === 'Salon Shop' && (
     <View style={styles.inputContainer}>
         <Text style={styles.label}>Type of shop</Text>
         <Picker
@@ -300,12 +315,34 @@ export default function ShopkeeperScreen({ route }) {
             style={styles.picker}
             enabled={!!subCategories.length} // Disable the picker if no subcategories are available
         >
+            
             {subCategories.map((subCategory, index) => (
                 <Picker.Item key={index} label={subCategory.sub_category} value={subCategory.sub_category} />
             ))}
         </Picker>
     </View>
+    
 )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Upload Shop Banner*</Text>
                     <Button

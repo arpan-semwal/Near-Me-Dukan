@@ -9,12 +9,12 @@ import StationaryShop from '../../shops/StationaryShop/StationaryShop';
 
 export default function ShopkeeperHome({ route }) {
     const [shopDetails, setShopDetails] = useState(null);
-    const { phoneNumber } = route.params;
+    const { phoneNumber  , selectedSubCategory } = route.params;
 
     useEffect(() => {
         const fetchShopDetails = async () => {
             try {
-                const response = await fetch(`http://192.168.38.249:3000/shopkeeperDetails/${phoneNumber}`);
+                const response = await fetch(`http://192.168.29.68:3000/shopkeeperDetails/${phoneNumber}`);
                 const data = await response.json();
                 
                 console.log('API response:', data);
@@ -41,8 +41,8 @@ export default function ShopkeeperHome({ route }) {
     switch (shopDetails.selectedCategory) {
         case 'Grocery Shop':
             return <GroceryShop />;
-        case 'Salon shop':
-            return <SalonShop />;
+        case 'Salon Shop':
+            return <SalonShop  selectedSubCategory={selectedSubCategory}/>;
         case 'Beauty Palour':
             return <BeautyPalor />;
         case 'Sweets and Namkeen Shop':

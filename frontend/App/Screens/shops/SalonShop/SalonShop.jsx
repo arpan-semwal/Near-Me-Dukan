@@ -15,7 +15,7 @@ export default function SalonShop() {
         { id: 5, title: 'My Payments', screen: 'ShopkeeperPayments' },
         { id: 7, title: 'My Profile', screen: 'SalonProfile' },
         { id: 8, title: 'Log Out', screen: 'Another' },
-    ];
+    ];zz
     
    
 

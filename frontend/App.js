@@ -50,7 +50,7 @@ import ShopkeeperManageProduct from './App/Screens/RegisterScreen/ShopkeeperCust
 import ShopkeeperPayments from './App/Screens/RegisterScreen/ShopkeeperPay/ShopkeeperPyaments/ShopkeeperPayments.jsx';
 import Privacy from './App/Screens/PrivacyAndConditions/Privacy.jsx';
 import Conditions from './App/Screens/PrivacyAndConditions/Conditions.jsx';
-import Inventory from './App/Screens/RegisterScreen/Inventory/Inventory.jsx';
+import Inventory from './App/Screens/shops/SalonShop/Inventory/Inventory.jsx';
 import GroceryShop from './App/Screens/shops/GroceryShop/GroceryShop.jsx';
 import SalonShop from './App/Screens/shops/SalonShop/SalonShop.jsx';
 import BeautyPalor from './App/Screens/shops/BeautyPalor/BeautyPalor.jsx';

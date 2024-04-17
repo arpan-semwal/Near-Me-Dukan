@@ -8,7 +8,7 @@ export default function MyServices({ selectedSubCategoryId }) {
     // Function to fetch services from the server based on the selected subcategory ID
     const fetchServices = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/services/${selectedSubCategoryId}`);
+        const response = await fetch(`http://192.168.29.68:3000/services/${selectedSubCategoryId}`);
         if (response.ok) {
           const data = await response.json();
           setServices(data);
