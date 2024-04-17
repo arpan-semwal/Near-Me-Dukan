@@ -161,6 +161,23 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
     );
 });
 
+app.get('/services/:subcategoryId', (req, res) => {
+    const subcategoryId = req.params.subcategoryId;
+  
+    // Query to fetch services from the database based on subcategory ID
+    const query = 'SELECT * FROM nkd.tbl_service_category; WHERE subcategory_id = ?';
+    
+    db.query(query, [subcategoryId], (err, results) => {
+      if (err) {
+        console.error('Error fetching services:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+  
+      // Send the results as a JSON response
+      res.status(200).json(results);
+    });
+  });
+
 
 
 
