@@ -59,6 +59,7 @@ import SweetsAndNamkeenShop from './App/Screens/shops/SweetsAndNamkeenShop/Sweet
 import StationaryShop from './App/Screens/shops/StationaryShop/StationaryShop.jsx';
 import MyServices from './App/Screens/shops/SalonShop/MyServices/MyServices.jsx';
 import SalonProfile from './App/Screens/shops/SalonShop/SalonProfile/SalonProfile.jsx';
+import SubSalonService from './App/Screens/shops/SalonShop/Inventory/SubSalonService/SubSalonService.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -117,6 +118,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="StationaryShop" component={StationaryShop}options={{ headerShown: false }} />
       <Stack.Screen name="MyServices" component={MyServices}options={{ headerShown: false }} />
       <Stack.Screen name="SalonProfile" component={SalonProfile}options={{ headerShown: false }} />
+      <Stack.Screen name="SubSalonService" component={SubSalonService}options={{ headerShown: false }} />
      
     
     </Stack.Navigator>

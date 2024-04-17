@@ -1,44 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 
-export default function MyServices({ selectedSubCategoryId }) {
-  const [services, setServices] = useState([]);
+export default function MyServices({ route }) {
+    const { selectedServices } = route.params; // Retrieve the selected services from the navigation parameters
 
-  useEffect(() => {
-    // Function to fetch services from the server based on the selected subcategory ID
-    const fetchServices = async () => {
-      try {
-        const response = await fetch(`http://192.168.29.68:3000/services/${selectedSubCategoryId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setServices(data);
-        } else {
-          console.error('Failed to fetch services:', response.status);
-        }
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      }
-    };
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>My Selected Services</Text>
 
-    // Fetch services when the component mounts or the selectedSubCategoryId changes
-    fetchServices();
-  }, [selectedSubCategoryId]);
-
-  // Render the services using a FlatList or similar component
-  return (
-    <View>
-      <FlatList
-        data={services}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.service_type}</Text>
-            <Text>{item.category}</Text>
-            <Text>{item.gender_services}</Text>
-            {/* Display other service details as needed */}
-          </View>
-        )}
-      />
-    </View>
-  );
+            {/* Display the selected services */}
+            <FlatList
+                data={selectedServices}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.card}>
+                        <Text style={styles.itemText}>{item.name}</Text>
+                        <Text style={styles.description}>{item.description}</Text>
+                        <Text style={styles.price}>Price: ${item.price.toFixed(2)}</Text>
+                    </View>
+                )}
+            />
+        </View>
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    card: {
+        padding: 15,
+        margin: 5,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    itemText: {
+        fontSize: 16,
+    },
+    description: {
+        marginTop: 10,
+    },
+    price: {
+        marginTop: 10,
+        color: 'green',
+        fontWeight: 'bold',
+    },
+});

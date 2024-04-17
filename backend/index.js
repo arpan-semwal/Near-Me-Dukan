@@ -177,6 +177,26 @@ app.get('/services/subcategory/:subcategory', (req, res) => {
     });
 });
 
+
+app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
+    const mainServiceId = req.params.mainServiceId;
+  
+    // Query the database for sub-services based on main service ID
+    db.query('SELECT * FROM nkd.tbl_salon_sub_sub_services WHERE main_service_id = ?', [mainServiceId], (err, results) => {
+      if (err) {
+        console.error('Error fetching sub-services:', err);
+        res.status(500).json({ message: 'Internal server error' });
+      } else {
+        res.status(200).json(results);
+      }
+    });
+  });
+  
+  
+  
+  
+  
+  
   
   
 
