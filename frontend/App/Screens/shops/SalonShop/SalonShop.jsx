@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Switch, FlatList, TouchableOpacity } from 'react-native';
-
 import { useNavigation } from '@react-navigation/native';
 
-export default function SalonShop() {
+export default function SalonShop({ selectedSubCategory }) {
     const navigation = useNavigation();
     const [isVisible, setIsVisible] = useState(true); // State for toggle button
     const [isVisible1, setIsVisible1] = useState(true); // State for toggle button
     const buttonsData = [
-		{ id: 6, title: 'My Services', screen: 'MyServices' },
+        { id: 6, title: 'My Services', screen: 'MyServices' },
         { id: 1, title: 'My Appointments', screen: 'ShopkeeperOrders' },
         { id: 3, title: 'My Customers', screen: 'ShopkeeperCustomer' },
         { id: 4, title: 'Discount Codes', screen: 'ShopkeeperDiscountCode' },
         { id: 5, title: 'My Payments', screen: 'ShopkeeperPayments' },
         { id: 7, title: 'My Profile', screen: 'SalonProfile' },
         { id: 8, title: 'Log Out', screen: 'Another' },
-    ];zz
-    
-   
+        { id: 9, title: 'My Inventory', screen: 'Inventory' }, // Added inventory screen
+    ];
 
     const handleButtonPress = (screenName) => {
-        navigation.navigate(screenName);
+        // Navigate to the desired screen and pass the selectedSubCategory as a parameter
+        navigation.navigate(screenName, { selectedSubCategory });
     };
 
     return (
@@ -53,11 +52,11 @@ export default function SalonShop() {
                                 <Text style={styles.visibilityHeading}>Store Visibility</Text>
                                 <Switch
                                     trackColor={{ false: '#767577', true: '#81b0ff' }}
-                                    thumbColor={isVisible ? '#318D00' : '#f4f3f4'} // Green color for true, default color for false
+                                    thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
                                     ios_backgroundColor="#3e3e3e"
                                     onValueChange={() => setIsVisible(previousState => !previousState)}
                                     value={isVisible}
-                                    style={styles.toggleButton} // Add this style
+                                    style={styles.toggleButton}
                                 />
                             </View>
                             <View style={styles.visibilityContainer2}>
@@ -68,7 +67,7 @@ export default function SalonShop() {
                                     ios_backgroundColor="#3e3e3e"
                                     onValueChange={() => setIsVisible1(previousState => !previousState)}
                                     value={isVisible1}
-                                    style={styles.toggleButton} // Add this style
+                                    style={styles.toggleButton}
                                 />
                             </View>
                         </View>
@@ -84,100 +83,3 @@ export default function SalonShop() {
         />
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 20,
-    },
-    headerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-        paddingHorizontal: 10,
-    },
-    storeImage: {
-        width: 90,
-        height: 90,
-        borderRadius: 10,
-    },
-    headerText: {
-        flex: 1,
-        marginLeft: 20,
-    },
-    welcomeText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    customerName: {
-        fontSize: 16,
-        marginBottom: 5,
-    },
-    shoppingAt: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    fullWidthImage: {
-        width: '100%',
-        height: 150,
-        marginBottom: 20,
-    },
-    circularImageContainer: {
-        alignItems: 'center',
-    },
-    circularImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 60,
-        borderWidth: 3,
-        borderColor: 'white',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: [{ translateX: -60 }, { translateY: -60 }],
-    },
-    visibilityContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 50,
-    },
-    visibilityHeading: {
-        paddingRight: 20,
-        fontSize: 26,
-        fontWeight: 'bold',
-    },
-    visibilityContainer2: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    visibilityHeading2: {
-        fontSize: 26,
-        fontWeight: 'bold',
-    },
-    toggleButton: {
-        transform: [{ scaleX: 1.7 }, { scaleY: 1.7 }],
-        borderWidth: 2,
-        borderColor: '#00ff00',
-    },
-    button: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#C7BC00',
-		marginHorizontal: 10, // Added horizontal margin
-		marginVertical: 5, // Added vertical margin
-		height: 50,
-		borderRadius: 10,
-	},
-    buttonText: {
-        fontSize: 16,
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-});

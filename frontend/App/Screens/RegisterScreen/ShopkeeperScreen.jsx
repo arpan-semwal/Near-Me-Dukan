@@ -113,7 +113,10 @@ export default function ShopkeeperScreen({ route }) {
             const responseData = await response.json();
             alert("Shopkeeper registered")
             console.log(responseData.message);
-            navigation.navigate('Subscription' , {phoneNumber:phoneNumber ,   });
+            navigation.navigate('Subscription', {
+            phoneNumber: phoneNumber,
+            selectedSubCategory: selectedSubCategory,
+        });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);
             Alert.alert('Error', 'Failed to register shopkeeper. Please try again later.');
@@ -274,17 +277,6 @@ export default function ShopkeeperScreen({ route }) {
                     />
                 </View>
                 
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>
                     <Picker
@@ -302,9 +294,6 @@ export default function ShopkeeperScreen({ route }) {
                 ))}
             </Picker>
         </View>
-        
-        
-        
         
         {selectedCategory === 'Salon Shop' && (
     <View style={styles.inputContainer}>

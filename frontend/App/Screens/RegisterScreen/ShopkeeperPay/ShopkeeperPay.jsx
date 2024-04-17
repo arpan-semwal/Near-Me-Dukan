@@ -6,7 +6,10 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 const ShopkeeperPay = ({route}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-  const { phoneNumber } = route.params;
+  const { phoneNumber , selectedSubCategory } = route.params;
+  
+  
+  
   useEffect(() => {
     startAnimation();
   }, []);
@@ -23,10 +26,15 @@ const ShopkeeperPay = ({route}) => {
     transform: [{ scale: scaleValue }],
   };
 
-  const handleNavigation = () => {
-    // Navigate to the order page when the button is pressed
-    navigation.navigate('ShopkeeperHome',{phoneNumber:phoneNumber});
-  };
+   
+
+const handleNavigation = () => {
+  // Navigate to the ShopkeeperHome screen and pass phoneNumber and selectedSubCategory as route parameters
+  navigation.navigate('ShopkeeperHome', {
+      phoneNumber: phoneNumber,
+      selectedSubCategory: selectedSubCategory,
+  });
+};
 
   return (
     <View style={styles.container}>
@@ -45,7 +53,7 @@ const ShopkeeperPay = ({route}) => {
       <Text style={styles.orderPlacedText}>Your Store Profile is Ready</Text>
 
       {/* Button */}
-      <TouchableOpacity style={styles.button} onPress={handleNavigation}>
+      <TouchableOpacity style={styles.button} onPress={handleNavigation}  >
         <Text style={styles.buttonText}>Customize</Text>
       </TouchableOpacity>
     </View>

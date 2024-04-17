@@ -160,29 +160,15 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
         }
     );
 });
-
-//app.get('/services/:subcategoryId', (req, res) => {
-//    const subcategoryId = req.params.subcategoryId;
-  
-//    // Query to fetch services from the database based on subcategory ID
-//    const query = 'SELECT * FROM nkd.tbl_service_category; WHERE subcategory_id = ?';
-    
-//    db.query(query, [subcategoryId], (err, results) => {
-//      if (err) {
-//        console.error('Error fetching services:', err);
-//        return res.status(500).json({ message: 'Internal server error' });
-//      }
-  
-//      // Send the results as a JSON response
-//      res.status(200).json(results);
-//    });
-//  });
-  
-  app.get('/services/subcategory/:subcategory', (req, res) => {
+ 
+app.get('/services/subcategory/:subcategory', (req, res) => {
     const subcategory = req.params.subcategory;
 
+    // Log the subcategory parameter for debugging
+    console.log('Received subcategory parameter:', subcategory);
+
     // Query the database for services based on the subcategory
-    db.query('SELECT * FROM nkd.tbl_salon_main_services WHERE sub_category_id = ?', [subcategory], (err, results) => {
+    db.query('SELECT * FROM nkd.tbl_salon_main_services WHERE sub_category_id = 1', [subcategory], (err, results) => {
         if (err) {
             console.error('Error fetching services:', err);
             return res.status(500).json({ message: 'Internal server error' });
@@ -190,6 +176,7 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
         res.status(200).json(results);
     });
 });
+
   
   
 
