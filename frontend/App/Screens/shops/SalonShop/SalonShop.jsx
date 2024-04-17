@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Switch, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function SalonShop({ selectedSubCategory }) {
+export default function SalonShop({ selectedSubCategoryId }) {
     const navigation = useNavigation();
     const [isVisible, setIsVisible] = useState(true); // State for toggle button
     const [isVisible1, setIsVisible1] = useState(true); // State for toggle button
@@ -19,7 +19,7 @@ export default function SalonShop({ selectedSubCategory }) {
 
     const handleButtonPress = (screenName) => {
         // Navigate to the desired screen and pass the selectedSubCategory as a parameter
-        navigation.navigate(screenName, { selectedSubCategory });
+        navigation.navigate(screenName, { selectedSubCategoryId });
     };
 
     return (

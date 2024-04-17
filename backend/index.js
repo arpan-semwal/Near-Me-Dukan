@@ -168,7 +168,7 @@ app.get('/services/subcategory/:subcategory', (req, res) => {
     console.log('Received subcategory parameter:', subcategory);
 
     // Query the database for services based on the subcategory
-    db.query('SELECT * FROM nkd.tbl_salon_main_services WHERE sub_category_id = 1', [subcategory], (err, results) => {
+    db.query('SELECT * FROM nkd.tbl_salon_main_services WHERE sub_category_id = ?', [subcategory], (err, results) => {
         if (err) {
             console.error('Error fetching services:', err);
             return res.status(500).json({ message: 'Internal server error' });

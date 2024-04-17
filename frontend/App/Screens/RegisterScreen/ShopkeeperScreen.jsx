@@ -25,6 +25,8 @@ export default function ShopkeeperScreen({ route }) {
     const navigation = useNavigation();
     const [categories, setCategories] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
+    const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
+
     
     
     const { phoneNumber } = route.params || {};
@@ -103,6 +105,7 @@ export default function ShopkeeperScreen({ route }) {
                     salesAssociateNumber,
                     selectedCategory,
                     selectedSubCategory,
+                    selectedSubCategoryId, // Include selectedSubCategoryId
                 }),
             });
     
@@ -113,9 +116,12 @@ export default function ShopkeeperScreen({ route }) {
             const responseData = await response.json();
             alert("Shopkeeper registered")
             console.log(responseData.message);
+            
+            
             navigation.navigate('Subscription', {
             phoneNumber: phoneNumber,
             selectedSubCategory: selectedSubCategory,
+            selectedSubCategoryId: selectedSubCategoryId,
         });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);
@@ -300,17 +306,24 @@ export default function ShopkeeperScreen({ route }) {
         <Text style={styles.label}>Type of shop</Text>
         <Picker
             selectedValue={selectedSubCategory}
-            onValueChange={(itemValue) => setSelectedSubCategory(itemValue)}
+            onValueChange={(itemValue) => {
+                // Update the selected subcategory
+                setSelectedSubCategory(itemValue);
+                
+                // Find the subcategory object that matches the selected subcategory name
+                const subCategory = subCategories.find(sub => sub.sub_category === itemValue);
+                
+                // Update the selected subcategory ID
+                setSelectedSubCategoryId(subCategory ? subCategory.id : '');
+            }}
             style={styles.picker}
-            enabled={!!subCategories.length} // Disable the picker if no subcategories are available
+            enabled={!!subCategories.length} // Enable or disable the picker based on the availability of subcategories
         >
-            
             {subCategories.map((subCategory, index) => (
                 <Picker.Item key={index} label={subCategory.sub_category} value={subCategory.sub_category} />
             ))}
         </Picker>
     </View>
-    
 )}
 
 

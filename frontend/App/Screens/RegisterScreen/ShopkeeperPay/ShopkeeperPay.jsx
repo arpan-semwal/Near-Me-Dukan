@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 const ShopkeeperPay = ({route}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-  const { phoneNumber , selectedSubCategory } = route.params;
+  const { phoneNumber , selectedSubCategory , selectedSubCategoryId } = route.params;
   
   
   
@@ -33,6 +33,7 @@ const handleNavigation = () => {
   navigation.navigate('ShopkeeperHome', {
       phoneNumber: phoneNumber,
       selectedSubCategory: selectedSubCategory,
+      selectedSubCategoryId:selectedSubCategoryId
   });
 };
 
