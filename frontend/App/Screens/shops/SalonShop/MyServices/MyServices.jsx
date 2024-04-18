@@ -41,21 +41,17 @@ export default function MyServices({ route }) {
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
-                <FlatList
-                    data={selectedServices}
-                    keyExtractor={(item, index) => `${item.id}-${index}`}
-                    numColumns={2} // Fixed number of columns to 2
-                    renderItem={({ item }) => (
-                        <View style={styles.card}>
-                            
-                            <Text style={styles.itemText}>Service Name: {item.name}</Text>
-                            
-                            <Text style={styles.itemText}>
-                                Price: {item.price !== undefined ? `$${item.price.toFixed(2)}` : 'Price not available'}
-                            </Text>
-                        </View>
-                    )}
-                />
+              <FlatList
+              data={selectedServices}
+              keyExtractor={(item, index) => `${item.id}-${index}`}
+              numColumns={2}
+              renderItem={({ item }) => (
+                  <View style={styles.card}>
+                      <Text style={styles.itemText}> {item.name}</Text>
+                      <Text style={styles.itemText}>Price: ${item.price}</Text>
+                  </View>
+              )}
+          />
             )}
         </View>
     );

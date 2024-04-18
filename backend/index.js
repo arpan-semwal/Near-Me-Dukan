@@ -219,11 +219,11 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
 
     // Query to fetch selected sub-services and their names
     const query = `
-        SELECT sss.id, sss.name
-        FROM sub_selected_services sssv
-        JOIN tbl_salon_sub_sub_services sss ON sssv.subServiceId = sss.id
-        WHERE sssv.phoneNumber = ?;
-    `;
+    SELECT sss.id, sss.name, sss.price
+    FROM sub_selected_services sssv
+    JOIN tbl_salon_sub_sub_services sss ON sssv.subServiceId = sss.id
+    WHERE sssv.phoneNumber = ?;
+`;
 
     db.query(query, [phoneNumber], (err, results) => {
         if (err) {
