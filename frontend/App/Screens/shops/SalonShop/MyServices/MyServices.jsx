@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function MyServices({ route }) {
     const { phoneNumber } = route.params;
 
     // State to store the selected services
     const [selectedServices, setSelectedServices] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Initialize loading state
 
     // Function to fetch the selected sub-services based on the phone number
     const fetchSelectedSubServices = async () => {
@@ -30,7 +30,7 @@ export default function MyServices({ route }) {
     useFocusEffect(
         React.useCallback(() => {
             fetchSelectedSubServices(); // Fetch data when the screen is focused
-        }, [phoneNumber]) // Dependency on phoneNumber
+        }, [phoneNumber])
     );
 
     return (
@@ -44,11 +44,12 @@ export default function MyServices({ route }) {
                 <FlatList
                     data={selectedServices}
                     keyExtractor={(item, index) => `${item.id}-${index}`}
+                    numColumns={2} // Fixed number of columns to 2
                     renderItem={({ item }) => (
                         <View style={styles.card}>
-                            <Text style={styles.itemText}>Service ID: {item.id}</Text>
+                            
                             <Text style={styles.itemText}>Service Name: {item.name}</Text>
-                            <Text style={styles.itemText}>Description: {item.description}</Text>
+                            
                             <Text style={styles.itemText}>
                                 Price: {item.price !== undefined ? `$${item.price.toFixed(2)}` : 'Price not available'}
                             </Text>
@@ -71,8 +72,9 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     card: {
+        flex: 1,
+        margin: 5, // Margin between cards
         padding: 15,
-        margin: 5,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#ccc',
