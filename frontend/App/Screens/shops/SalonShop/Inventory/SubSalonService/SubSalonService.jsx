@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Button } from 'react-native';
 
-export default function SubSalonService({ route }) {
+export default function SubSalonService({ route, navigation }) {
     const { mainServiceId } = route.params;
+    const { phoneNumber } = route.params;
 
-    // State to store the fetched sub-services and selected services
+    // State to store the fetched sub-services, selected services, and search query
     const [subServices, setSubServices] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
 
     // Fetch sub-services based on the main service ID
@@ -30,25 +32,76 @@ export default function SubSalonService({ route }) {
     const handleServiceSelect = (serviceId) => {
         setSelectedServices((prevSelectedServices) => {
             if (prevSelectedServices.includes(serviceId)) {
-                // If the service is already selected, remove it from the array
+                // Remove the service from the array if it's already selected
                 return prevSelectedServices.filter((id) => id !== serviceId);
             } else {
-                // If the service is not selected, add it to the array
+                // Add the service to the array if it's not selected
                 return [...prevSelectedServices, serviceId];
             }
         });
     };
 
+    // Function to handle navigation to MyServices screen and save selected services
+    const goToMyServices = async () => {
+        try {
+            // Save the selected services before navigating
+            await saveSelectedServices();
+
+            // Reset selected services array to clear the selection
+            setSelectedServices([]);
+
+            // Navigate to MyServices screen
+            navigation.navigate('MyServices', { phoneNumber });
+        } catch (error) {
+            console.error('Error navigating to MyServices:', error);
+        }
+    };
+
+    // Function to save selected services
+    const saveSelectedServices = async () => {
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phoneNumber,
+                    selectedServices,
+                }),
+            });
+            const data = await response.json();
+            if (data.message === 'Sub-services saved successfully') {
+                console.log('Sub-services saved successfully');
+            }
+        } catch (error) {
+            console.error('Error saving selected services:', error);
+        }
+    };
+
+    // Filter sub-services based on search query
+    const filteredSubServices = subServices.filter((service) =>
+        service.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Sub-Services</Text>
-            
+
+            {/* Search bar */}
+            <TextInput
+                style={styles.searchBar}
+                placeholder="Search sub-services..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+            />
+
             {/* Display loading indicator while fetching data */}
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList
-                    data={subServices}
+                    data={filteredSubServices}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.card}>
@@ -72,6 +125,9 @@ export default function SubSalonService({ route }) {
                     )}
                 />
             )}
+
+            {/* Button to navigate to MyServices screen */}
+            <Button title="Go to MyServices" onPress={goToMyServices} />
         </View>
     );
 }
@@ -85,6 +141,13 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+    },
+    searchBar: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
     },
     card: {
         padding: 15,

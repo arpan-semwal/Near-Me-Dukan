@@ -1,25 +1,61 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 
 export default function MyServices({ route }) {
-    const { selectedServices } = route.params; // Retrieve the selected services from the navigation parameters
+    const { phoneNumber } = route.params;
+
+    // State to store the selected services
+    const [selectedServices, setSelectedServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Function to fetch the selected sub-services based on the phone number
+    const fetchSelectedSubServices = async () => {
+        try {
+            setLoading(true); // Set loading state to true
+            // Fetch data from the server
+            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices/${phoneNumber}`);
+            const data = await response.json();
+            // Update state with the selected services data
+            setSelectedServices(data);
+        } catch (error) {
+            console.error('Error fetching selected sub-services:', error);
+        } finally {
+            // Set loading state to false
+            setLoading(false);
+        }
+    };
+
+    // Use useFocusEffect to refresh data when the screen is focused
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchSelectedSubServices(); // Fetch data when the screen is focused
+        }, [phoneNumber]) // Dependency on phoneNumber
+    );
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>My Selected Services</Text>
 
-            {/* Display the selected services */}
-            <FlatList
-                data={selectedServices}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Text style={styles.itemText}>{item.name}</Text>
-                        <Text style={styles.description}>{item.description}</Text>
-                        <Text style={styles.price}>Price: ${item.price.toFixed(2)}</Text>
-                    </View>
-                )}
-            />
+            {/* Display loading indicator while fetching data */}
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <FlatList
+                    data={selectedServices}
+                    keyExtractor={(item, index) => `${item.id}-${index}`}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <Text style={styles.itemText}>Service ID: {item.id}</Text>
+                            <Text style={styles.itemText}>Service Name: {item.name}</Text>
+                            <Text style={styles.itemText}>Description: {item.description}</Text>
+                            <Text style={styles.itemText}>
+                                Price: {item.price !== undefined ? `$${item.price.toFixed(2)}` : 'Price not available'}
+                            </Text>
+                        </View>
+                    )}
+                />
+            )}
         </View>
     );
 }
@@ -52,13 +88,6 @@ const styles = StyleSheet.create({
     },
     itemText: {
         fontSize: 16,
-    },
-    description: {
-        marginTop: 10,
-    },
-    price: {
-        marginTop: 10,
-        color: 'green',
-        fontWeight: 'bold',
+        marginVertical: 5,
     },
 });

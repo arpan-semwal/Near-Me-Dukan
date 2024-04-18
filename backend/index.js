@@ -195,6 +195,69 @@ app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
   
   
   
+
+  app.post('/shopkeeper/selectedSubServices', (req, res) => {
+    const { phoneNumber, selectedServices } = req.body;
+
+    const insertQuery = `INSERT IGNORE INTO sub_selected_services (phoneNumber, subServiceId) VALUES ?`;
+    const values = selectedServices.map(subServiceId => [phoneNumber, subServiceId]);
+
+    db.query(insertQuery, [values], (err, results) => {
+        if (err) {
+            console.error('Error saving selected services:', err);
+            res.status(500).json({ message: 'Error saving selected services', error: err });
+        } else {
+            res.json({ message: 'Sub-services saved successfully' });
+        }
+    });
+});
+
+
+// Endpoint to retrieve selected services for a shopkeeper
+app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+
+    // Query to fetch selected sub-services and their names
+    const query = `
+        SELECT sss.id, sss.name
+        FROM sub_selected_services sssv
+        JOIN tbl_salon_sub_sub_services sss ON sssv.subServiceId = sss.id
+        WHERE sssv.phoneNumber = ?;
+    `;
+
+    db.query(query, [phoneNumber], (err, results) => {
+        if (err) {
+            res.status(500).json({ message: 'Error retrieving selected services', error: err });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+
+
+app.get('/searchServices', (req, res) => {
+    const { query } = req.query; // Get the search query from the request query parameters
+
+    // Query the database for services matching the search query
+    db.query(
+        'SELECT * FROM nkd.tbl_salon_main_services WHERE name LIKE ? OR description LIKE ?',
+        [`%${query}%`, `%${query}%`],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            // Send the results back to the client
+            res.status(200).json(results);
+        }
+    );
+});
+
+  
+  
+  
   
   
   

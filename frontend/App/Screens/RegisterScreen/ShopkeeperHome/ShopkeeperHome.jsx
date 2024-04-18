@@ -18,14 +18,20 @@ export default function SalonShop({ route }) {
         { id: 8, title: 'Log Out', screen: 'Another' },
     ];
 
-    const { selectedSubCategory , selectedSubCategoryId } = route.params; // Access selectedSubCategory from route.params
+    const { selectedSubCategory , selectedSubCategoryId ,   phoneNumber, } = route.params; // Access selectedSubCategory from route.params
 
     // Function to handle button press and navigate to a specific screen
     const handleButtonPress = (screenName) => {
         if (screenName === 'Inventory') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory  , selectedSubCategoryId});
-        } else {
+            navigation.navigate(screenName, { selectedSubCategory  , selectedSubCategoryId ,  phoneNumber: phoneNumber,});
+        } 
+        else if (screenName === 'MyServices') {
+            // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
+            navigation.navigate(screenName, { selectedSubCategory  , selectedSubCategoryId ,  phoneNumber: phoneNumber,});
+        }
+        
+        else {
             navigation.navigate(screenName);
         }
     };

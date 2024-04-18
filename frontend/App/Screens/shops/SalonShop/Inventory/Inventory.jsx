@@ -3,7 +3,7 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity }
 import { useNavigation } from '@react-navigation/native';
 
 export default function Inventory({ route }) {
-    const { selectedSubCategoryId } = route.params;
+    const { selectedSubCategoryId , phoneNumber } = route.params;
 
     // State to store the fetched services
     const [services, setServices] = useState([]);
@@ -42,7 +42,7 @@ export default function Inventory({ route }) {
                 <TouchableOpacity
                     key={index}
                     style={styles.card}
-                    onPress={() => navigation.navigate('SubSalonService', { mainServiceId: service.id })}
+                    onPress={() => navigation.navigate('SubSalonService', { mainServiceId: service.id  , phoneNumber:phoneNumber})}
                 >
                     <Text style={styles.itemText}>{service.name}</Text>
                 </TouchableOpacity>
