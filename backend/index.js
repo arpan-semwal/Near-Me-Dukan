@@ -194,7 +194,6 @@ app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
   
   
   
-  
 
   app.post('/shopkeeper/selectedSubServices', (req, res) => {
     const { phoneNumber, selectedServices } = req.body;
