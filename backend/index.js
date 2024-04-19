@@ -32,7 +32,7 @@ db.connect(err => {
 // API endpoint for user registration
 // API endpoint for user registration
 app.post('/register', (req, res) => {
-    const { phoneNumber, name, pincode, state, city, address } = req.body;
+    const { phoneNumber, name, pincode, state, city, address , shopID } = req.body;
 
     // Check if user already exists
     db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
@@ -45,8 +45,8 @@ app.post('/register', (req, res) => {
         }
 
         // Insert new user into the database
-        db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?, ?)',
-            [phoneNumber, name, pincode, state, city, address],
+        db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address , shop_id) VALUES (?, ?, ?, ?, ?, ? , ?)',
+            [phoneNumber, name, pincode, state, city, address , shopID],
             (err, result) => {
                 if (err) {
                     console.error('Error registering user:', err);

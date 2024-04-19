@@ -38,7 +38,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
     const [requiredFields, setRequiredFields] = useState({});
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const [isChecked, setIsChecked] = useState(false); // State for the checkbox
+    const [isChecked, setIsChecked] = useState(false); // Stat0 e for the checkbox
     
     const navigation = useNavigation();
     const handleSubmit = () => {
@@ -62,6 +62,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
                 city,
                 address,
                 phoneNumber,
+                shopID
             }),
         })
         .then(response => {
