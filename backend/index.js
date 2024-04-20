@@ -32,7 +32,7 @@ db.connect(err => {
 // API endpoint for user registration
 // API endpoint for user registration
 app.post('/register', (req, res) => {
-    const { phoneNumber, name, pincode, state, city, address , shopID } = req.body;
+    const { phoneNumber, name, pincode, state, city, address, shopID } = req.body;
 
     // Check if user already exists
     db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
@@ -44,18 +44,61 @@ app.post('/register', (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Insert new user into the database
-        db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address , shop_id) VALUES (?, ?, ?, ?, ?, ? , ?)',
-            [phoneNumber, name, pincode, state, city, address , shopID],
+        // If shopID is provided, check if it matches any shopkeeper's phone number
+        if (shopID) {
+            db.query('SELECT * FROM shopkeepers WHERE phoneNumber = ?', [shopID], (err, shopkeeperResults) => {
+                if (err) {
+                    console.error('Error checking shopkeeper existence:', err);
+                    return res.status(500).json({ message: 'Internal server error' });
+                }
+            
+                if (shopkeeperResults.length > 0) {
+                    // Shopkeeper exists with the provided shopID, determine the type of shop
+                    const shopkeeper = shopkeeperResults[0];
+                    const selectedCategory = shopkeeper.selectedCategory;
+            
+                    // Check the category to determine the type of shop
+                    if (selectedCategory === 'Salon Shop') {
+                        console.log('Salon Shop found');
+                        // Add the user to newcustomers database with shopID
+                        db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+                        [phoneNumber, name, pincode, state, city, address, shopID], 
+                        (err, result) => {
+                            if (err) {
+                                console.error('Error registering user:', err);
+                                return res.status(500).json({ message: 'Internal server error' });
+                            }
+                            console.log('User registered successfully');
+                            return res.status(200).json({ message: 'User registered successfully', userId: result.insertId });
+                        });
+                    }  
+                    else {
+                        console.log('Unknown shop type');
+                        // Navigate to a default homepage or handle other shop types
+                        return res.status(200).json({ message: 'Unknown shop type', shopkeeper });
+                    }
+                } else {
+                    // No shopkeeper found with the provided shopID, return error
+                    console.log('Shopkeeper not found');
+                    return res.status(404).json({ message: 'Shopkeeper not found' });
+                }
+            });
+        } else {
+            // If shopID is not provided, register the user without associating it with any shop
+            db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?, ?)', 
+            [phoneNumber, name, pincode, state, city, address], 
             (err, result) => {
                 if (err) {
                     console.error('Error registering user:', err);
                     return res.status(500).json({ message: 'Internal server error' });
                 }
-                res.status(200).json({ message: 'User registered successfully' });
+                console.log('User registered successfully');
+                return res.status(200).json({ message: 'User registered successfully', userId: result.insertId });
             });
+        }
     });
 });
+
 
 app.post('/checkPhoneNumber', (req, res) => {
   const { phoneNumber } = req.body;

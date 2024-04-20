@@ -49,21 +49,29 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             return;
         }
     
+        // Prepare the data for API request
+        const formData = {
+            name,
+            pincode,
+            state,
+            city,
+            address,
+            phoneNumber,
+        };
+
+        // Include shop ID if provided
+        if (shopID.trim() !== '') {
+            formData.shopID = shopID;
+            setShopID(shopID); // Update shopID in the context
+        }
+
         // Call the API to register the user
         fetch('http://192.168.29.68:3000/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                name,
-                pincode,
-                state,
-                city,
-                address,
-                phoneNumber,
-                shopID
-            }),
+            body: JSON.stringify(formData),
         })
         .then(response => {
             if (!response.ok) {
@@ -78,7 +86,6 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             // You can navigate to the next screen or perform any other action here
         })
         .catch(error => {
-          
             alert('User already registered.');
         });
     };
@@ -107,7 +114,6 @@ export default function CustomerScreen({ route, onFormSubmit }) {
                 break;
             case 'shopID':
                 setShopId(value);
-                setShopID(value); // Update shopID in the context
                 break;
             default:
                 break;
@@ -141,12 +147,12 @@ export default function CustomerScreen({ route, onFormSubmit }) {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Shop ID</Text>
+                    <Text style={styles.label}>Shop ID (Optional)</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="87361"
                         value={shopID}
-                        onChangeText={setShopId}
+                        onChangeText={(value) => handleInputChange(value, 'shopID')}
                     />
                 </View>
                 <View style={styles.inputContainer}>
