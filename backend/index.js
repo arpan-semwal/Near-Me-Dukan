@@ -329,7 +329,7 @@ app.get('/shop/:shopID', (req, res) => {
 
     // Query the database to fetch shop details based on shopID
     db.query(
-        'SELECT * FROM shopkeepers WHERE shopID = ?',
+        'SELECT * FROM shopkeepers WHERE phoneNumber = ?',
         [shopID],
         (err, result) => {
             if (err) {
@@ -362,6 +362,41 @@ app.get('/shop/:shopID', (req, res) => {
         }
     );
 });
+
+app.get('/salons', (req, res) => {
+    const { shopID } = req.query;
+
+    // Query the database to fetch salon shops
+    db.query(
+        'SELECT * FROM shopkeepers WHERE selectedCategory = ?',
+        ['Salon Shop'],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching salon shops:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'No salon shops found' });
+            }
+
+            // Move shop with customer's shopID to the top
+            const customerShopIndex = results.findIndex(shop => shop.phoneNumber === shopID);
+            console.log('Customer shop index:', customerShopIndex);
+            if (customerShopIndex !== -1) {
+                const customerShop = results.splice(customerShopIndex, 1)[0];
+                console.log('Customer shop:', customerShop);
+                results.unshift(customerShop);
+            }
+
+            console.log('Modified results:', results);
+
+            res.status(200).json(results);
+        }
+    );
+});
+
+
 
 
   

@@ -66,7 +66,7 @@ export default function BarberHomePage({ route }) {
           </View>
           
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('BarberSearchShops', { pincode: pincode, name: name , shopID:shopID })}>
+            <TouchableOpacity onPress={() => navigateToScreen('BarberSearchShops', {   shopID:shopID })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
