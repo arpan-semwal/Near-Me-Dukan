@@ -69,7 +69,7 @@ app.post('/register', (req, res) => {
                                 return res.status(500).json({ message: 'Internal server error' });
                             }
                             console.log('User registered successfully');
-                            return res.status(200).json({ message: 'User registered successfully', userId: result.insertId });
+                            return res.status(200).json({ message: 'User registered successfully', shopType: selectedCategory });
                         });
                     }  
                     else {
@@ -297,8 +297,73 @@ app.get('/searchServices', (req, res) => {
     );
 });
 
+
+app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+
+    // Fetch shopkeeper details from the database based on the phone number
+    db.query(
+        'SELECT shopkeeperName, pincode, shopState, city, address FROM shopkeepers WHERE phoneNumber = ?',
+        [phoneNumber],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching shopkeeper details:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (results.length > 0) {
+                res.status(200).json(results[0]);
+            } else {
+                res.status(404).json({ message: 'Shopkeeper not found' });
+            }
+        }
+    );
+});
   
+
+ 
   
+
+app.get('/shop/:shopID', (req, res) => {
+    const shopID = req.params.shopID;
+
+    // Query the database to fetch shop details based on shopID
+    db.query(
+        'SELECT * FROM shopkeepers WHERE shopID = ?',
+        [shopID],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching shop details:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'Shop not found' });
+            }
+
+            const shopDetails = {
+                id: result[0].id,
+                phoneNumber: result[0].phoneNumber,
+                shopkeeperName: result[0].shopkeeperName,
+                shopID: result[0].shopID,
+                pincode: result[0].pincode,
+                shopState: result[0].shopState,
+                city: result[0].city,
+                address: result[0].address,
+                salesAssociateNumber: result[0].salesAssociateNumber,
+                selectedCategory: result[0].selectedCategory,
+                shopBanner: result[0].shopBanner,
+                profilePicture: result[0].profilePicture,
+                registrationDate: result[0].registrationDate,
+                selectedSubCategory: result[0].selectedSubCategory,
+            };
+
+            res.status(200).json(shopDetails);
+        }
+    );
+});
+
+
   
   
   

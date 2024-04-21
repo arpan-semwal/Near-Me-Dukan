@@ -1,35 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import dummyData from "./BarberDummy";
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useCustomer } from '../../../Context/ContextApi';
 import ChangePincode from '../CustomerHomeCards/SearchShops/ChangePincode';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation } from '@react-navigation/native';
 
-export default function BarberSearchShops() {
-  const [shops, setShops] = useState(dummyData);
-  const { pincode, customerName } = useCustomer();
-  const navigation = useNavigation(); // Initialize navigation object
-  
-  const renderShopItem = ({ item }) => (
-    <View>
-      <TouchableOpacity onPress={() => navigation.navigate('Salons', { salon: item })}>
-      <View style={styles.shopItem}>
-        <Image source={item.image} style={styles.shopImage} />
-        <View style={styles.shopDetails}>
-          <Text style={styles.shopName}>{item.name}</Text>
-          <Text style={styles.shopLocation}>Location: {item.location}</Text>
-          <Text style={styles.shopStatus}>Status: {item.isOpen ? 'Open' : 'Closed'}</Text>
+export default function BarberSearchShops({ route }) {
+  const { shopID, customerName } = useCustomer();
+  const navigation = useNavigation(); 
+
+  const [shop, setShop] = useState(null);
+
+  useEffect(() => {
+    // Fetch shop details for the shop the user registered with
+    const fetchShopDetails = async () => {
+      try {
+        const response = await fetch(`http://192.168.29.68:3000/shop/${shopID}`);
+        const data = await response.json();
+        if (data) {
+          setShop(data);
+        }
+      } catch (error) {
+        console.error('Error fetching shop details:', error);
+        // Handle error if unable to fetch shop details
+      }
+    };
+
+    fetchShopDetails();
+  }, [shopID]);
+
+  const renderShopItem = () => {
+    if (!shop) {
+      return null;
+    }
+
+    return (
+      <TouchableOpacity onPress={() => navigation.navigate('Salons', { salon: shop })}>
+        <View style={styles.shopItem}>
+          <Image source={{ uri: shop.profilePicture }} style={styles.shopImage} />
+          <View style={styles.shopDetails}>
+            <Text style={styles.shopName}>{shop.shopkeeperName}</Text>
+            <Text style={styles.shopLocation}>Location: {shop.city}, {shop.shopState}</Text>
+            <Text style={styles.shopStatus}>Pincode: {shop.pincode}</Text>
+            <Text style={styles.shopStatus}>Category: {shop.selectedCategory}</Text>
+            <Text style={styles.shopStatus}>Subcategory: {shop.selectedSubCategory}</Text>
+          </View>
         </View>
-      </View>
       </TouchableOpacity>
-      
-      <View style={styles.separator} />
-    </View>
-  );
-
-  const handleSubmit = () => {
-    // Handle submission, for example, showing a modal to change pincode
-    
+    );
   };
 
   return (
@@ -40,22 +57,17 @@ export default function BarberSearchShops() {
         </View>
         <View style={styles.rightContainer}>
           <Text style={styles.welcomeText}>Welcome, {customerName}</Text>
-          <Text style={styles.pincodeText}>Shops at Pincode: {pincode}</Text>
-          <TouchableOpacity onPress={handleSubmit}>
+          <Text style={styles.pincodeText}>Shop ID: {shopID}</Text>
+          {/* <TouchableOpacity onPress={() => navigation.navigate('ChangePincode')}>
             <Text style={styles.changePincodeText}>Change Pincode</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       <View style={styles.locationContainer}>
-      
-        <Text style={styles.locationHeading}>Salons in Your Location</Text>
+        <Text style={styles.locationHeading}>Shop Details</Text>
         <View style={styles.separator} />
       </View>
-      <FlatList
-        data={shops}
-        renderItem={renderShopItem}
-        keyExtractor={item => item.id.toString()}
-      />
+      {renderShopItem()}
     </View>
   );
 }

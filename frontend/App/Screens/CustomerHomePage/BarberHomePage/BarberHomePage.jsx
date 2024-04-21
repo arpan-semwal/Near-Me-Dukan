@@ -32,6 +32,7 @@ export default function BarberHomePage({ route }) {
             <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
+			 
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
                 </View>
                 <Text style={styles.cardText}>My Preferred Shops</Text>
@@ -53,6 +54,7 @@ export default function BarberHomePage({ route }) {
         
         <View style={styles.cardRow}>
           <View style={styles.card}>
+		 
             <TouchableOpacity onPress={() => navigateToScreen('MyAddress')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>

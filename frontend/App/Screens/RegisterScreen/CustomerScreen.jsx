@@ -82,8 +82,11 @@ export default function CustomerScreen({ route, onFormSubmit }) {
         .then(data => {
             console.log('Success:', data);
             alert('User registered successfully');
-            navigation.navigate('CustomerHomePage');
-            // You can navigate to the next screen or perform any other action here
+            if (data.shopType === 'Salon Shop'  ) {
+                navigation.navigate('Barber' , { shopID:shopID });
+            } else {
+                navigation.navigate('CustomerHomePage');
+            }
         })
         .catch(error => {
             alert('User already registered.');
