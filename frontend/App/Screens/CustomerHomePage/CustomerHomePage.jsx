@@ -6,9 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 
 export default function CustomerHomePage({ route }) {
-  const { name, pincode, shopID } = route.params || {};
+  const { name, pincode, shopID , phoneNumber } = route.params || {};
   const navigation = useNavigation();
-  
+   
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
   };
@@ -26,7 +26,7 @@ export default function CustomerHomePage({ route }) {
        
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops')}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops' ,  { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
@@ -61,7 +61,7 @@ export default function CustomerHomePage({ route }) {
           </View>
           
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name , shopID:shopID })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />

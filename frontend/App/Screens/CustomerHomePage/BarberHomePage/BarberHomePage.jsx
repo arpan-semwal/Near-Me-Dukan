@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import {useCart} from '../../../Context/ContextApi';
 
 export default function BarberHomePage({ route }) {
-  const { name, pincode, shopID } = route.params || {};
+  const { name, pincode, shopID , phoneNumber  } = route.params || {};
   const {customerName} = useCart();
   const navigation = useNavigation();
   
@@ -25,11 +25,11 @@ export default function BarberHomePage({ route }) {
             style={styles.storeImage}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome, {customerName}</Text>
+        <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
        
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops')}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
 			 

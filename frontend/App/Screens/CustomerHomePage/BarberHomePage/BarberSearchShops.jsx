@@ -7,7 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function BarberSearchShops({ route }) {
   const { customerName } = useCustomer();
-  const { shopID } = route.params || {};
+  const { shopID , phoneNumber } = route.params || {};
   const [preferredShops, setPreferredShops] = useState([]);
 
   const navigation = useNavigation();
@@ -69,22 +69,23 @@ export default function BarberSearchShops({ route }) {
 
   const toggleFavorite = async (shop) => {
     try {
-      const updatedShops = [...shops]; // Create a copy of shops array
-      const index = updatedShops.findIndex((s) => s.shopID === shop.shopID);
-      updatedShops[index] = { ...updatedShops[index], favorite: !updatedShops[index].favorite };
+      const updatedShops = shops.map((s) => {
+        if (s.shopID === shop.shopID) {
+          return { ...s, favorite: !s.favorite };
+        }
+        return s;
+      });
       setShops(updatedShops);
 
-      const selectedShop = updatedShops[index];
-      const isFavorite = selectedShop.favorite;
-
-      if (isFavorite) {
-        // Add the selected shop to preferred shops
-        setPreferredShops([...preferredShops, selectedShop]);
-      } else {
-        // Remove the selected shop from preferred shops
-        const filteredPreferredShops = preferredShops.filter((s) => s.shopID !== selectedShop.shopID);
-        setPreferredShops(filteredPreferredShops);
-      }
+      const response = await fetch('http://192.168.29.68:3000/preferredShops/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber:  phoneNumber, shopID: shop.shopID }),
+      });
+      const data = await response.json();
+      console.log(data);
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
