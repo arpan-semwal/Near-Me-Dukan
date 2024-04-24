@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useCart } from '../../../../Context/ContextApi'; // Import useCart hook
 
 export default function SelectedServices({ route }) {
     const { mainServiceName, subServices, userType } = route.params;
+    const { addToCart } = useCart(); // Access addToCart function from CartContext
+    const [addedItems, setAddedItems] = useState([]); // State to manage items that have been added to cart
 
-    const handleAddToCart = (serviceName) => {
-        // Handle adding service to cart
-        console.log(`Added ${serviceName} to cart`);
+    const handleAddToCart = (item) => {
+        addToCart(item);
+        setAddedItems([...addedItems, item.id]); // Add item ID to the list of added items
     };
-    
+
+    const isAddedToCart = (itemId) => addedItems.includes(itemId); // Check if item is added to cart
+
     console.log('User Type:', userType);
 
     return (
@@ -25,8 +30,8 @@ export default function SelectedServices({ route }) {
                         {userType === 'customer' && ( // Render only if userType is 'customer'
                             <TouchableOpacity
                                 style={styles.addToCartButton}
-                                onPress={() => handleAddToCart(item.name)}>
-                                <Text style={styles.addToCartText}>Add to Cart</Text>
+                                onPress={() => handleAddToCart(item)}>
+                                <Text style={styles.addToCartText}>{isAddedToCart(item.id) ? 'Added to Cart' : 'Add to Cart'}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
