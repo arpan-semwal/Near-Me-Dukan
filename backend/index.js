@@ -259,11 +259,12 @@ app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
 app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
     const phoneNumber = req.params.phoneNumber;
 
-    // Query to fetch selected sub-services and their names
+    // Query to fetch selected sub-services and their main service information
     const query = `
-    SELECT sss.id, sss.name, sss.price
+    SELECT m.id AS mainServiceId, m.name AS mainServiceName, sss.id, sss.name, sss.price
     FROM sub_selected_services sssv
     JOIN tbl_salon_sub_sub_services sss ON sssv.subServiceId = sss.id
+    JOIN tbl_salon_main_services m ON sss.main_service_id = m.id
     WHERE sssv.phoneNumber = ?;
 `;
 
@@ -275,7 +276,6 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
         }
     });
 });
-
 
 
 

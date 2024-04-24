@@ -33,6 +33,20 @@ export default function MyServices({ route }) {
         }, [phoneNumber])
     );
 
+    // Function to group sub-services by their main services
+    const groupByMainService = () => {
+        const groupedServices = {};
+
+        selectedServices.forEach((service) => {
+            if (!groupedServices[service.mainServiceName]) {
+                groupedServices[service.mainServiceName] = [];
+            }
+            groupedServices[service.mainServiceName].push(service);
+        });
+
+        return groupedServices;
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>My Selected Services</Text>
@@ -41,17 +55,21 @@ export default function MyServices({ route }) {
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
-              <FlatList
-              data={selectedServices}
-              keyExtractor={(item, index) => `${item.id}-${index}`}
-              numColumns={2}
-              renderItem={({ item }) => (
-                  <View style={styles.card}>
-                      <Text style={styles.itemText}> {item.name}</Text>
-                      <Text style={styles.itemText}>Price: ${item.price}</Text>
-                  </View>
-              )}
-          />
+                <FlatList
+                    data={Object.entries(groupByMainService())}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.mainServiceContainer}>
+                            <Text style={styles.mainServiceName}>{item[0]}</Text>
+                            {item[1].map((subService) => (
+                                <View style={styles.card} key={subService.id}>
+                                    <Text style={styles.itemText}>Sub Service: {subService.name}</Text>
+                                    <Text style={styles.itemText}>Price: ${subService.price}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                />
             )}
         </View>
     );
@@ -66,6 +84,14 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+    },
+    mainServiceContainer: {
+        marginBottom: 20,
+    },
+    mainServiceName: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
     card: {
         flex: 1,
