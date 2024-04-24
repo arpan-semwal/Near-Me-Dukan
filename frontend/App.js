@@ -60,7 +60,7 @@ import StationaryShop from './App/Screens/shops/StationaryShop/StationaryShop.js
 import MyServices from './App/Screens/shops/SalonShop/MyServices/MyServices.jsx';
 import SalonProfile from './App/Screens/shops/SalonShop/SalonProfile/SalonProfile.jsx';
 import SubSalonService from './App/Screens/shops/SalonShop/Inventory/SubSalonService/SubSalonService.jsx';
-import SubServices from './App/Screens/shops/SalonShop/MyServices/subServices.jsx';
+import SelectedServices from './App/Screens/shops/SalonShop/MyServices/SelectedServices.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -120,7 +120,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="MyServices" component={MyServices}options={{ headerShown: false }} />
       <Stack.Screen name="SalonProfile" component={SalonProfile}options={{ headerShown: false }} />
       <Stack.Screen name="SubSalonService" component={SubSalonService}options={{ headerShown: false }} />
-      <Stack.Screen name="SubServices" component={SubServices}options={{ headerShown: false }} />
+      <Stack.Screen name="SelectedServices" component={SelectedServices}options={{ headerShown: false }} />
      
     
     </Stack.Navigator>

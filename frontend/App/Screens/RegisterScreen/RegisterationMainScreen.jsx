@@ -12,12 +12,13 @@ export default function RegisterationMainScreen({ route }) {
     const { phoneNumber } = route.params;
 
     const handleCustomerPress = () => {
-        // Navigate to the customer screen and pass the phone number as a parameter
-        navigation.navigate('Customer', { phoneNumber: phoneNumber });
+        // Navigate to the customer screen and pass the phone number and role as parameters
+        navigation.navigate('Customer', { phoneNumber: phoneNumber, role: 'customer' });
     };
+
     const handleShopKeeperPress = () => {
-        // Navigate to the customer screen and pass the phone number as a parameter
-        navigation.navigate('Shopkeeper', { phoneNumber: phoneNumber });
+        // Navigate to the shopkeeper screen and pass the phone number and role as parameters
+        navigation.navigate('Shopkeeper', { phoneNumber: phoneNumber, role: 'shopkeeper' });
     };
 
     return (
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     logo: {
         resizeMode: 'contain',
         width: windowWidth * 0.8, // Adjust as needed
-          height: windowHeight * 0.2, // Adjust as needed
+        height: windowHeight * 0.2, // Adjust as needed
         marginBottom: windowHeight * 0.03, // Add some margin below the image
     },
     registerText: {
