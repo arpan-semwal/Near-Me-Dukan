@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import {useCart} from '../../../Context/ContextApi';
 
 export default function BarberHomePage({ route }) {
-  const { name, pincode, shopID , phoneNumber  } = route.params || {};
+  const { name, pincode, shopID , phoneNumber , userType  } = route.params || {};
   const {customerName} = useCart();
   const navigation = useNavigation();
   
@@ -29,7 +29,7 @@ export default function BarberHomePage({ route }) {
        
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber ,userType})}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
 			 
@@ -66,7 +66,7 @@ export default function BarberHomePage({ route }) {
           </View>
           
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('BarberSearchShops', {   shopID:shopID })}>
+            <TouchableOpacity onPress={() => navigateToScreen('BarberSearchShops', { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber , userType:userType })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />

@@ -29,7 +29,7 @@ export default function ShopkeeperScreen({ route }) {
 
     
     
-    const { phoneNumber } = route.params || {};
+    const { phoneNumber , userType } = route.params || {};
 
 
     useEffect(() => {
@@ -119,6 +119,7 @@ export default function ShopkeeperScreen({ route }) {
             
             
             navigation.navigate('Subscription', {
+                userType:userType,
             phoneNumber: phoneNumber,
             selectedSubCategory: selectedSubCategory,
             selectedSubCategoryId: selectedSubCategoryId,

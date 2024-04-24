@@ -28,7 +28,7 @@ const PrivacyCheckbox = ({ onCheckboxChange }) => {
 
 export default function CustomerScreen({ route, onFormSubmit }) {
     const {  setShopID, setShopName, setCustAddress, setPincode, setState, setCity } = useContext(CustomerContext); // Access context setters
-    const { phoneNumber } = route.params || {};
+    
     const [name, setName] = useState('');
     const [pincode, setPincodeLocal] = useState(''); // Local state for pincode
     const [shopID, setShopId] = useState('');
@@ -39,6 +39,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
     const [formSubmitted, setFormSubmitted] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [isChecked, setIsChecked] = useState(false); // Stat0 e for the checkbox
+    const { phoneNumber, userType } = route.params || {};
     
     const navigation = useNavigation();
     const handleSubmit = () => {
@@ -83,7 +84,7 @@ export default function CustomerScreen({ route, onFormSubmit }) {
             console.log('Success:', data);
             alert('User registered successfully');
             if (data.shopType === 'Salon Shop'  ) {
-                navigation.navigate('Barber' , { shopID:shopID , phoneNumber:phoneNumber });
+                navigation.navigate('Barber' , { shopID:shopID , phoneNumber:phoneNumber , userType:userType });
             } else {
                 navigation.navigate('CustomerHomePage' , {phoneNumber:phoneNumber});
             }

@@ -1,10 +1,15 @@
-// SubServices.js
-
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function SelectedServices({ route }) {
-    const { mainServiceName, subServices } = route.params;
+    const { mainServiceName, subServices, userType } = route.params;
+
+    const handleAddToCart = (serviceName) => {
+        // Handle adding service to cart
+        console.log(`Added ${serviceName} to cart`);
+    };
+    
+    console.log('User Type:', userType);
 
     return (
         <View style={styles.container}>
@@ -17,6 +22,13 @@ export default function SelectedServices({ route }) {
                     <View style={styles.card}>
                         <Text style={styles.itemText}>Sub Service: {item.name}</Text>
                         <Text style={styles.itemText}>Price: ${item.price}</Text>
+                        {userType === 'customer' && ( // Render only if userType is 'customer'
+                            <TouchableOpacity
+                                style={styles.addToCartButton}
+                                onPress={() => handleAddToCart(item.name)}>
+                                <Text style={styles.addToCartText}>Add to Cart</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
             />
@@ -54,5 +66,17 @@ const styles = StyleSheet.create({
     itemText: {
         fontSize: 16,
         marginVertical: 5,
+    },
+    addToCartButton: {
+        backgroundColor: '#3498db',
+        borderRadius: 5,
+        padding: 10,
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    addToCartText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

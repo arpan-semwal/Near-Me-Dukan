@@ -7,9 +7,9 @@ import { AntDesign } from '@expo/vector-icons';
 
 export default function BarberSearchShops({ route }) {
   const { customerName } = useCustomer();
-  const { shopID , phoneNumber } = route.params || {};
+  const { shopID , phoneNumber , userType } = route.params || {};
   const [preferredShops, setPreferredShops] = useState([]);
-
+  console.log('User Type:', userType);
   const navigation = useNavigation();
 
   const [shops, setShops] = useState([]);
@@ -62,10 +62,9 @@ export default function BarberSearchShops({ route }) {
       </TouchableOpacity>
     ));
   };
-
   const navigateToSalon = (shop) => {
-    navigation.navigate('Salons', { salon: shop });
-  };
+    navigation.navigate('MyServices', { phoneNumber: shop.phoneNumber , userType:userType });
+};
 
   const toggleFavorite = async (shop) => {
     try {
@@ -98,7 +97,7 @@ export default function BarberSearchShops({ route }) {
           <Image source={require('../../../../assets/logo.png')} style={styles.welcomeImage} />
         </View>
         <View style={styles.rightContainer}>
-          <Text style={styles.welcomeText}>Welcome, {customerName}</Text>
+          <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
           <Text style={styles.pincodeText}>Shop ID: {shopID}</Text>
           {/* <TouchableOpacity onPress={() => navigation.navigate('ChangePincode')}>
             <Text style={styles.changePincodeText}>Change Pincode</Text>

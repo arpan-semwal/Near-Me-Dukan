@@ -3,10 +3,11 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity }
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export default function MyServices({ route }) {
-    const { phoneNumber } = route.params;
+    const { phoneNumber , userType } = route.params;
 
     const [selectedServices, setSelectedServices] = useState([]);
     const [loading, setLoading] = useState(true);
+    console.log('User Type:', userType);
 
     const navigation = useNavigation();
 
@@ -43,7 +44,7 @@ export default function MyServices({ route }) {
     };
 
     const handleMainServiceClick = (mainServiceName, subServices) => {
-        navigation.navigate('SelectedServices', { mainServiceName, subServices });
+        navigation.navigate('SelectedServices', { mainServiceName, subServices , userType:userType });
     };
 
     return (

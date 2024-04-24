@@ -13,12 +13,12 @@ export default function RegisterationMainScreen({ route }) {
 
     const handleCustomerPress = () => {
         // Navigate to the customer screen and pass the phone number and role as parameters
-        navigation.navigate('Customer', { phoneNumber: phoneNumber, role: 'customer' });
+        navigation.navigate('Customer', { phoneNumber: phoneNumber, userType : 'customer' });
     };
 
     const handleShopKeeperPress = () => {
         // Navigate to the shopkeeper screen and pass the phone number and role as parameters
-        navigation.navigate('Shopkeeper', { phoneNumber: phoneNumber, role: 'shopkeeper' });
+        navigation.navigate('Shopkeeper', { phoneNumber: phoneNumber, userType : 'shopkeeper' });
     };
 
     return (
