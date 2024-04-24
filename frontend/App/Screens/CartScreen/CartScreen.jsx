@@ -57,8 +57,13 @@ const CartScreen = ({ route }) => {
     navigation.navigate("Checkout", { cartItems, totalPrice }); // Pass cartItems and totalPrice to Checkout screen
   };
 
+  const handleMakeAppointment = () => {
+    // Logic to handle making an appointment
+    // You can navigate to a screen for making an appointment or perform any other action
+    console.log("Make an appointment");
+  };
+
   return (
-    
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
@@ -85,7 +90,7 @@ const CartScreen = ({ route }) => {
             <View style={styles.productBackground}>
               <Image source={item.image} style={styles.productImage} />
               <View style={styles.productDetails}>
-                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title}>{item.name}</Text>
                 <Text style={styles.info}>₹{item.price} × {item.quantity} = ₹{item.price * item.quantity}</Text>
                 <View style={styles.quantityContainer}>
                   <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecreaseQuantity(item)}>
@@ -106,25 +111,32 @@ const CartScreen = ({ route }) => {
         ListFooterComponent={
           <View style={styles.totalPriceContainer}>
             <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
-            <Text style={styles.deliveryText}>Deliver to address below</Text>
-            <Text style={styles.addressText}>{custAddress}</Text>
-            <Text style={styles.addressText}>Pincode: {pincode}</Text>
-            <Text style={styles.addressText}> {city} ,{state}</Text>
-             
-            <TouchableOpacity onPress={() => changeAddress(custAddress)}>
-              <Text style={styles.shoppingAt}>Change Address</Text>
-            </TouchableOpacity>
+            {storeName.toLowerCase() === 'salon' ? (
+              <TouchableOpacity style={styles.button} onPress={handleMakeAppointment}>
+                <Text style={styles.buttonText}>Make an Appointment</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <Text style={styles.deliveryText}>Deliver to address below</Text>
+                <Text style={styles.addressText}>{custAddress}</Text>
+                <Text style={styles.addressText}>Pincode: {pincode}</Text>
+                <Text style={styles.addressText}> {city} ,{state}</Text>
+                
+                <TouchableOpacity onPress={() => changeAddress(custAddress)}>
+                  <Text style={styles.shoppingAt}>Change Address</Text>
+                </TouchableOpacity>
+              </>
+            )}
             <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
               <Text style={styles.buttonText}>Continue Shopping</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleCheckout}>
-               <Text style={styles.buttonText}>Proceed to Pay</Text>
+              <Text style={styles.buttonText}>Proceed to Pay</Text>
             </TouchableOpacity>
           </View>
         }
       />
     </View>
-   
   );
 };
 
@@ -266,9 +278,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   changeAddressButton: {
-    
     padding: 13,
-   
     alignItems: 'center',
     marginTop: 10,
     width: '40%',
