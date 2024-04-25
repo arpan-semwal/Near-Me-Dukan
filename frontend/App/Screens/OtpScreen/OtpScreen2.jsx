@@ -7,7 +7,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function OtpScreen2({ route }) {
-    const { phoneNumber } = route.params || {};
+    const { phoneNumber, userType } = route.params;
     const [otp, setOtp] = useState('');
     const [isCorrectOtp, setIsCorrectOtp] = useState(true);
     const [isResent, setIsResent] = useState(false);
@@ -22,10 +22,22 @@ export default function OtpScreen2({ route }) {
 
     const handleSubmit = () => {
         const correctOtp = '1234'; // Example correct OTP
+
+        // Perform OTP verification
         if (otp === correctOtp) {
             setIsCorrectOtp(true);
-            // Navigate to RegisterationMainScreen with phoneNumber as a parameter
-            navigation.navigate('Register', { phoneNumber: phoneNumber });
+            // If userType is shopkeeper
+            if (userType === 'shopkeeper') {
+                navigation.navigate('ShopkeeperHome', { phoneNumber });
+            }
+            // If userType is customer
+            else if (userType === 'customer') {
+                navigation.navigate('CustomerHomePage', { phoneNumber });
+            }
+            // If userType is unregistered
+            else if (userType === 'unregistered') {
+                navigation.navigate('Register', { phoneNumber });
+            }
         } else {
             setIsCorrectOtp(false);
         }
@@ -44,7 +56,7 @@ export default function OtpScreen2({ route }) {
                     style={styles.logo}
                 />
             </View>
-            <Text style={styles.heading}>Enter OTP</Text>
+            <Text style={styles.heading}>Enter OTP : {userType}</Text>
             <View style={styles.blueBox}>
                 <View style={styles.countryCodeContainer}>
                     <Text style={styles.countryCode}>+91</Text>

@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import {useCart} from '../../../Context/ContextApi';
 
 export default function BarberHomePage({ route }) {
-  const { name, pincode, shopID , phoneNumber , userType   } = route.params || {};
+  const { name, pincode, shopID , phoneNumber , userType  } = route.params || {};
   const {customerName} = useCart();
   const navigation = useNavigation();
   

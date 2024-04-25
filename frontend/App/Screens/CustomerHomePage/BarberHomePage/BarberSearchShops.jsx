@@ -66,29 +66,29 @@ export default function BarberSearchShops({ route }) {
     navigation.navigate('MyServices', { phoneNumber: shop.phoneNumber , userType:userType });
 };
 
-  const toggleFavorite = async (shop) => {
-    try {
-      const updatedShops = shops.map((s) => {
-        if (s.shopID === shop.shopID) {
-          return { ...s, favorite: !s.favorite };
-        }
-        return s;
-      });
-      setShops(updatedShops);
+const toggleFavorite = async (shop) => {
+  try {
+    const updatedShops = shops.map((s) => {
+      if (s.shopID === shop.shopID) {
+        return { ...s, favorite: !s.favorite };
+      }
+      return s;
+    });
+    setShops(updatedShops);
 
-      const response = await fetch('http://192.168.29.68:3000/preferredShops/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phoneNumber:  phoneNumber, shopID: shop.shopID }),
-      });
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-    }
-  };
+    const response = await fetch('http://192.168.29.68:3000/preferredShops/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber: phoneNumber, shopID: shop.shopID }),
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+  }
+};
   
   return (
     <View style={styles.container}>

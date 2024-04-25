@@ -28,8 +28,43 @@ db.connect(err => {
 
 
 
+// to check weather the number is present in the which database
+app.post('/checkPhoneNumber', (req, res) => {
+    const { phoneNumber } = req.body;
 
-// API endpoint for user registration
+    // Check if the phone number exists in the shopkeepers table
+    db.query('SELECT * FROM shopkeepers WHERE phoneNumber = ?', [phoneNumber], (err, shopkeeperResults) => {
+        if (err) {
+            console.error('Error checking shopkeeper existence:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        // Check if the phone number exists in the newcustomers table
+        db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, customerResults) => {
+            if (err) {
+                console.error('Error checking customer existence:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (shopkeeperResults.length > 0) {
+                // Phone number exists in shopkeepers database
+                return res.status(400).json({ message: 'Phone number already exists in shopkeepers database' });
+            } else if (customerResults.length > 0) {
+                // Phone number exists in newcustomers database
+                return res.status(400).json({ message: 'Phone number already exists in newcustomers database' });
+            } else {
+                // Phone number doesn't exist in either database
+                return res.status(200).json({ message: 'Phone number available' });
+            }
+        });
+    });
+});
+
+
+
+
+
+ 
 // API endpoint for user registration
 app.post('/register', (req, res) => {
     const { phoneNumber, name, pincode, state, city, address, shopID } = req.body;
@@ -494,7 +529,59 @@ app.get('/orders', (req, res) => {
 
 
 
+app.post('/preferredShops/add', (req, res) => {
+    const { phoneNumber, shopID } = req.body;
+  
+    // Add the shopID to the preferred shops list for the given phoneNumber
+    db.query(
+      'INSERT INTO preferredShops (phoneNumber, shopID) VALUES (?, ?)',
+      [phoneNumber, shopID],
+      (err, result) => {
+        if (err) {
+          console.error('Error adding preferred shop:', err);
+          return res.status(500).json({ message: 'Internal server error' });
+        }
+        console.log('Preferred shop added successfully');
+        res.status(200).json({ message: 'Preferred shop added successfully' });
+      }
+    );
+  });
+  
+  app.get('/preferredShops/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
 
+    // Query the database to fetch preferred shops based on phoneNumber
+    db.query(
+        'SELECT * FROM preferredShops WHERE phoneNumber = ?',
+        [phoneNumber],
+        async (err, results) => {
+            if (err) {
+                console.error('Error fetching preferred shops:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            // Fetch shop details for each preferred shop
+            try {
+                const shopsWithDetails = await Promise.all(results.map(async (shop) => {
+                    const shopDetails = await fetchShopDetails(shop.shopID);
+                    return {
+                        ...shop,
+                        shopDetails
+                    };
+                }));
+
+                res.status(200).json(shopsWithDetails);
+            } catch (error) {
+                console.error('Error fetching shop details for preferred shops:', error);
+                res.status(500).json({ message: 'Error fetching shop details for preferred shops' });
+            }
+        }
+    );
+});
+
+
+
+ 
   
   
   

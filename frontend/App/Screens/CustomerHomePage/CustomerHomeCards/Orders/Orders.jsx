@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Colors from '../../../../utils/Colors';
-
+import { useCart, useCustomer } from '../../../../Context/ContextApi';
 export default function Orders() {
     const navigation = useNavigation();
-    const route = useRoute();
-    const { customerPhone, shopID } = route.params;
+    
+    const { customerName, shopID, shopName, custPhoneNumber } = useCustomer();
 
     const [orders, setOrders] = useState([]);
 
@@ -16,7 +16,7 @@ export default function Orders() {
 
     const fetchOrders = () => {
         // Make API call to fetch orders and shopkeeper details based on customerPhone and shopID
-        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${customerPhone}&shopID=${shopID}`)
+        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${custPhoneNumber}&shopID=${shopID}`)
             .then(response => response.json())
             .then(data => {
                 setOrders(data);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../utils/Colors';
 
@@ -11,6 +11,13 @@ export default function OtpScreen1() {
     const navigation = useNavigation();
 
     const handleSubmitPhoneNumber = () => {
+        // Validate phone number
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            alert('Please enter a valid 10-digit phone number');
+            return;
+        }
+    
         // Send a request to check if any user exists with the provided phone number
         fetch('http://192.168.29.68:3000/checkPhoneNumber', {
             method: 'POST',
@@ -21,22 +28,24 @@ export default function OtpScreen1() {
         })
         .then(response => {
             if (response.ok) {
-                // Phone number does not exist, navigate to another screen
-                navigation.navigate('Otp2', { phoneNumber:phoneNumber });
+                // Phone number is available, navigate to Otp2 with userType 'unregistered'
+                navigation.navigate('Otp2', { phoneNumber, userType: 'unregistered' });
             } else {
-                throw new Error('Phone number already exists');
+                return response.json();
+            }
+        })
+        .then(data => {
+            if (data) {
+                // Phone number already exists, navigate to Otp2 with the correct userType
+                navigation.navigate('Otp2', { phoneNumber, userType: data.message.includes('shopkeepers') ? 'shopkeeper' : 'customer' });
             }
         })
         .catch(error => {
-            if (error.message === 'Phone number already exists') {
-                // Phone number already exists, display alert
-                alert('Phone number already exists');
-            } else {
-                console.error('An error occurred while checking the phone number:', error);
-                alert('An error occurred while checking the phone number.');
-            }
+            console.error('An error occurred while checking the phone number:', error);
+            alert('An error occurred while checking the phone number.');
         });
     };
+    
 
     return (
         <View style={styles.container}>
