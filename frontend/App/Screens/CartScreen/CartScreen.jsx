@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useCart } from '../../Context/ContextApi'; // Import useCart hook
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Platform, DatePickerIOS, TimePickerAndroid } from 'react-native';
+ 
+import { useCart, useCustomer } from '../../Context/ContextApi';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
-
+ 
 const CartScreen = ({ route }) => {
-  const { cartItems, removeFromCart, customerName, shopID, shopName, custAddress, pincode, setPincode, state, setState, city, setCity, storeName } = useCart();
+  const { cartItems, removeFromCart} = useCart();
+   
+  
+  const { userType } = useCart();
+  const {   customerName, shopID, shopName , custPhoneNumber } = useCustomer();
   const [totalPrice, setTotalPrice] = useState(0);
   const [itemCount, setItemCount] = useState(0);
+  const [shopkeeperDetails, setShopkeeperDetails] = useState(null); // State to store shopkeeper details
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState('');
   const navigation = useNavigation();
 
   function calculateTotalPrice(items) {
@@ -22,7 +30,20 @@ const CartScreen = ({ route }) => {
   useEffect(() => {
     setTotalPrice(calculateTotalPrice(cartItems));
     setItemCount(calculateItemCount(cartItems));
+
+    // Fetch shopkeeper details when component mounts
+    fetchShopkeeperDetails();
   }, [cartItems]);
+
+  // Fetch shopkeeper details based on shopID
+  const fetchShopkeeperDetails = () => {
+    fetch(`http://192.168.29.68:3000/shopkeeperDetails/${shopID}`)
+      .then(response => response.json())
+      .then(data => {
+        setShopkeeperDetails(data);
+      })
+      .catch(error => console.error('Error fetching shopkeeper details:', error));
+  };
 
   const handleIncreaseQuantity = (item) => {
     item.quantity++;
@@ -49,18 +70,28 @@ const CartScreen = ({ route }) => {
     navigation.goBack();
   };
 
-  const changeAddress = (address) => {
-    navigation.navigate("ChangeAddress", { custAddress},{pincode},{state},{city});
-  };
-  
   const handleCheckout = () => {
-    navigation.navigate("Checkout", { cartItems, totalPrice }); // Pass cartItems and totalPrice to Checkout screen
+    navigation.navigate("Checkout", { cartItems, totalPrice, shopkeeperName: shopkeeperDetails.shopkeeperName });
   };
 
-  const handleMakeAppointment = () => {
-    // Logic to handle making an appointment
-    // You can navigate to a screen for making an appointment or perform any other action
-    console.log("Make an appointment");
+  const handleSelectDate = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleSelectTime = async () => {
+    try {
+      const { action, hour, minute } = await TimePickerAndroid.open({
+        hour: 12,
+        minute: 0,
+        is24Hour: false,
+        mode: 'spinner'
+      });
+      if (action !== TimePickerAndroid.dismissedAction) {
+        setSelectedTime(`${hour}:${minute}`);
+      }
+    } catch ({ code, message }) {
+      console.warn('Cannot open time picker', message);
+    }
   };
 
   return (
@@ -69,12 +100,11 @@ const CartScreen = ({ route }) => {
         <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
         <View style={styles.headerText}>
           <Text style={styles.welcomeText}>Welcome: {customerName}</Text>
-          <Text style={styles.shoppingAt}>Shopping at: {storeName}</Text>
-          
-          <TouchableOpacity onPress={changeAddress}>
-            <Text style={styles.shoppingAt}>Change Address</Text>
-          </TouchableOpacity>
+          <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
           <Text style={styles.shoppingAt}>Shop ID: {shopID}</Text>
+          {shopkeeperDetails && (
+            <Text style={styles.shoppingAt}>Shopkeeper: {shopkeeperDetails.shopkeeperName}</Text>
+          )}
         </View>
       </View>
       <View style={styles.line} />
@@ -108,31 +138,41 @@ const CartScreen = ({ route }) => {
             </View>
           </View>
         )}
+        
         ListFooterComponent={
           <View style={styles.totalPriceContainer}>
             <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
-            {storeName.toLowerCase() === 'salon' ? (
-              <TouchableOpacity style={styles.button} onPress={handleMakeAppointment}>
-                <Text style={styles.buttonText}>Make an Appointment</Text>
-              </TouchableOpacity>
+            {shopkeeperDetails && shopkeeperDetails.selectedCategory === 'Salon Shop' ? (
+              <>
+                <Text style={styles.deliveryText}>Shop Address</Text>
+                <Text style={styles.addressText}>{shopkeeperDetails.address}</Text>
+                <Text style={styles.addressText}>{shopkeeperDetails.city}, {shopkeeperDetails.state}</Text>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
+                    <Text style={styles.buttonText}>Continue Shopping</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button} onPress={handleCheckout}>
+                    <Text style={styles.buttonText}>Proceed to Pay</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
             ) : (
               <>
-                <Text style={styles.deliveryText}>Deliver to address below</Text>
-                <Text style={styles.addressText}>{custAddress}</Text>
-                <Text style={styles.addressText}>Pincode: {pincode}</Text>
-                <Text style={styles.addressText}> {city} ,{state}</Text>
-                
-                <TouchableOpacity onPress={() => changeAddress(custAddress)}>
-                  <Text style={styles.shoppingAt}>Change Address</Text>
-                </TouchableOpacity>
+                <Text style={styles.deliveryText}>Select Appointment Date and Time</Text>
+                {Platform.OS === 'ios' ? (
+                  <DatePickerIOS
+                    date={selectedDate}
+                    onDateChange={handleSelectDate}
+                    mode="date"
+                  />
+                ) : (
+                  <TouchableOpacity style={styles.button} onPress={handleSelectTime}>
+                    <Text style={styles.buttonText}>Select Time</Text>
+                  </TouchableOpacity>
+                )}
+                {selectedTime !== '' && <Text style={styles.selectedDateTime}>Selected Time: {selectedTime}</Text>}
               </>
             )}
-            <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
-              <Text style={styles.buttonText}>Continue Shopping</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleCheckout}>
-              <Text style={styles.buttonText}>Proceed to Pay</Text>
-            </TouchableOpacity>
           </View>
         }
       />
@@ -165,10 +205,6 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  customerName: {
-    fontSize: 16,
     marginBottom: 5,
   },
   shoppingAt: {
@@ -256,7 +292,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
-    width: '50%',
+    width: '30%',
   },
   buttonText: {
     color: 'white',
@@ -277,14 +313,15 @@ const styles = StyleSheet.create({
   addressText: {
     marginBottom: 10,
   },
-  changeAddressButton: {
-    padding: 13,
-    alignItems: 'center',
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems:"center",
     marginTop: 10,
-    width: '40%',
+    width: '200%',
   },
-  changeAddressButtonText: {
-    color: 'black',
+  selectedDateTime: {
+    marginTop: 10,
     fontWeight: 'bold',
   },
 });

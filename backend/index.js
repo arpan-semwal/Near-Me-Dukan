@@ -400,6 +400,99 @@ app.get('/salons', (req, res) => {
 });
 
 
+app.get('/shopkeeperDetails/:shopID', (req, res) => {
+    const shopID = req.params.shopID;
+
+    // Query the database to fetch shopkeeper details based on shopID
+    db.query(
+        'SELECT * FROM shopkeepers WHERE phoneNumber = ?',
+        [shopID],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching shopkeeper details:', err);
+                return res.status(500).json({ message: 'Internal server error', error: err });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'Shopkeeper not found' });
+            }
+
+            // Shopkeeper details found
+            const shopkeeper = result[0];
+            res.status(200).json(shopkeeper);
+        }
+    );
+});
+
+
+ 
+ 
+
+// API endpoint to get customer name by phone number
+// API endpoint to get customer details by shop ID
+app.get('/customerDetailsByShopID/:shopID', (req, res) => {
+    const shopID = req.params.shopID;
+
+    // Query the database to fetch customer details based on shop ID
+    db.query(
+        'SELECT * FROM newcustomers WHERE shop_id = ?',
+        [shopID],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching customer details by shop ID:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'No customers found for this shop' });
+            }
+
+            // Customers found
+            res.status(200).json(result);
+        }
+    );
+});
+
+
+
+// API endpoint to save orders
+app.post('/saveOrder', (req, res) => {
+    const { customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName } = req.body;
+
+    // Save order details to the database
+    db.query(
+        'INSERT INTO tbl_orders (customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [customerName, custPhoneNumber, JSON.stringify(cartItems), totalPrice, selectedDate, selectedTime, shopID, shopkeeperName],
+        (err, result) => {
+            if (err) {
+                console.error('Error saving order:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            console.log('Order saved successfully');
+            res.status(200).json({ message: 'Order saved successfully' });
+        }
+    );
+});
+ 
+app.get('/orders', (req, res) => {
+    const { customerPhoneNumber, shopID } = req.query;
+
+    // Fetch orders from the database based on customerPhoneNumber and shopID
+    db.query(
+        'SELECT * FROM tbl_orders WHERE custPhoneNumber = ? AND shopID = ?',
+        [customerPhoneNumber, shopID],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching orders:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json(results);
+        }
+    );
+});
+
+
+
 
 
   

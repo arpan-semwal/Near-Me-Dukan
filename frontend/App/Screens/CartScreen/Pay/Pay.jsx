@@ -3,9 +3,14 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Animated }
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
+import { useCart, useCustomer } from '../../../Context/ContextApi';
+
 const Pay = () => {
+  
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
+  const { customerName, shopName, custPhoneNumber } = useCustomer();
+  const { shopID, storeName } = useCart();
 
   useEffect(() => {
     startAnimation();
@@ -24,8 +29,8 @@ const Pay = () => {
   };
 
   const goToOrderPage = () => {
-    // Navigate to the order page when the button is pressed
-    navigation.navigate('Orders');
+    // Navigate to the order page and pass customerPhone and shopID as params
+    navigation.navigate('Orders', { customerPhone: custPhoneNumber, shopID: shopID });
   };
 
   return (

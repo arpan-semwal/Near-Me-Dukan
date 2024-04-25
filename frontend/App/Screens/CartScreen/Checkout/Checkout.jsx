@@ -2,37 +2,60 @@ import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
-import {useCart} from '../../../Context/ContextApi';
+import { useCart, useCustomer } from '../../../Context/ContextApi';
+import axios from 'axios';
+
+const saveOrder = async (customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName) => {
+  try {
+    const response = await axios.post('http://192.168.29.68:3000/saveOrder', {
+      customerName: customerName,
+      custPhoneNumber: custPhoneNumber,
+      cartItems: cartItems,
+      totalPrice: totalPrice,
+      selectedDate: selectedDate || null, // Pass null if selectedDate is empty
+      selectedTime: selectedTime || null, // Pass null if selectedTime is empty
+      shopID: shopID, // Pass shopID
+      shopkeeperName: shopkeeperName, // Pass shopkeeperName
+    });
+    console.log(response.data.message);
+    // Redirect to success page or show a success message
+  } catch (error) {
+    console.error('Error saving order:', error);
+    // Handle error
+  }
+};
 
 const Checkout = ({ route }) => {
-  const { cartItems, totalPrice } = route.params; // Receive cartItems and totalPrice from route params
-  const {customerName,shopID ,storeName } = useCart();
+  const { customerName, shopName, custPhoneNumber } = useCustomer();
+  const { cartItems, totalPrice, shopkeeperName } = route.params; 
+  const { shopID, storeName } = useCart();
   const navigation = useNavigation();
+
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
           <View style={styles.headerText}>
-            <Text style={styles.welcomeText}>Welcome:{customerName} </Text>
-            <Text style={styles.shoppingAt}>Shopping at:{storeName}  </Text>
+            <Text style={styles.welcomeText}>Welcome: {customerName}</Text>
+            <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
             <TouchableOpacity>
               <Text style={styles.shoppingAt}>Change Address</Text>
             </TouchableOpacity>
-            <Text style={styles.shoppingAt}>Shop ID:{shopID} </Text>
+            <Text style={styles.shoppingAt}>Shop ID: {shopID}</Text>
+            <Text style={styles.shoppingAt}>ShopKeeper Name: {shopkeeperName}</Text>
           </View>
         </View>
-		<View>
-			<Text style={styles.checkout}>CheckOut</Text>
-			
-		</View>
-        
+        <View>
+          <Text style={styles.checkout}>CheckOut</Text>
+        </View>
+
         {cartItems.map((item, index) => (
           <View key={item.id}>
             <View style={styles.itemContainer}>
               <Image source={item.image} style={styles.itemImage} />
               <View style={styles.itemDetails}>
-                <Text style={styles.itemText}>{item.title}</Text>
+                <Text style={styles.itemText}>{item.name}</Text>
                 <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
                 <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
                 <Text style={styles.itemTotal}>Total: ₹{item.price * item.quantity}</Text>
@@ -41,21 +64,19 @@ const Checkout = ({ route }) => {
             {index < cartItems.length - 1 && <View style={styles.line} />}
           </View>
         ))}
-     
+
         <Text style={styles.totalPrice}>Total Price: ₹{totalPrice}</Text>
 
         <Text style={styles.paymentMethod}>Select Payment Method</Text>
         <TouchableOpacity
   style={styles.paymentButton}
-  onPress={() => navigation.navigate('Pay')}
+  onPress={() => {
+    navigation.navigate('Pay');
+    saveOrder(customerName, custPhoneNumber, cartItems, totalPrice, '', '', shopID, shopkeeperName);
+    
+  }}
 >
   <Text style={styles.paymentButtonText}>Pay At Shop</Text>
-</TouchableOpacity>
-<TouchableOpacity
-  style={styles.paymentButton}
-  onPress={() => navigation.navigate('Pay')}
->
-  <Text style={styles.paymentButtonText}>UPI/Cash on Delivery</Text>
 </TouchableOpacity>
       </View>
     </ScrollView>
@@ -96,14 +117,13 @@ const styles = StyleSheet.create({
   shoppingAt: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5
+    marginBottom: 5,
   },
-  checkout:{
-	fontWeight:"bold",
-	fontSize:26,
-	textAlign:"center",
-	marginBottom:20
-	
+  checkout: {
+    fontWeight: 'bold',
+    fontSize: 26,
+    textAlign: 'center',
+    marginBottom: 20,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -111,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
     alignItems: 'center',
-	borderRadius:5
+    borderRadius: 5,
   },
   itemImage: {
     width: 80,

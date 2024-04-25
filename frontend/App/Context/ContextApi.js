@@ -21,8 +21,10 @@ export const CartProvider = ({ children }) => {
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
   const [storeName, setStoreName] = useState('');
- 
-  const addToCart = (product) => {
+  const [userType, setUserType] = useState('customer'); // Add userType state
+  const [custPhoneNumber, setCustPhoneNumber] = useState('');
+
+  const addToCart = (product) => { // Modify addToCart to accept userType
     // Check if the product is already in the cart
     const existingItem = cartItems.find(item => item.id === product.id);
     if (existingItem) {
@@ -52,7 +54,7 @@ export const CartProvider = ({ children }) => {
       customerName, 
       setCustomerName, 
       shopID, 
-      setShopID,  // This is where you set shopId
+      setShopID,  
       shopName, 
       setShopName,
       custAddress,
@@ -65,9 +67,27 @@ export const CartProvider = ({ children }) => {
       setCity,
       storeName,  
       setStoreName,  
-      
+      userType, // Include userType in the context value
+      setUserType, // Include setUserType in the context value
     }}>
-      <CustomerContext.Provider value={{ customerName, setCustomerName, shopID, setShopID, shopName, setShopName,custAddress , setCustAddress, pincode,setPincode, state, setState, city,setCity }}>
+      <CustomerContext.Provider value={{ 
+        customerName, 
+        setCustomerName, 
+        shopID, 
+        setShopID, 
+        shopName, 
+        setShopName,
+        custAddress , 
+        setCustAddress, 
+        pincode,
+        setPincode, 
+        state, 
+        setState, 
+        city, 
+        setCity ,  
+        custPhoneNumber, 
+        setCustPhoneNumber 
+      }}>
         {children}
       </CustomerContext.Provider>
     </CartContext.Provider>
