@@ -1,109 +1,79 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator , StyleSheet , TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function Inventory({ route }) {
-    const { selectedSubCategoryId } = route.params;
-
-    // State to store the fetched services
+const Inventory = ({ route }) => {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { selectedSubCategory } = route.params;
     const navigation = useNavigation();
 
-    // Fetch services based on the selected subcategory ID
     useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const response = await fetch(`http://192.168.29.68:3000/services/subcategory/${selectedSubCategoryId}`);
+        fetchMainServices();
+    }, []);
+
+    const fetchMainServices = async () => {
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/mainServices/${selectedSubCategory}`);
+            if (response.ok) {
                 const data = await response.json();
-
-                // Update the state with the fetched services
                 setServices(data);
-            } catch (error) {
-                console.error('Error fetching services:', error);
-            } finally {
-                setLoading(false);
+            } else {
+                console.error('Failed to fetch main services:', response.statusText);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching main services:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchServices();
-    }, [selectedSubCategoryId]);
-
-    // Group services into rows of 3
-    const groupedServices = [];
-    for (let i = 0; i < services.length; i += 3) {
-        groupedServices.push(services.slice(i, i + 3));
-    }
-
-    // Render each row of services
-    const renderRow = ({ item }) => (
-        <View style={styles.row}>
-            {item.map((service, index) => (
-                <TouchableOpacity
-                    key={index}
-                    style={styles.card}
-                    onPress={() => navigation.navigate('SubSalonService', { mainServiceId: service.id })}
-                >
-                    <Text style={styles.itemText}>{service.name}</Text>
-                </TouchableOpacity>
-            ))}
-        </View>
+    const renderService = ({ item }) => (
+        <TouchableOpacity
+            style={styles.serviceContainer}
+            onPress={() => navigation.navigate('SubSalonService', { mainServiceId: item.id })}
+        >
+            <Text style={styles.serviceName}>{item.name}</Text>
+        </TouchableOpacity>
     );
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Inventory</Text>
-
-            {/* Display loading indicator while fetching data */}
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList
-                    data={groupedServices}
-                    renderItem={renderRow}
-                    keyExtractor={(item, index) => index.toString()}
+                    data={services}
+                    renderItem={renderService}
+                    keyExtractor={(item) => item.id.toString()}
                 />
             )}
         </View>
     );
-}
+};
+
+export default Inventory;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     title: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 20,
-        textAlign: 'center',
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
+    serviceContainer: {
+        padding: 10,
+        marginVertical: 5,
+        backgroundColor: '#eaeaea',
+        borderRadius: 5,
+        width: 300,
     },
-    card: {
-        flex: 1,
-        padding: 15,
-        marginHorizontal: 5,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        alignItems: 'center',
-    },
-    itemText: {
+    serviceName: {
         fontSize: 16,
-        textAlign: 'center',
     },
 });

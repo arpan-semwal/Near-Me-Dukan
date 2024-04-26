@@ -108,6 +108,19 @@ app.post('/logout', (req, res) => {
 
 
 
+app.get('/mainServices', (req, res) => {
+    const { selectedSubCategory } = req.query;
+
+    db.query('SELECT * FROM tbl_salon_main_services WHERE category = ?', [selectedSubCategory], (err, results) => {
+        if (err) {
+            console.error('Error fetching main services:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        res.status(200).json(results);
+    });
+});
+
 
 // You can add this middleware to validate session tokens for protected routes
 function authenticateSession(req, res, next) {
@@ -221,26 +234,7 @@ app.post('/register', (req, res) => {
     });
 });
 
-
-//app.post('/checkPhoneNumber', (req, res) => {
-//  const { phoneNumber } = req.body;
-
-//  // Check if user already exists
-//  db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
-//      if (err) {
-//          console.error('Error checking user existence:', err);
-//          return res.status(500).json({ message: 'Internal server error' });
-//      }
-//      if (results.length > 0) {
-//          return res.status(400).json({ message: 'Phone number already exists' });
-//      }
-//      // If phone number doesn't exist, return success
-//      return res.status(200).json({ message: 'Phone number available' });
-//  });
-//});
  
-
-
 // API endpoint for shopkeeper registration
  
 app.post('/shopkeeperRegister', (req, res) => {
@@ -300,7 +294,6 @@ app.get('/subcategories/:categoryId', (req, res) => {
 app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
     const phoneNumber = req.params.phoneNumber;
 
-    // Fetch shopkeeper details from the database based on the phone number
     db.query(
         'SELECT shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory FROM shopkeepers WHERE phoneNumber = ?',
         [phoneNumber],
@@ -315,6 +308,23 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
             } else {
                 res.status(404).json({ message: 'Shopkeeper not found' });
             }
+        }
+    );
+});
+
+app.get('/mainServices/:subcategory', (req, res) => {
+    const subcategory = req.params.subcategory;
+
+    db.query(
+        'SELECT * FROM nkd.tbl_salon_main_services WHERE sub_category_id = (SELECT id FROM tbl_subcategories_salon WHERE name = ?)',
+        [subcategory],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching main services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            res.status(200).json(results);
         }
     );
 });

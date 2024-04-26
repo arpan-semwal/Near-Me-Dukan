@@ -9,20 +9,21 @@ export default function SalonShop({ route }) {
     const [isVisible1, setIsVisible1] = useState(true); // State for "Make Store LIVE" switch
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
+    const [selectedSubCategory, setSelectedSubCategory] = useState('');
     
     useEffect(() => {
-        // Fetch shopkeeper details when the component mounts
         fetchShopkeeperDetails();
     }, []);
 
     const fetchShopkeeperDetails = async () => {
         try {
-            // Retrieve shopkeeper details from the server
             const response = await fetch(`http://192.168.29.68:3000/shopkeeperDetails/${route.params.phoneNumber}`);
             if (response.ok) {
                 const data = await response.json();
                 setShopkeeperName(data.shopkeeperName);
-                setShopkeeperPhoneNumber(route.params.phoneNumber); // Shopkeeper's phone number passed via route.params
+                setShopkeeperPhoneNumber(route.params.phoneNumber);
+                setSelectedSubCategory(data.selectedSubCategory);
+               
             } else {
                 console.error('Failed to fetch shopkeeper details:', response.statusText);
             }
@@ -31,6 +32,7 @@ export default function SalonShop({ route }) {
         }
     };
 
+     
     const buttonsData = [
         { id: 6, title: 'My Services', screen: 'MyServices' },
         { id: 1, title: 'My Appointments', screen: 'ShopkeeperOrders' },
@@ -41,16 +43,16 @@ export default function SalonShop({ route }) {
         { id: 10, title: 'Inventory', screen: 'Inventory' },
     ];
 
-    const { selectedSubCategory, selectedSubCategoryId, phoneNumber, userType } = route.params; // Access selectedSubCategory from route.params
+    
 
     // Function to handle button press and navigate to a specific screen
     const handleButtonPress = (screenName) => {
         if (screenName === 'Inventory') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory, selectedSubCategoryId, phoneNumber: phoneNumber, userType: userType });
+            navigation.navigate(screenName, { selectedSubCategory: selectedSubCategory,  phoneNumber: shopkeeperPhoneNumber  });
         } else if (screenName === 'MyServices') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory, selectedSubCategoryId, phoneNumber: phoneNumber, userType: userType });
+            navigation.navigate(screenName, { selectedSubCategory:selectedSubCategory,   phoneNumber: shopkeeperPhoneNumber });
         } else {
             navigation.navigate(screenName);
         }
