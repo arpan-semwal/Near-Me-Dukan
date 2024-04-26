@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Switch, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SalonShop({ route }) {
     const navigation = useNavigation();
@@ -15,88 +16,115 @@ export default function SalonShop({ route }) {
         { id: 5, title: 'My Payments', screen: 'ShopkeeperPayments' },
         { id: 7, title: 'My Profile', screen: 'SalonProfile' },
         { id: 10, title: 'Inventory', screen: 'Inventory' },
-        { id: 8, title: 'Log Out', screen: 'Another' },
     ];
 
-    const { selectedSubCategory , selectedSubCategoryId ,   phoneNumber, userType} = route.params; // Access selectedSubCategory from route.params
+    const { selectedSubCategory, selectedSubCategoryId, phoneNumber, userType } = route.params; // Access selectedSubCategory from route.params
 
     // Function to handle button press and navigate to a specific screen
     const handleButtonPress = (screenName) => {
         if (screenName === 'Inventory') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory  , selectedSubCategoryId ,  phoneNumber: phoneNumber,userType:userType});
-        } 
-        else if (screenName === 'MyServices') {
+            navigation.navigate(screenName, { selectedSubCategory, selectedSubCategoryId, phoneNumber: phoneNumber, userType: userType });
+        } else if (screenName === 'MyServices') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory  , selectedSubCategoryId ,  phoneNumber: phoneNumber,userType:userType});
-        }
-        
-        else {
+            navigation.navigate(screenName, { selectedSubCategory, selectedSubCategoryId, phoneNumber: phoneNumber, userType: userType });
+        } else {
             navigation.navigate(screenName);
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            // Retrieve session token from AsyncStorage
+            const sessionToken = await AsyncStorage.getItem('sessionToken');
+            
+            console.log('Session token:', sessionToken); // Log the session token
+    
+            // Call logout API
+            const response = await fetch('http://192.168.29.68:3000/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: phoneNumber }), // Assuming phoneNumber is the userId
+            });
+    
+            if (response.ok) {
+                // Clear session token from AsyncStorage
+                await AsyncStorage.removeItem('sessionToken');
+    
+                // Navigate to login screen
+                navigation.navigate('HomePage');
+            } else {
+                // Handle error
+                console.error('Logout failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
+
     return (
-        <FlatList
-            data={['header', ...buttonsData]}
-            keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
-            renderItem={({ item }) => {
-                if (item === 'header') {
-                    return (
-                        <View style={styles.container}>
-                            <View style={styles.headerContainer}>
-                                <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
-                                <View style={styles.headerText}>
-                                    <Text style={styles.welcomeText}>Welcome</Text>
-                                    <Text style={styles.shoppingAt}>Shop ID:</Text>
-                                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
-                                </View>
-                            </View>
+        <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
+                <View style={styles.headerText}>
+                    <Text style={styles.welcomeText}>Welcome</Text>
+                    <Text style={styles.shoppingAt}>Shop ID:</Text>
+                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                </View>
+            </View>
 
-                            {/* Full-width image */}
-                            <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
+            {/* Full-width image */}
+            <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
 
-                            {/* Circular image with overlay */}
-                            <View style={styles.circularImageContainer}>
-                                <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
-                            </View>
+            {/* Circular image with overlay */}
+            <View style={styles.circularImageContainer}>
+                <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
+            </View>
 
-                            {/* Store Visibility switch */}
-                            <View style={styles.visibilityContainer}>
-                                <Text style={styles.visibilityHeading}>Store Visibility</Text>
-                                <Switch
-                                    trackColor={{ false: '#767577', true: '#81b0ff' }}
-                                    thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
-                                    ios_backgroundColor="#3e3e3e"
-                                    onValueChange={() => setIsVisible(previousState => !previousState)}
-                                    value={isVisible}
-                                    style={styles.toggleButton}
-                                />
-                            </View>
+            {/* Store Visibility switch */}
+            <View style={styles.visibilityContainer}>
+                <Text style={styles.visibilityHeading}>Store Visibility</Text>
+                <Switch
+                    trackColor={{ false: '#767577', true: '#81b0ff' }}
+                    thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => setIsVisible(previousState => !previousState)}
+                    value={isVisible}
+                    style={styles.toggleButton}
+                />
+            </View>
 
-                            {/* Make Store LIVE switch */}
-                            <View style={styles.visibilityContainer}>
-                                <Text style={styles.visibilityHeading}>Make Store LIVE</Text>
-                                <Switch
-                                    trackColor={{ false: '#767577', true: '#81b0ff' }}
-                                    thumbColor={isVisible1 ? '#FF0000' : '#f4f3f4'}
-                                    ios_backgroundColor="#3e3e3e"
-                                    onValueChange={() => setIsVisible1(previousState => !previousState)}
-                                    value={isVisible1}
-                                    style={styles.toggleButton}
-                                />
-                            </View>
-                        </View>
-                    );
-                } else {
-                    return (
-                        <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(item.screen)}>
-                            <Text style={styles.buttonText}>{item.title}</Text>
-                        </TouchableOpacity>
-                    );
-                }
-            }}
-        />
+            {/* Make Store LIVE switch */}
+            <View style={styles.visibilityContainer}>
+                <Text style={styles.visibilityHeading}>Make Store LIVE</Text>
+                <Switch
+                    trackColor={{ false: '#767577', true: '#81b0ff' }}
+                    thumbColor={isVisible1 ? '#FF0000' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => setIsVisible1(previousState => !previousState)}
+                    value={isVisible1}
+                    style={styles.toggleButton}
+                />
+            </View>
+
+            {/* Logout Button */}
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                <Text style={styles.logoutText}>Logout</Text>
+            </TouchableOpacity>
+
+            {/* Buttons */}
+            <FlatList
+                data={buttonsData}
+                keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+                renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(item.screen)}>
+                        <Text style={styles.buttonText}>{item.title}</Text>
+                    </TouchableOpacity>
+                )}
+            />
+        </View>
     );
 }
 
@@ -177,6 +205,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     buttonText: {
+        fontSize: 16,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    logoutButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#FF0000',
+        marginHorizontal: 10,
+        marginVertical: 5,
+        height: 50,
+        borderRadius: 10,
+    },
+    logoutText: {
         fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',

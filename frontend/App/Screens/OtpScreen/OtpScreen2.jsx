@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity , Dimensions , Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
+ 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -20,28 +21,44 @@ export default function OtpScreen2({ route }) {
         setIsCorrectOtp(true);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const correctOtp = '1234'; // Example correct OTP
-
+    
         // Perform OTP verification
         if (otp === correctOtp) {
             setIsCorrectOtp(true);
-            // If userType is shopkeeper
-            if (userType === 'shopkeeper') {
-                navigation.navigate('ShopkeeperHome', { phoneNumber });
-            }
-            // If userType is customer
-            else if (userType === 'customer') {
-                navigation.navigate('CustomerHomePage', { phoneNumber });
-            }
-            // If userType is unregistered
-            else if (userType === 'unregistered') {
-                navigation.navigate('Register', { phoneNumber });
+            
+            try {
+                // Make a request to create a session in the backend
+                const response = await fetch('http://192.168.29.68:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId: phoneNumber }), // Assuming phoneNumber is the userId
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    // Navigate user based on userType
+                    if (userType === 'shopkeeper') {
+                        navigation.navigate('ShopkeeperHome', { phoneNumber });
+                    } else if (userType === 'customer') {
+                        navigation.navigate('CustomerHomePage', { phoneNumber });
+                    } else if (userType === 'unregistered') {
+                        navigation.navigate('Register', { phoneNumber });
+                    }
+                } else {
+                    console.error('Error creating session:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
             }
         } else {
             setIsCorrectOtp(false);
         }
     };
+    
 
     const handleResend = () => {
         setIsResent(true);

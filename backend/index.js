@@ -2,6 +2,7 @@ const mysql = require('mysql');
 const express = require('express');
 const bodyParser = require('body-parser'); // Import body-parser
 const app = express();
+const crypto = require('crypto');
  
 
 const multer = require('multer');
@@ -48,7 +49,7 @@ app.post('/checkPhoneNumber', (req, res) => {
 
             if (shopkeeperResults.length > 0) {
                 // Phone number exists in shopkeepers database
-                return res.status(400).json({ message: 'Phone number already exists in shopkeepers database' });
+                return res.status(400).json({ message: 'Phone number already exists in shopkeepers database'  });
             } else if (customerResults.length > 0) {
                 // Phone number exists in newcustomers database
                 return res.status(400).json({ message: 'Phone number already exists in newcustomers database' });
@@ -59,6 +60,92 @@ app.post('/checkPhoneNumber', (req, res) => {
         });
     });
 });
+
+app.post('/login', (req, res) => {
+    const { userId } = req.body;
+    const sessionToken = generateSessionToken(); // Function to generate session token
+    const loginTime = new Date();
+    const expirationTime = new Date();
+    expirationTime.setDate(expirationTime.getDate() + 10); // Expires after 10 days
+
+    // Insert session data into the database
+    db.query('INSERT INTO sessions (user_id, session_token, login_time, expiration_time) VALUES (?, ?, ?, ?)', 
+        [userId, sessionToken, loginTime, expirationTime],
+        (err, result) => {
+            if (err) {
+                console.error('Error creating session:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json({ sessionToken, expirationTime });
+        }
+    );
+});
+
+// Function to generate a session token
+function generateSessionToken() {
+    // Your session token generation logic here
+    return crypto.randomBytes(32).toString('hex');
+}
+
+
+
+
+app.post('/logout', (req, res) => {
+    const { userId } = req.body;
+
+    // Delete session from the database
+    db.query('DELETE FROM sessions WHERE user_id = ?', [userId], (err, result) => {
+        if (err) {
+            console.error('Error logging out:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+        
+        console.log('Deleted session:', result); // Log the result of the database operation
+
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
+
+
+
+
+// You can add this middleware to validate session tokens for protected routes
+function authenticateSession(req, res, next) {
+    const sessionToken = req.headers.authorization;
+    if (!sessionToken) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Validate session token from the database
+    db.query('SELECT * FROM sessions WHERE session_token = ?', [sessionToken], (err, results) => {
+        if (err) {
+            console.error('Error validating session:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        const session = results[0];
+        const currentTime = new Date();
+        if (currentTime > new Date(session.expiration_time)) {
+            // Session expired, delete it from the database
+            db.query('DELETE FROM sessions WHERE session_token = ?', [sessionToken], (err, result) => {
+                if (err) {
+                    console.error('Error deleting expired session:', err);
+                }
+            });
+            return res.status(401).json({ message: 'Session expired' });
+        }
+
+        // Attach user ID to the request for further processing
+        req.userId = session.user_id;
+        next();
+    });
+}
+
+module.exports = { app, authenticateSession };
 
 
 
