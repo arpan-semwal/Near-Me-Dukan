@@ -3,18 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import { useCart } from '../../../../Context/ContextApi'; // Import useCart hook
 
 export default function SelectedServices({ route }) {
-    const { mainServiceName, subServices, userType } = route.params;
-    const { addToCart } = useCart(); // Access addToCart function from CartContext
-    const [addedItems, setAddedItems] = useState([]); // State to manage items that have been added to cart
-
-    const handleAddToCart = (item) => {
-        addToCart(item);
-        setAddedItems([...addedItems, item.id]); // Add item ID to the list of added items
-    };
-
-    const isAddedToCart = (itemId) => addedItems.includes(itemId); // Check if item is added to cart
-
-    console.log('User Type:', userType);
+    const { mainServiceName, subServices } = route.params;
 
     return (
         <View style={styles.container}>
@@ -27,13 +16,6 @@ export default function SelectedServices({ route }) {
                     <View style={styles.card}>
                         <Text style={styles.itemText}>Sub Service: {item.name}</Text>
                         <Text style={styles.itemText}>Price: ${item.price}</Text>
-                        {userType === 'customer' && ( // Render only if userType is 'customer'
-                            <TouchableOpacity
-                                style={styles.addToCartButton}
-                                onPress={() => handleAddToCart(item)}>
-                                <Text style={styles.addToCartText}>{isAddedToCart(item.id) ? 'Added to Cart' : 'Add to Cart'}</Text>
-                            </TouchableOpacity>
-                        )}
                     </View>
                 )}
             />

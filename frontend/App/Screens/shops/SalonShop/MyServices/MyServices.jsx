@@ -3,11 +3,10 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity }
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 export default function MyServices({ route }) {
-    const { phoneNumber , userType } = route.params;
+    const { phoneNumber } = route.params;
 
     const [selectedServices, setSelectedServices] = useState([]);
     const [loading, setLoading] = useState(true);
-    console.log('User Type:', userType);
 
     const navigation = useNavigation();
 
@@ -24,27 +23,12 @@ export default function MyServices({ route }) {
         }
     };
 
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchSelectedSubServices();
-        }, [phoneNumber])
-    );
-
-    const groupByMainService = () => {
-        const groupedServices = {};
-
-        selectedServices.forEach((service) => {
-            if (!groupedServices[service.mainServiceName]) {
-                groupedServices[service.mainServiceName] = [];
-            }
-            groupedServices[service.mainServiceName].push(service);
-        });
-
-        return groupedServices;
-    };
+    useEffect(() => {
+        fetchSelectedSubServices();
+    }, [phoneNumber]);
 
     const handleMainServiceClick = (mainServiceName, subServices) => {
-        navigation.navigate('SelectedServices', { mainServiceName, subServices , userType:userType });
+        navigation.navigate('SelectedServices', { mainServiceName, subServices });
     };
 
     return (
@@ -55,13 +39,13 @@ export default function MyServices({ route }) {
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList
-                    data={Object.entries(groupByMainService())}
-                    keyExtractor={(item, index) => index.toString()}
+                    data={selectedServices}
+                    keyExtractor={(item) => item.mainServiceName}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.card}
-                            onPress={() => handleMainServiceClick(item[0], item[1])}>
-                            <Text style={styles.mainServiceName}>{item[0]}</Text>
+                            onPress={() => handleMainServiceClick(item.mainServiceName, item.subServices)}>
+                            <Text style={styles.mainServiceName}>{item.mainServiceName}</Text>
                         </TouchableOpacity>
                     )}
                 />
