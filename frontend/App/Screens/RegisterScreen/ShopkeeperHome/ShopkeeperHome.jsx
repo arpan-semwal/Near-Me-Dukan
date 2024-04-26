@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Switch, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,6 +7,29 @@ export default function SalonShop({ route }) {
     const navigation = useNavigation();
     const [isVisible, setIsVisible] = useState(true);
     const [isVisible1, setIsVisible1] = useState(true); // State for "Make Store LIVE" switch
+    const [shopkeeperName, setShopkeeperName] = useState('');
+    const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
+    
+    useEffect(() => {
+        // Fetch shopkeeper details when the component mounts
+        fetchShopkeeperDetails();
+    }, []);
+
+    const fetchShopkeeperDetails = async () => {
+        try {
+            // Retrieve shopkeeper details from the server
+            const response = await fetch(`http://192.168.29.68:3000/shopkeeperDetails/${route.params.phoneNumber}`);
+            if (response.ok) {
+                const data = await response.json();
+                setShopkeeperName(data.shopkeeperName);
+                setShopkeeperPhoneNumber(route.params.phoneNumber); // Shopkeeper's phone number passed via route.params
+            } else {
+                console.error('Failed to fetch shopkeeper details:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching shopkeeper details:', error);
+        }
+    };
 
     const buttonsData = [
         { id: 6, title: 'My Services', screen: 'MyServices' },
@@ -65,66 +88,73 @@ export default function SalonShop({ route }) {
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
-                <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome</Text>
-                    <Text style={styles.shoppingAt}>Shop ID:</Text>
-                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
-                </View>
-            </View>
+        <FlatList
+            style={styles.container}
+            data={[{ key: 'content' }]}
+            keyExtractor={(item) => item.key}
+            renderItem={() => (
+                <View>
+                    <View style={styles.headerContainer}>
+                        <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
+                        <View style={styles.headerText}>
+                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
+                            <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
+                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                        </View>
+                    </View>
 
-            {/* Full-width image */}
-            <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
+                    {/* Full-width image */}
+                    <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
 
-            {/* Circular image with overlay */}
-            <View style={styles.circularImageContainer}>
-                <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
-            </View>
+                    {/* Circular image with overlay */}
+                    <View style={styles.circularImageContainer}>
+                        <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
+                    </View>
 
-            {/* Store Visibility switch */}
-            <View style={styles.visibilityContainer}>
-                <Text style={styles.visibilityHeading}>Store Visibility</Text>
-                <Switch
-                    trackColor={{ false: '#767577', true: '#81b0ff' }}
-                    thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={() => setIsVisible(previousState => !previousState)}
-                    value={isVisible}
-                    style={styles.toggleButton}
-                />
-            </View>
+                    {/* Store Visibility switch */}
+                    <View style={styles.visibilityContainer}>
+                        <Text style={styles.visibilityHeading}>Store Visibility</Text>
+                        <Switch
+                            trackColor={{ false: '#767577', true: '#81b0ff' }}
+                            thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={() => setIsVisible(previousState => !previousState)}
+                            value={isVisible}
+                            style={styles.toggleButton}
+                        />
+                    </View>
 
-            {/* Make Store LIVE switch */}
-            <View style={styles.visibilityContainer}>
-                <Text style={styles.visibilityHeading}>Make Store LIVE</Text>
-                <Switch
-                    trackColor={{ false: '#767577', true: '#81b0ff' }}
-                    thumbColor={isVisible1 ? '#FF0000' : '#f4f3f4'}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={() => setIsVisible1(previousState => !previousState)}
-                    value={isVisible1}
-                    style={styles.toggleButton}
-                />
-            </View>
+                    {/* Make Store LIVE switch */}
+                    <View style={styles.visibilityContainer}>
+                        <Text style={styles.visibilityHeading}>Make Store LIVE</Text>
+                        <Switch
+                            trackColor={{ false: '#767577', true: '#81b0ff' }}
+                            thumbColor={isVisible1 ? '#FF0000' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={() => setIsVisible1(previousState => !previousState)}
+                            value={isVisible1}
+                            style={styles.toggleButton}
+                        />
+                    </View>
 
-            {/* Logout Button */}
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                <Text style={styles.logoutText}>Logout</Text>
-            </TouchableOpacity>
-
-            {/* Buttons */}
-            <FlatList
-                data={buttonsData}
-                keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(item.screen)}>
-                        <Text style={styles.buttonText}>{item.title}</Text>
+                    {/* Logout Button */}
+                    <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+                        <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
-                )}
-            />
-        </View>
+
+                    {/* Buttons */}
+                    <FlatList
+                        data={buttonsData}
+                        keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity style={styles.button} onPress={() => handleButtonPress(item.screen)}>
+                                <Text style={styles.buttonText}>{item.title}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+                </View>
+            )}
+        />
     );
 }
 

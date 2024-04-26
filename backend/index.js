@@ -49,7 +49,7 @@ app.post('/checkPhoneNumber', (req, res) => {
 
             if (shopkeeperResults.length > 0) {
                 // Phone number exists in shopkeepers database
-                return res.status(400).json({ message: 'Phone number already exists in shopkeepers database'  });
+                return res.status(400).json({ message: 'Phone number already exists in shopkeepers database' });
             } else if (customerResults.length > 0) {
                 // Phone number exists in newcustomers database
                 return res.status(400).json({ message: 'Phone number already exists in newcustomers database' });
@@ -222,30 +222,23 @@ app.post('/register', (req, res) => {
 });
 
 
-app.post('/checkPhoneNumber', (req, res) => {
-  const { phoneNumber } = req.body;
+//app.post('/checkPhoneNumber', (req, res) => {
+//  const { phoneNumber } = req.body;
 
-  // Check if user already exists
-  db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
-      if (err) {
-          console.error('Error checking user existence:', err);
-          return res.status(500).json({ message: 'Internal server error' });
-      }
-      if (results.length > 0) {
-          return res.status(400).json({ message: 'Phone number already exists' });
-      }
-      // If phone number doesn't exist, return success
-      return res.status(200).json({ message: 'Phone number available' });
-  });
-});
-
-const saveImage = (base64String, filename) => {
-    const filepath = path.join(__dirname, 'uploads', filename);
-    const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
-    const buffer = Buffer.from(base64Data, 'base64');
-    fs.writeFileSync(filepath, buffer);
-    return filepath;
-};
+//  // Check if user already exists
+//  db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
+//      if (err) {
+//          console.error('Error checking user existence:', err);
+//          return res.status(500).json({ message: 'Internal server error' });
+//      }
+//      if (results.length > 0) {
+//          return res.status(400).json({ message: 'Phone number already exists' });
+//      }
+//      // If phone number doesn't exist, return success
+//      return res.status(200).json({ message: 'Phone number available' });
+//  });
+//});
+ 
 
 
 // API endpoint for shopkeeper registration
