@@ -44,44 +44,24 @@ export default function SubSalonService({ route, navigation }) {
     // Function to handle navigation to MyServices screen and save selected services
     const goToMyServices = async () => {
         try {
-            // Save the selected services before navigating
-            await saveSelectedServices();
-
-            // Reset selected services array to clear the selection
-            setSelectedServices([]);
-
-            // Navigate to MyServices screen
-            navigation.navigate('MyServices', { phoneNumber });
-        } catch (error) {
-            console.error('Error navigating to MyServices:', error);
-        }
-    };
-
-    // Function to save selected services
-    const saveSelectedServices = async () => {
-        try {
-            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices`, {
+            await fetch('http://192.168.29.68:3000/saveSelectedServices', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    phoneNumber,
-                    selectedServices: {
-                        mainServiceName: "Your Main Service Name", // Add your main service name here
-                        subServiceName: selectedServices, // Pass selected services array
-                    },
+                    phoneNumber: phoneNumber,
+                    selectedServices: selectedServices.map(serviceId => ({ mainServiceId, subServiceId: serviceId }))
                 }),
             });
-            const data = await response.json();
-            if (data.message === 'Selected sub-services saved successfully') {
-                console.log('Selected sub-services saved successfully');
-            }
+    
+            setSelectedServices([]);
+            navigation.navigate('MyServices', { phoneNumber: phoneNumber });
         } catch (error) {
-            console.error('Error saving selected sub-services:', error);
+            console.error('Error navigating to MyServices:', error);
         }
     };
-
+    
     // Filter sub-services based on search query
     const filteredSubServices = subServices.filter((service) =>
         service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -89,7 +69,7 @@ export default function SubSalonService({ route, navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Sub-Services</Text>
+            <Text style={styles.title}>Sub-Services:{phoneNumber}</Text>
 
             {/* Search bar */}
             <TextInput
@@ -131,6 +111,16 @@ export default function SubSalonService({ route, navigation }) {
 
             {/* Button to navigate to MyServices screen */}
             <Button title="Go to MyServices" onPress={goToMyServices} />
+
+            {/* Display selected services */}
+            <View style={styles.selectedServicesContainer}>
+                <Text style={styles.selectedServicesTitle}>Selected Services:</Text>
+                <FlatList
+                    data={selectedServices}
+                    keyExtractor={(item) => item.toString()}
+                    renderItem={({ item }) => <Text>{item}</Text>}
+                />
+            </View>
         </View>
     );
 }
@@ -192,5 +182,13 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
+    },
+    selectedServicesContainer: {
+        marginTop: 20,
+    },
+    selectedServicesTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
 });

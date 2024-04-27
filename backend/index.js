@@ -355,15 +355,20 @@ app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
   
 
   app.post('/shopkeeper/selectedSubServices', (req, res) => {
-    const { phoneNumber, selectedServices } = req.body;
+    const { phoneNumber, mainServiceName, subServiceName } = req.body;
+
+    // Ensure all required fields are present
+    if (!phoneNumber || !mainServiceName || !subServiceName) {
+        return res.status(400).json({ message: 'Please provide phoneNumber, mainServiceName, and subServiceName' });
+    }
 
     // Save selected sub-services to the database
     db.query(
-        'INSERT INTO SelectedServices (phoneNumber, mainServiceName, subServiceName) VALUES (?, ?, ?)',
-        [phoneNumber, selectedServices.mainServiceName, selectedServices.subServiceName],
+        'INSERT INTO nkd.tbl_selected_services (phoneNumber, mainServiceName, subServiceName) VALUES (?, ?, ?)',
+        [phoneNumber, mainServiceName, subServiceName],
         (err, result) => {
             if (err) {
-                console.error('Error saving selected sub-services:', err);
+                console.error('Error saving selected services:', err);
                 return res.status(500).json({ message: 'Internal server error' });
             }
             console.log('Selected sub-services saved successfully');
@@ -374,44 +379,9 @@ app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
 
 
 
-// Endpoint to retrieve selected services for a shopkeeper
-app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
-    const phoneNumber = req.params.phoneNumber;
-
-    // Query to fetch selected sub-services and their main service information
-    const query = `
-    SELECT m.id AS mainServiceId, m.name AS mainServiceName, sss.id, sss.name, sss.price
-    FROM sub_selected_services sssv
-    JOIN tbl_salon_sub_sub_services sss ON sssv.subServiceId = sss.id
-    JOIN tbl_salon_main_services m ON sss.main_service_id = m.id
-    WHERE sssv.phoneNumber = ?;
-`;
-
-    db.query(query, [phoneNumber], (err, results) => {
-        if (err) {
-            res.status(500).json({ message: 'Error retrieving selected services', error: err });
-        } else {
-            res.json(results);
-        }
-    });
-});
  
-app.get('/shopkeeper/selectedSubServices/:phoneNumber/:mainServiceName', (req, res) => {
-    const { phoneNumber, mainServiceName } = req.params;
 
-    // Fetch selected sub-services from the database based on phoneNumber and mainServiceName
-    db.query(
-        'SELECT subServiceName FROM SelectedServices WHERE phoneNumber = ? AND mainServiceName = ?',
-        [phoneNumber, mainServiceName],
-        (err, results) => {
-            if (err) {
-                console.error('Error fetching selected sub-services:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-            res.status(200).json(results);
-        }
-    );
-});
+
 
 
 
@@ -678,11 +648,124 @@ app.post('/preferredShops/add', (req, res) => {
     );
 });
 
+ 
 
+
+app.post('/shopkeeper/selectedSubServices', (req, res) => {
+    console.log('Received request to save selected sub-services:', req.body);
+    const { phoneNumber, mainServiceName, subServiceIds } = req.body;
+
+    // Ensure all required fields are present
+    if (!phoneNumber || !mainServiceName || !subServiceIds) {
+        return res.status(400).json({ message: 'Please provide phoneNumber, mainServiceName, and subServiceIds' });
+    }
+
+    // Save selected sub-services to the database
+    db.query(
+        'INSERT INTO tbl_selected_services (phoneNumber, mainServiceName, subServiceIds) VALUES (?, ?, ?)',
+        [phoneNumber, mainServiceName, JSON.stringify(subServiceIds)],
+        (err, result) => {
+            if (err) {
+                console.error('Error saving selected services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            console.log('Selected sub-services saved successfully:', result);
+            res.status(200).json({ message: 'Selected sub-services saved successfully' });
+        }
+    );
+});
+
+app.get('/mainService/:subServiceId', (req, res) => {
+    const subServiceId = req.params.subServiceId;
+
+    db.query(
+        'SELECT m.name FROM nkd.tbl_salon_main_services m JOIN nkd.tbl_salon_sub_sub_services s ON m.id = s.main_service_id WHERE s.id = ?',
+        [subServiceId],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching main service name:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Main service not found for the given sub-service ID' });
+            }
+            res.status(200).json(results[0]);
+        }
+    );
+});
 
  
-  
-  
+app.post('/saveSelectedServices', async (req, res) => {
+    try {
+        const { phoneNumber, selectedServices } = req.body;
+
+        // Assuming selectedServices is an array of objects with mainServiceId and subServiceId
+        for (const service of selectedServices) {
+            await db.query(
+                'INSERT INTO tbl_selected_services (phoneNumber, mainServiceId, subServiceId) VALUES (?, ?, ?)',
+                [phoneNumber, service.mainServiceId, service.subServiceId]
+            );
+        }
+
+        res.status(200).json({ message: 'Selected services saved successfully.' });
+    } catch (error) {
+        console.error('Error saving selected services:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/myServices/:phoneNumber', async (req, res) => {
+    try {
+        const phoneNumber = req.params.phoneNumber;
+
+        const queryResult = await db.query(
+            'SELECT s.*, m.name AS mainServiceName, sub.name AS subServiceName ' +
+            'FROM tbl_selected_services s ' +
+            'JOIN tbl_salon_main_services m ON s.mainServiceId = m.id ' +
+            'JOIN tbl_salon_sub_sub_services sub ON s.subServiceId = sub.id ' +
+            'WHERE s.phoneNumber = ?',
+            [phoneNumber]
+        );
+
+        if (!queryResult || !queryResult.length) {
+            console.error('No selected services found for this phone number:', phoneNumber);
+            return res.status(404).json({ error: 'No selected services found for this phone number.' });
+        }
+
+        res.status(200).json(queryResult);
+    } catch (error) {
+        console.error('Error fetching selected services:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// Backend code to fetch selected services
+ 
+app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+
+    db.query(
+        'SELECT s.*, m.name AS mainServiceName, sub.name AS subServiceName, sub.price AS subServicePrice ' +
+        'FROM tbl_selected_services s ' +
+        'JOIN tbl_salon_main_services m ON s.mainServiceId = m.id ' +
+        'JOIN tbl_salon_sub_sub_services sub ON s.subServiceId = sub.id ' +
+        'WHERE s.phoneNumber = ?',
+        [phoneNumber],
+        async (err, results) => {
+            if (err) {
+                console.error('Error fetching selected services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            res.status(200).json(results);
+        }
+    );
+});
+
+
+
+
+
+
   
   
   
