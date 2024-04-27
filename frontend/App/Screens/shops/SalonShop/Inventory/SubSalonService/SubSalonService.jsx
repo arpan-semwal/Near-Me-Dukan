@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Button } from 'react-native';
+import { View, Text, TextInput, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Button,Image } from 'react-native';
 
 export default function SubSalonService({ route, navigation }) {
     const { mainServiceId } = route.params;
-    const { phoneNumber } = route.params;
+    const { phoneNumber , shopkeeperName } = route.params;
 
     // State to store the fetched sub-services, selected services, and search query
     const [subServices, setSubServices] = useState([]);
@@ -69,7 +69,14 @@ export default function SubSalonService({ route, navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Sub-Services:{phoneNumber}</Text>
+            <View style={styles.headerContainer}>
+            <Image source={require('../../../../../../assets/logo.png')} style={styles.storeImage} />
+                <View style={styles.headerText}>
+                    <Text style={styles.welcomeText}>Welcome :{shopkeeperName}  </Text>
+                    <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                </View>
+            </View>
 
             {/* Search bar */}
             <TextInput
@@ -113,14 +120,7 @@ export default function SubSalonService({ route, navigation }) {
             <Button title="Go to MyServices" onPress={goToMyServices} />
 
             {/* Display selected services */}
-            <View style={styles.selectedServicesContainer}>
-                <Text style={styles.selectedServicesTitle}>Selected Services:</Text>
-                <FlatList
-                    data={selectedServices}
-                    keyExtractor={(item) => item.toString()}
-                    renderItem={({ item }) => <Text>{item}</Text>}
-                />
-            </View>
+             
         </View>
     );
 }
@@ -190,5 +190,31 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+        paddingHorizontal: 10,
+    },
+    storeImage: {
+        width: 90,
+        height: 90,
+        borderRadius: 10,
+    },
+    headerText: {
+        flex: 1,
+        marginLeft: 20,
+    },
+    welcomeText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    shoppingAt: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
 });

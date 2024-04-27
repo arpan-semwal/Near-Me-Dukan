@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
-const MyServices = ({ route, navigation}) => {
-    const { phoneNumber , storeImage,shopkeeperName  } = route.params;
+const MyServices = ({ route, navigation }) => {
+    const { phoneNumber, storeImage, shopkeeperName } = route.params;
     const [mainServices, setMainServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,15 +30,13 @@ const MyServices = ({ route, navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <Image source={storeImage} style={styles.storeImage} />
+            <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
                     <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
-                    <Text style={styles.shoppingAt}>Shop ID:{phoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                     <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                 </View>
             </View>
-
-            
 
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -51,6 +50,7 @@ const MyServices = ({ route, navigation}) => {
                             onPress={() => handleMainServiceClick(item.mainServiceId)}
                             style={styles.item}
                         >
+                            <MaterialIcons name="people-alt" size={24} color="black" style={styles.icon} />
                             <Text style={styles.itemText}>{item.mainServiceName}</Text>
                         </TouchableOpacity>
                     ))}
@@ -110,6 +110,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    icon: {
+        marginBottom: 10,
     },
     itemText: {
         color: 'black',

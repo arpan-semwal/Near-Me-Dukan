@@ -51,7 +51,7 @@ const SubServices = ({ route }) => {
                 </View>
             </View>
             <View style={styles.line}></View>
-           
+            
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : subServices.length === 0 ? (
@@ -63,8 +63,13 @@ const SubServices = ({ route }) => {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.card}>
-                            <Text style={styles.subServiceName}>Sub Service: {item.subServiceName}</Text>
-                            <Text style={styles.subServicePrice}>Price: ${item.subServicePrice.toFixed(2)}</Text>
+                            <View style={styles.cardContent}>
+                                <Image source={require('../../../../../assets/logo.png')} style={styles.serviceImage} />
+                                <View style={styles.detailsContainer}>
+                                    <Text style={styles.subServiceName}>Sub Service: {item.subServiceName}</Text>
+                                    <Text style={styles.subServicePrice}>Price: ${item.subServicePrice.toFixed(2)}</Text>
+                                </View>
+                            </View>
                         </View>
                     )}
                 />
@@ -75,6 +80,7 @@ const SubServices = ({ route }) => {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor:"white",
         flex: 1,
         padding: 20,
         marginBottom: 20,
@@ -117,6 +123,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     card: {
+        alignItems: 'center',
         padding: 20,
         marginBottom: 20,
         borderWidth: 1,
@@ -125,8 +132,19 @@ const styles = StyleSheet.create({
         width: 314,
         height: 173,
         backgroundColor: '#44C7F4',
-        justifyContent: 'center',
+    },
+    cardContent: {
+        flexDirection: 'row',
         alignItems: 'center',
+    },
+    serviceImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 30,
+        marginRight: 10,
+    },
+    detailsContainer: {
+        flex: 1,
     },
     subServiceName: {
         fontSize: 16,

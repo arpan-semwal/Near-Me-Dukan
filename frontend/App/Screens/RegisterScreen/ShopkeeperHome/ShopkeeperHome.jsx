@@ -49,7 +49,7 @@ export default function SalonShop({ route }) {
     const handleButtonPress = (screenName) => {
         if (screenName === 'Inventory') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory: selectedSubCategory,  phoneNumber: shopkeeperPhoneNumber  });
+            navigation.navigate(screenName, { selectedSubCategory: selectedSubCategory,  phoneNumber: shopkeeperPhoneNumber  ,  shopkeeperName: shopkeeperName, });
         } else if (screenName === 'MyServices') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
             navigation.navigate('MyServices', { 
