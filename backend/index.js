@@ -4,19 +4,12 @@ const bodyParser = require('body-parser'); // Import body-parser
 const app = express();
 const crypto = require('crypto');
  
-
-const multer = require('multer');
-const path = require('path');
-
-
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'Noodle@123',
   database: 'nkd'
 });
-
-
 
 app.use(bodyParser.json());
 
@@ -26,8 +19,6 @@ db.connect(err => {
   }
   console.log('Connected to MySQL database');
 });
-
-
 
 // to check weather the number is present in the which database
 app.post('/checkPhoneNumber', (req, res) => {
@@ -366,18 +357,21 @@ app.get('/subservices/mainservice/:mainServiceId', (req, res) => {
   app.post('/shopkeeper/selectedSubServices', (req, res) => {
     const { phoneNumber, selectedServices } = req.body;
 
-    const insertQuery = `INSERT IGNORE INTO sub_selected_services (phoneNumber, subServiceId) VALUES ?`;
-    const values = selectedServices.map(subServiceId => [phoneNumber, subServiceId]);
-
-    db.query(insertQuery, [values], (err, results) => {
-        if (err) {
-            console.error('Error saving selected services:', err);
-            res.status(500).json({ message: 'Error saving selected services', error: err });
-        } else {
-            res.json({ message: 'Sub-services saved successfully' });
+    // Save selected sub-services to the database
+    db.query(
+        'INSERT INTO SelectedServices (phoneNumber, mainServiceName, subServiceName) VALUES (?, ?, ?)',
+        [phoneNumber, selectedServices.mainServiceName, selectedServices.subServiceName],
+        (err, result) => {
+            if (err) {
+                console.error('Error saving selected sub-services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            console.log('Selected sub-services saved successfully');
+            res.status(200).json({ message: 'Selected sub-services saved successfully' });
         }
-    });
+    );
 });
+
 
 
 // Endpoint to retrieve selected services for a shopkeeper
@@ -402,7 +396,22 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
     });
 });
  
- 
+app.get('/shopkeeper/selectedSubServices/:phoneNumber/:mainServiceName', (req, res) => {
+    const { phoneNumber, mainServiceName } = req.params;
+
+    // Fetch selected sub-services from the database based on phoneNumber and mainServiceName
+    db.query(
+        'SELECT subServiceName FROM SelectedServices WHERE phoneNumber = ? AND mainServiceName = ?',
+        [phoneNumber, mainServiceName],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching selected sub-services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json(results);
+        }
+    );
+});
 
 
 

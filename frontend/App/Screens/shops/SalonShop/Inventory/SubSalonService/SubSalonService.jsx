@@ -67,15 +67,18 @@ export default function SubSalonService({ route, navigation }) {
                 },
                 body: JSON.stringify({
                     phoneNumber,
-                    selectedServices,
+                    selectedServices: {
+                        mainServiceName: "Your Main Service Name", // Add your main service name here
+                        subServiceName: selectedServices, // Pass selected services array
+                    },
                 }),
             });
             const data = await response.json();
-            if (data.message === 'Sub-services saved successfully') {
-                console.log('Sub-services saved successfully');
+            if (data.message === 'Selected sub-services saved successfully') {
+                console.log('Selected sub-services saved successfully');
             }
         } catch (error) {
-            console.error('Error saving selected services:', error);
+            console.error('Error saving selected sub-services:', error);
         }
     };
 

@@ -10,10 +10,23 @@ export default function MyServices({ route }) {
 
     const navigation = useNavigation();
 
-    const fetchSelectedSubServices = async () => {
+    //const fetchSelectedSubServices = async () => {
+    //    try {
+    //        setLoading(true);
+    //        const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices/${phoneNumber}`);
+    //        const data = await response.json();
+    //        setSelectedServices(data);
+    //    } catch (error) {
+    //        console.error('Error fetching selected sub-services:', error);
+    //    } finally {
+    //        setLoading(false);
+    //    }
+    //};
+    
+    const fetchSelectedSubServicesByMainCategory = async (mainServiceName) => {
         try {
             setLoading(true);
-            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices/${phoneNumber}`);
+            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices/${phoneNumber}/${mainServiceName}`);
             const data = await response.json();
             setSelectedServices(data);
         } catch (error) {
@@ -23,9 +36,12 @@ export default function MyServices({ route }) {
         }
     };
 
+    //useEffect(() => {
+    //    fetchSelectedSubServices().then(() => console.log("Selected services fetched:", selectedServices));
+    //}, [phoneNumber]);
     useEffect(() => {
-        fetchSelectedSubServices();
-    }, [phoneNumber]);
+        fetchSelectedSubServicesByMainCategory(mainServiceName);
+    }, [phoneNumber, mainServiceName]);
 
     const handleMainServiceClick = (mainServiceName, subServices) => {
         navigation.navigate('SelectedServices', { mainServiceName, subServices });
@@ -33,7 +49,7 @@ export default function MyServices({ route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>My Selected Services</Text>
+            <Text style={styles.title}>My Selected Services djasjhdsadshsha{phoneNumber}</Text>
 
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
