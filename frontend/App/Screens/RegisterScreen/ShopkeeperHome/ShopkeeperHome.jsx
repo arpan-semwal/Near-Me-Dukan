@@ -52,7 +52,11 @@ export default function SalonShop({ route }) {
             navigation.navigate(screenName, { selectedSubCategory: selectedSubCategory,  phoneNumber: shopkeeperPhoneNumber  });
         } else if (screenName === 'MyServices') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory:selectedSubCategory,   phoneNumber: shopkeeperPhoneNumber });
+            navigation.navigate('MyServices', { 
+                phoneNumber: shopkeeperPhoneNumber, 
+                shopkeeperName: shopkeeperName,
+                storeImage: require('../../../../assets/logo.png') // Pass the image source
+            });
         } else {
             navigation.navigate(screenName);
         }

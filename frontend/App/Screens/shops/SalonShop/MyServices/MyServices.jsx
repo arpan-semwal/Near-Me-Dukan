@@ -1,9 +1,8 @@
-// MyServices.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-const MyServices = ({ route, navigation }) => {
-    const { phoneNumber } = route.params;
+const MyServices = ({ route, navigation}) => {
+    const { phoneNumber , storeImage,shopkeeperName  } = route.params;
     const [mainServices, setMainServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,23 +28,33 @@ const MyServices = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>My Selected Services: {phoneNumber}</Text>
+            <View style={styles.headerContainer}>
+                <Image source={storeImage} style={styles.storeImage} />
+                <View style={styles.headerText}>
+                    <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
+                    <Text style={styles.shoppingAt}>Shop ID:{phoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                </View>
+            </View>
+
+            
+
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : mainServices.length === 0 ? (
                 <Text>No selected services found for this phone number: {phoneNumber}</Text>
             ) : (
-                <FlatList
-                    data={mainServices}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleMainServiceClick(item.mainServiceId)}>
-                            <View style={styles.item}>
-                                <Text>Main Service: {item.mainServiceName}</Text>
-                            </View>
+                <View style={styles.mainServiceContainer}>
+                    {mainServices.map((item, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => handleMainServiceClick(item.mainServiceId)}
+                            style={styles.item}
+                        >
+                            <Text style={styles.itemText}>{item.mainServiceName}</Text>
                         </TouchableOpacity>
-                    )}
-                />
+                    ))}
+                </View>
             )}
         </View>
     );
@@ -56,17 +65,56 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
     },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+        paddingHorizontal: 10,
+    },
+    storeImage: {
+        width: 90,
+        height: 90,
+        borderRadius: 10,
+    },
+    headerText: {
+        flex: 1,
+        marginLeft: 20,
+    },
+    welcomeText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    shoppingAt: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
     },
+    mainServiceContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
     item: {
-        padding: 10,
-        marginBottom: 10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
+        width: '47%', // Adjust for spacing
+        height: 156,
+        backgroundColor: '#44C7F4',
+        padding: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    itemText: {
+        color: 'black',
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
 
