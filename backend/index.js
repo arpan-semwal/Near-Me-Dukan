@@ -719,12 +719,17 @@ app.get('/myServices/:phoneNumber', async (req, res) => {
         const phoneNumber = req.params.phoneNumber;
 
         const queryResult = await db.query(
-            'SELECT s.*, m.name AS mainServiceName, sub.name AS subServiceName ' +
+            'SELECT m.id AS mainServiceId, m.name AS mainServiceName, null AS subServiceId, null AS subServiceName, null AS subServicePrice ' +
             'FROM tbl_selected_services s ' +
             'JOIN tbl_salon_main_services m ON s.mainServiceId = m.id ' +
+            'WHERE s.phoneNumber = ? ' +
+            'UNION ' +
+            'SELECT s.mainServiceId, m.name AS mainServiceName, s.subServiceId, sub.name AS subServiceName, sub.price AS subServicePrice ' +
+            'FROM tbl_selected_services s ' +
             'JOIN tbl_salon_sub_sub_services sub ON s.subServiceId = sub.id ' +
+            'JOIN tbl_salon_main_services m ON s.mainServiceId = m.id ' +
             'WHERE s.phoneNumber = ?',
-            [phoneNumber]
+            [phoneNumber, phoneNumber]
         );
 
         if (!queryResult || !queryResult.length) {
@@ -738,6 +743,7 @@ app.get('/myServices/:phoneNumber', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 // Backend code to fetch selected services
  
 app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
@@ -753,6 +759,52 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber', (req, res) => {
         async (err, results) => {
             if (err) {
                 console.error('Error fetching selected services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (results.length === 0) {
+                console.error('No selected services found for this phone number:', phoneNumber);
+                return res.status(404).json({ message: 'No selected services found for this phone number.' });
+            }
+
+            res.status(200).json(results);
+        }
+    );
+});
+
+app.get('/shopkeeper/selectedMainServices/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+
+    db.query(
+        'SELECT DISTINCT m.id AS mainServiceId, m.name AS mainServiceName ' +
+        'FROM tbl_selected_services s ' +
+        'JOIN tbl_salon_main_services m ON s.mainServiceId = m.id ' +
+        'WHERE s.phoneNumber = ?',
+        [phoneNumber],
+        async (err, results) => {
+            if (err) {
+                console.error('Error fetching selected main services:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            res.status(200).json(results);
+        }
+    );
+});
+
+app.get('/shopkeeper/selectedSubServices/:phoneNumber/:mainServiceId', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+    const mainServiceId = req.params.mainServiceId;
+
+    db.query(
+        'SELECT s.*, sub.name AS subServiceName, sub.price AS subServicePrice ' +
+        'FROM tbl_selected_services s ' +
+        'JOIN tbl_salon_sub_sub_services sub ON s.subServiceId = sub.id ' +
+        'WHERE s.phoneNumber = ? AND s.mainServiceId = ?',
+        [phoneNumber, mainServiceId],
+        async (err, results) => {
+            if (err) {
+                console.error('Error fetching selected sub services:', err);
                 return res.status(500).json({ message: 'Internal server error' });
             }
 
