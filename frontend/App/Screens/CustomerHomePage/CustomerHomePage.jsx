@@ -1,17 +1,39 @@
- 
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
+import {useEffect, useState} from 'react';
 
 export default function CustomerHomePage({ route }) {
-  const { name, pincode, shopID , phoneNumber } = route.params || {};
+  const {  pincode , phoneNumber } = route.params || {};
+  const [customerDetails, setCustomerDetails] = useState(null);
+  const [name, setName] = useState('');
+  const [shopID, setShopID] = useState('');
+ 
   const navigation = useNavigation();
-   
+
   const navigateToScreen = (screenName, params) => {
     navigation.navigate(screenName, params);
   };
+
+  useEffect(() => {
+    const fetchCustomerDetails = async () => {
+      try {
+        const response = await fetch(`http://192.168.29.68:3000/customerDetails/${phoneNumber}`);
+        const data = await response.json();
+        setCustomerDetails(data);
+        setName(data.name); // Set the customer's name
+        setShopID(data.shop_id); // Set the customer's shop ID
+      } catch (error) {
+        console.error('Error fetching customer details:', error);
+      }
+    };
+
+    if (phoneNumber) {
+      fetchCustomerDetails();
+    }
+  }, [phoneNumber]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -22,32 +44,32 @@ export default function CustomerHomePage({ route }) {
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome, {name}</Text>
-       
+        <Text style={styles.welcomeText}>Welcome, {customerDetails ? customerDetails.name : ''}</Text>
+
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops' ,  { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, name: name, shopID: shopID, phoneNumber: phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Preferred Shops</Text>
+                <Text style={styles.cardText}>My Preferred Shops :{shopID}  </Text>
               </View>
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.card}>
             <TouchableOpacity onPress={() => navigateToScreen('Orders')}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Orders</Text>
+                <Text style={styles.cardText}>My Orders </Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
-        
+
         <View style={styles.cardRow}>
           <View style={styles.card}>
             <TouchableOpacity onPress={() => navigateToScreen('MyAddress')}>
@@ -59,48 +81,49 @@ export default function CustomerHomePage({ route }) {
               </View>
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name , shopID:shopID,phoneNumber:phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name, shopID: shopID, phoneNumber: phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>Search Shops</Text>
+                <Text style={styles.cardText}>Search Shops {shopID}</Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
+
         <View>
           <Text style={styles.headingText}>Types of shops</Text>
         </View>
-        
+
         <View style={styles.container1}>
-  <TouchableOpacity onPress={() => navigateToScreen('Sweets')}>
-    <View style={styles.iconContainer}>
-      <Icon name="home" size={30} style={styles.icon1} />
-      <Text style={styles.iconHeading}>Sweets</Text>
-    </View>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => navigateToScreen('Snacks')}>
-    <View style={styles.iconContainer}>
-      <Icon name="search" size={30} style={styles.icon1} />
-      <Text style={styles.iconHeading}>Snacks</Text>
-    </View>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => navigateToScreen('Vegetables')}>
-    <View style={styles.iconContainer}>
-      <Icon name="user" size={30} style={styles.icon1} />
-      <Text style={styles.iconHeading}>Vegetables</Text>
-    </View>
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => navigateToScreen('Barber')}>
-    <View style={styles.iconContainer}>
-      <Icon name="bell" size={30} style={styles.icon1} />
-      <Text style={styles.iconHeading}>Barber</Text>
-    </View>
-  </TouchableOpacity>
-</View>
+          <TouchableOpacity onPress={() => navigateToScreen('Sweets')}>
+            <View style={styles.iconContainer}>
+              <Icon name="home" size={30} style={styles.icon1} />
+              <Text style={styles.iconHeading}>Sweets</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigateToScreen('Snacks')}>
+            <View style={styles.iconContainer}>
+              <Icon name="search" size={30} style={styles.icon1} />
+              <Text style={styles.iconHeading}>Snacks</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigateToScreen('Vegetables')}>
+            <View style={styles.iconContainer}>
+              <Icon name="user" size={30} style={styles.icon1} />
+              <Text style={styles.iconHeading}>Vegetables</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigateToScreen('Barber')}>
+            <View style={styles.iconContainer}>
+              <Icon name="bell" size={30} style={styles.icon1} />
+              <Text style={styles.iconHeading}>Barber</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

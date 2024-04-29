@@ -282,6 +282,8 @@ app.get('/subcategories/:categoryId', (req, res) => {
     });
 });
 
+
+
 app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
     const phoneNumber = req.params.phoneNumber;
 
@@ -297,11 +299,28 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
             if (results.length > 0) {
                 res.status(200).json(results[0]);
             } else {
-                res.status(404).json({ message: 'Shopkeeper not found' });
+                // If no results found by phone number, try fetching by shop ID
+                db.query(
+                    'SELECT shopkeeperName, pincode, shopState, city, address FROM shopkeepers WHERE shopID = ?',
+                    [phoneNumber],  // Assuming phoneNumber is actually shopID in this case
+                    (err, results) => {
+                        if (err) {
+                            console.error('Error fetching shopkeeper details:', err);
+                            return res.status(500).json({ message: 'Internal server error' });
+                        }
+
+                        if (results.length > 0) {
+                            res.status(200).json(results[0]);
+                        } else {
+                            res.status(404).json({ message: 'Shopkeeper not found' });
+                        }
+                    }
+                );
             }
         }
     );
 });
+
 
 app.get('/mainServices/:subcategory', (req, res) => {
     const subcategory = req.params.subcategory;
@@ -405,29 +424,6 @@ app.get('/searchServices', (req, res) => {
 });
 
 
-app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
-    const phoneNumber = req.params.phoneNumber;
-
-    // Fetch shopkeeper details from the database based on the phone number
-    db.query(
-        'SELECT shopkeeperName, pincode, shopState, city, address FROM shopkeepers WHERE phoneNumber = ?',
-        [phoneNumber],
-        (err, results) => {
-            if (err) {
-                console.error('Error fetching shopkeeper details:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-
-            if (results.length > 0) {
-                res.status(200).json(results[0]);
-            } else {
-                res.status(404).json({ message: 'Shopkeeper not found' });
-            }
-        }
-    );
-});
-  
-
  
   
 
@@ -503,59 +499,36 @@ app.get('/salons', (req, res) => {
     );
 });
 
-
-app.get('/shopkeeperDetails/:shopID', (req, res) => {
-    const shopID = req.params.shopID;
-
-    // Query the database to fetch shopkeeper details based on shopID
-    db.query(
-        'SELECT * FROM shopkeepers WHERE phoneNumber = ?',
-        [shopID],
-        (err, result) => {
-            if (err) {
-                console.error('Error fetching shopkeeper details:', err);
-                return res.status(500).json({ message: 'Internal server error', error: err });
-            }
-
-            if (result.length === 0) {
-                return res.status(404).json({ message: 'Shopkeeper not found' });
-            }
-
-            // Shopkeeper details found
-            const shopkeeper = result[0];
-            res.status(200).json(shopkeeper);
-        }
-    );
-});
-
-
  
- 
-
-// API endpoint to get customer name by phone number
 // API endpoint to get customer details by shop ID
-app.get('/customerDetailsByShopID/:shopID', (req, res) => {
-    const shopID = req.params.shopID;
+app.get('/customerDetails/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
 
-    // Query the database to fetch customer details based on shop ID
+    // Query the database to fetch customer details based on phone number
     db.query(
-        'SELECT * FROM newcustomers WHERE shop_id = ?',
-        [shopID],
+        'SELECT name, pincode FROM newcustomers WHERE phoneNumber = ?',
+        [phoneNumber],
         (err, result) => {
             if (err) {
-                console.error('Error fetching customer details by shop ID:', err);
+                console.error('Error fetching customer details:', err);
                 return res.status(500).json({ message: 'Internal server error' });
             }
 
             if (result.length === 0) {
-                return res.status(404).json({ message: 'No customers found for this shop' });
+                return res.status(404).json({ message: 'No customer found for this phone number' });
             }
 
-            // Customers found
-            res.status(200).json(result);
+            // Customer found
+            res.status(200).json(result[0]);
         }
     );
 });
+
+
+
+
+
+
 
 
 
@@ -615,6 +588,8 @@ app.post('/preferredShops/add', (req, res) => {
       }
     );
   });
+  
+  
   
   app.get('/preferredShops/:phoneNumber', (req, res) => {
     const phoneNumber = req.params.phoneNumber;
@@ -813,14 +788,123 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber/:mainServiceId', (req, res
     );
 });
 
+app.get('/shopkeeperDetails/:shopID', (req, res) => {
+    const shopID = req.params.shopID;
+
+    // Query the database to fetch shopkeeper details based on shop ID
+    db.query(
+        'SELECT * FROM shopkeepers WHERE shopID = ? OR shop_id = ? OR id = ?',
+        [shopID, shopID, shopID],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching shopkeeper details:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'No shopkeeper found for this shop ID' });
+            }
+
+            // Shopkeeper found
+            res.status(200).json(result[0]);
+        }
+    );
+});
 
 
 
 
 
   
-  
-  
+  // Backend code to fetch all types of shops
+  app.get('/shops', (req, res) => {
+    const { pincode } = req.query;
+
+    // Query the database to fetch shops based on the provided pincode
+    db.query(
+        'SELECT * FROM shopkeepers WHERE pincode = ?',
+        [pincode],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching shops:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'No shops found for this pincode' });
+            }
+
+            // Shop(s) found
+            res.status(200).json(result);
+        }
+    );
+});
+
+
+app.get('/customerPincode/:phoneNumber', (req, res) => {
+    const phoneNumber = req.params.phoneNumber;
+
+    // Query the database to fetch customer's pincode based on phone number
+    db.query(
+        'SELECT pincode FROM newcustomers WHERE phoneNumber = ?',
+        [phoneNumber],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching customer pincode:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'No customer found for this phone number' });
+            }
+
+            // Customer pincode found
+            const pincode = result[0].pincode;
+            res.status(200).json({ pincode });
+        }
+    );
+});
+
+// Fetch shops in the area based on pincode
+app.get('/shopsInArea/:pincode', (req, res) => {
+    const { pincode } = req.params;
+
+    // Query the database to fetch shops based on the provided pincode
+    db.query(
+        'SELECT * FROM shopkeepers WHERE pincode = ?',
+        [pincode],
+        (err, result) => {
+            if (err) {
+                console.error('Error fetching shops in area:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'No shops found for this pincode' });
+            }
+
+            // Format the data to match the frontend expectation
+            const formattedShops = result.map(shop => ({
+                id: shop.id,
+                shopkeeperName: shop.shopkeeperName, // Assuming 'name' is the shopkeeper's name
+                pincode: shop.pincode,
+                shopState: shop.shopState,
+                city: shop.city,
+                address: shop.address,
+                salesAssociateNumber: shop.salesAssociateNumber,
+                selectedCategory: shop.selectedCategory,
+                shopBanner: '', // You can add shop banner if available
+                profilePicture: '', // You can add profile picture if available
+                registrationDate: shop.registrationDate,
+                selectedSubCategory: shop.selectedSubCategory,
+                shopID: shop.shopID // Assuming 'shop_id' is the unique shop identifier
+            }));
+
+            // Shops found
+            res.status(200).json(formattedShops);
+        }
+    );
+});
 
 
 

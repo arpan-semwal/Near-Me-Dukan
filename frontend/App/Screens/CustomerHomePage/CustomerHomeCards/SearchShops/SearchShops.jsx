@@ -1,5 +1,3 @@
-// SearchShops.js
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
@@ -7,55 +5,80 @@ import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
 
 import StoreScreen from '../../StoreScreen/StoreScreen';
-import {useCart} from '../../../../Context/ContextApi';
+import { useCart } from '../../../../Context/ContextApi';
 
 export default function SearchShops({ route }) {
-    const {   name , shopID } = route.params || {};
+    const { phoneNumber } = route.params || {}; // Assuming phoneNumber is passed from the previous screen
     const navigation = useNavigation(); // Initialize navigation object
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
-    const { storeName, setStoreName,pincode } = useCart();
+    const [pincode, setPincode] = useState('');
+    const [customerName, setCustomerName] = useState('');
+    const [filteredShops, setFilteredShops] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleSubmit = () => {
         setShowChangePincode(true);
     }
 
     const handlePincodeChange = () => {
-        // Check if the new pincode exists in the dummy data
-        const isValidPincode = dummyData.some(item => item.pincode === newPincode);
-        if (isValidPincode) {
-            // If valid, update the pincode and close the modal
-            route.params.pincode = newPincode;
-            setShowChangePincode(false);
-        } else {
-            // If not valid, show an alert
-            Alert.alert('Invalid Pincode', 'No shops found for the entered pincode.');
+        // Check if the new pincode is valid
+        if (newPincode.trim() === '') {
+            Alert.alert('Invalid Pincode', 'Please enter a valid pincode.');
+            return;
         }
+
+        setPincode(newPincode); // Update the pincode state
+        setShowChangePincode(false);
     }
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('blur', () => {
-            // Reset the newPincode state when the modal closes
-            setNewPincode('');
-        });
+        // Fetch customer's details when component mounts
+        fetchCustomerDetails();
+    }, []);
 
-        return unsubscribe;
-    }, [navigation]);
+    useEffect(() => {
+        // Fetch shops based on the pincode when pincode changes
+        if (pincode) {
+            fetchShopsInArea(pincode);
+        }
+    }, [pincode]);
 
-    // Filter the dummyData array to only include shops with the matching pin code
-    const filteredData = dummyData.filter(item => item.pincode === pincode);
+    const fetchCustomerDetails = async () => {
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/customerDetails/${phoneNumber}`);
+            const data = await response.json();
+            setCustomerName(data.name); // Set customer's name
+            setPincode(data.pincode); // Set customer's pincode
+        } catch (error) {
+            console.error('Error fetching customer details:', error);
+            setError('Error fetching customer details');
+        }
+    }
+
+    const fetchShopsInArea = async (pincode) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/shopsInArea/${pincode}`);
+            const data = await response.json();
+            setFilteredShops(data);
+            setError('');
+        } catch (error) {
+            console.error('Error fetching shops in area:', error);
+            setError('Error fetching shops in area');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleShopPress = (shopID) => {
+        // Implement navigation logic here
+    }
 
     const renderSeparator = () => (
         <View style={styles.separator} />
     );
-
-    const handleProductPress = (shopName ) => {
-        // Set the store name to the global state
-        setStoreName(shopName);
-        // Navigate to the StoreScreen component passing shopName and customerName as parameters
-        navigation.navigate('Store', { shopName: shopName, customerName: name, shopID: shopID });
-    };
-    
 
     return (
         <View style={styles.container}>
@@ -64,7 +87,7 @@ export default function SearchShops({ route }) {
                     <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
                 </View>
                 <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {name}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {customerName}</Text>
                     <Text style={styles.pincodeText}>Shops at Pincode: {pincode}</Text>
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>
@@ -74,26 +97,29 @@ export default function SearchShops({ route }) {
             <View style={styles.locationTextContainer}>
                 <Text style={styles.locationText}>Shops in Your Location</Text>
             </View>
-            <FlatList
-                data={filteredData}
-                renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleProductPress(item.name)}>
-                        <View>
-                            <View style={styles.itemContainer}>
-                                <Image source={item.image} style={styles.image} />
-                                <View style={styles.detailsContainer}>
-                                    <Text style={styles.name}>{item.name}</Text>
-                                    <Text>Shop ID: {item.shopID}</Text>
-                                    <Text>Location: {item.location}</Text>
-                                    <Text>Delivery Available: {item.deliveryAvailable ? 'Yes' : 'No'}</Text>
+            {error ? (
+                <Text style={styles.errorText}>{error}</Text>
+            ) : (
+                <FlatList
+                    data={filteredShops}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => handleShopPress(item.shopID)}>
+                            <View>
+                                <View style={styles.itemContainer}>
+                                    {/* Add shop details here */}
+                                    <Text>{item.shopkeeperName}</Text>
+                                    <Text>Pincode: {item.pincode}</Text>
+                                    <Text>Pincode: {item.selectedCategory}</Text>
+                                    {/* Add more shop details as needed */}
                                 </View>
+                                {renderSeparator()}
                             </View>
-                            {renderSeparator()}
-                        </View>
-                    </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id.toString()}
-            />
+                        </TouchableOpacity>
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                    ListEmptyComponent={<Text>No shops found</Text>}
+                />
+            )}
             {/* Render ChangePincode component as a modal */}
             <Modal
                 visible={showChangePincode}
@@ -102,11 +128,15 @@ export default function SearchShops({ route }) {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <ChangePincode
-                            newPincode={newPincode}
-                            setNewPincode={setNewPincode}
-                            handlePincodeChange={handlePincodeChange}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter New Pincode"
+                            value={newPincode}
+                            onChangeText={setNewPincode}
                         />
+                        <TouchableOpacity onPress={handlePincodeChange}>
+                            <Text style={styles.closeButton}>Change</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => setShowChangePincode(false)}>
                             <Text style={styles.closeButton}>Close</Text>
                         </TouchableOpacity>
@@ -116,7 +146,6 @@ export default function SearchShops({ route }) {
         </View>
     );
 }
-
 const ChangePincode = ({ newPincode, setNewPincode, handlePincodeChange }) => {
     return (
         <View style={styles.card}>
@@ -183,22 +212,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     itemContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         marginBottom: 20,
-    },
-    image: {
-        width: 100,
-        height: 100,
-        marginRight: 10,
-        borderRadius: 50,
-    },
-    detailsContainer: {
-        flex: 1,
-    },
-    name: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 5,
     },
     separator: {
         borderBottomColor: '#ccc',
@@ -248,4 +263,3 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
 });
- 

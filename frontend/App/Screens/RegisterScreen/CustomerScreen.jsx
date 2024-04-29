@@ -85,11 +85,11 @@ export default function CustomerScreen({ route }) {
             setCustomerName(name); // Set customerName globally
             setCustPhoneNumber(phoneNumber);
             alert('User registered successfully');
-            if (data.shopType === 'Salon Shop'  ) {
-                navigation.navigate('Barber' , { shopID:shopID , phoneNumber:phoneNumber , userType:userType , name:name });
-            } else {
-                navigation.navigate('CustomerHomePage' , {phoneNumber:phoneNumber});
-            }
+            
+            navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType, name: name, shopID: shopID });
+          
+              
+            
         })
         .catch(error => {
             alert('User already registered.');

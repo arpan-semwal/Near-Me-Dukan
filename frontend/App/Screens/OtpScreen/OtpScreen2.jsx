@@ -44,7 +44,7 @@ export default function OtpScreen2({ route }) {
                     if (userType === 'shopkeeper') {
                         navigation.navigate('ShopkeeperHome', { phoneNumber });
                     } else if (userType === 'customer') {
-                        navigation.navigate('CustomerHomePage', { phoneNumber });
+                        navigation.navigate('CustomerHomePage', { phoneNumber:phoneNumber });
                     } else if (userType === 'unregistered') {
                         navigation.navigate('Register', { phoneNumber });
                     }
