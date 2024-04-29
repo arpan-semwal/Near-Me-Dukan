@@ -120,7 +120,7 @@ export default function CustomerHomePage({ route }) {
           <TouchableOpacity onPress={() => navigateToScreen('Barber')}>
             <View style={styles.iconContainer}>
               <Icon name="bell" size={30} style={styles.icon1} />
-              <Text style={styles.iconHeading}>Barber</Text>
+              <Text style={styles.iconHeading}>Salon</Text>
             </View>
           </TouchableOpacity>
         </View>

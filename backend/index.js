@@ -427,44 +427,7 @@ app.get('/searchServices', (req, res) => {
  
   
 
-app.get('/shop/:shopID', (req, res) => {
-    const shopID = req.params.shopID;
-
-    // Query the database to fetch shop details based on shopID
-    db.query(
-        'SELECT * FROM shopkeepers WHERE phoneNumber = ?',
-        [shopID],
-        (err, result) => {
-            if (err) {
-                console.error('Error fetching shop details:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-
-            if (result.length === 0) {
-                return res.status(404).json({ message: 'Shop not found' });
-            }
-
-            const shopDetails = {
-                id: result[0].id,
-                phoneNumber: result[0].phoneNumber,
-                shopkeeperName: result[0].shopkeeperName,
-                shopID: result[0].shopID,
-                pincode: result[0].pincode,
-                shopState: result[0].shopState,
-                city: result[0].city,
-                address: result[0].address,
-                salesAssociateNumber: result[0].salesAssociateNumber,
-                selectedCategory: result[0].selectedCategory,
-                shopBanner: result[0].shopBanner,
-                profilePicture: result[0].profilePicture,
-                registrationDate: result[0].registrationDate,
-                selectedSubCategory: result[0].selectedSubCategory,
-            };
-
-            res.status(200).json(shopDetails);
-        }
-    );
-});
+ 
 
 app.get('/salons', (req, res) => {
     const { shopID } = req.query;
@@ -501,12 +464,13 @@ app.get('/salons', (req, res) => {
 
  
 // API endpoint to get customer details by shop ID
+// Get customer details by phone number
 app.get('/customerDetails/:phoneNumber', (req, res) => {
     const phoneNumber = req.params.phoneNumber;
 
     // Query the database to fetch customer details based on phone number
     db.query(
-        'SELECT name, pincode FROM newcustomers WHERE phoneNumber = ?',
+        'SELECT name, pincode, shop_id as shopID FROM newcustomers WHERE phoneNumber = ?',
         [phoneNumber],
         (err, result) => {
             if (err) {
@@ -523,6 +487,8 @@ app.get('/customerDetails/:phoneNumber', (req, res) => {
         }
     );
 });
+
+
 
 
 
@@ -865,50 +831,111 @@ app.get('/customerPincode/:phoneNumber', (req, res) => {
     );
 });
 
-// Fetch shops in the area based on pincode
-app.get('/shopsInArea/:pincode', (req, res) => {
-    const { pincode } = req.params;
+ 
+app.get('/shopDetails/:shopID', (req, res) => {
+    const { shopID } = req.params;
 
-    // Query the database to fetch shops based on the provided pincode
+    // Query the database to fetch shop details based on the phone number (shop ID)
     db.query(
-        'SELECT * FROM shopkeepers WHERE pincode = ?',
-        [pincode],
+        'SELECT * FROM shopkeepers WHERE phoneNumber = ?',
+        [shopID],
         (err, result) => {
             if (err) {
-                console.error('Error fetching shops in area:', err);
+                console.error('Error fetching shop details:', err);
                 return res.status(500).json({ message: 'Internal server error' });
             }
 
             if (result.length === 0) {
-                return res.status(404).json({ message: 'No shops found for this pincode' });
+                return res.status(404).json({ message: 'Shop not found' });
             }
 
-            // Format the data to match the frontend expectation
-            const formattedShops = result.map(shop => ({
-                id: shop.id,
-                shopkeeperName: shop.shopkeeperName, // Assuming 'name' is the shopkeeper's name
-                pincode: shop.pincode,
-                shopState: shop.shopState,
-                city: shop.city,
-                address: shop.address,
-                salesAssociateNumber: shop.salesAssociateNumber,
-                selectedCategory: shop.selectedCategory,
-                shopBanner: '', // You can add shop banner if available
-                profilePicture: '', // You can add profile picture if available
-                registrationDate: shop.registrationDate,
-                selectedSubCategory: shop.selectedSubCategory,
-                shopID: shop.shopID // Assuming 'shop_id' is the unique shop identifier
-            }));
-
-            // Shops found
-            res.status(200).json(formattedShops);
+            // Shop details found
+            const shopDetails = result[0];
+            res.status(200).json(shopDetails);
         }
     );
 });
 
+app.get('/shopkeepers/:shopID', (req, res) => {
+    const { shopID } = req.params;
+
+    db.query('SELECT * FROM shopkeepers WHERE phoneNumber = ?', [shopID], (err, results) => {
+        if (err) {
+            console.error('Error checking shopkeeper existence:', err);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+
+        if (results.length > 0) {
+            return res.status(200).json({ exists: true });
+        } else {
+            return res.status(404).json({ exists: false });
+        }
+    });
+});
 
 
+ 
 
+// Get shops in the area based on pincode
+app.get('/shopsInArea/:pincode', async (req, res) => {
+    const { pincode } = req.params;
+
+    try {
+        // Query the database to fetch shops based on the provided pincode
+        const result = await new Promise((resolve, reject) => {
+            db.query(
+                'SELECT * FROM shopkeepers WHERE pincode = ?',
+                [pincode],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error fetching shops in area:', err);
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
+        });
+
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'No shops found for this pincode' });
+        }
+
+        // Check if the shopID provided by the customer exists
+        const { shopID } = req.query;
+        if (shopID) {
+            const shopIndex = result.findIndex(shop => shop.shopID === shopID);
+            if (shopIndex !== -1) {
+                const shop = result.splice(shopIndex, 1)[0]; // Remove the shop from the array
+                result.unshift(shop); // Add the shop at the beginning of the array
+            }
+        }
+
+        // Format the data to match the frontend expectation
+        const formattedShops = await Promise.all(result.map(async shop => {
+            const { id, shopkeeperName, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, registrationDate, shopID } = shop;
+            return {
+                id,
+                shopkeeperName,
+                pincode,
+                shopState,
+                city,
+                address,
+                salesAssociateNumber,
+                selectedCategory,
+                selectedSubCategory,
+                registrationDate,
+                shopID
+            };
+        }));
+
+        // Shops found
+        res.status(200).json(formattedShops);
+    } catch (error) {
+        console.error('Error fetching shops in area:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
  
 

@@ -8,8 +8,8 @@ import StoreScreen from '../../StoreScreen/StoreScreen';
 import { useCart } from '../../../../Context/ContextApi';
 
 export default function SearchShops({ route }) {
-    const { phoneNumber } = route.params || {}; // Assuming phoneNumber is passed from the previous screen
-    const navigation = useNavigation(); // Initialize navigation object
+    const { phoneNumber } = route.params || {};
+    const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
     const [pincode, setPincode] = useState('');
@@ -17,8 +17,9 @@ export default function SearchShops({ route }) {
     const [filteredShops, setFilteredShops] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [shopID , setShopID] = useState("");
 
-    const handleSubmit = () => {
+     const handleSubmit = () => {
         setShowChangePincode(true);
     }
 
@@ -51,9 +52,42 @@ export default function SearchShops({ route }) {
             const data = await response.json();
             setCustomerName(data.name); // Set customer's name
             setPincode(data.pincode); // Set customer's pincode
+            setShopID(data.shopID); // Set customer's shopID
+    
+            // Prioritize the customer's shop if available
+            if (data.shopID) {
+                prioritizeShop(data.shopID);
+            }
         } catch (error) {
             console.error('Error fetching customer details:', error);
             setError('Error fetching customer details');
+        }
+    };
+
+    const prioritizeShop = async (shopID) => {
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/shopDetails/${shopID}`);
+            const data = await response.json();
+
+            // Check if the shopID exists in the shopkeepers database
+            const shopExists = await checkShopExists(shopID);
+            if (shopExists) {
+                // Move the shop with the matching shopID to the beginning of the array
+                setFilteredShops([data, ...filteredShops.filter(shop => shop.shopID !== shopID)]);
+            }
+        } catch (error) {
+            console.error('Error prioritizing shop:', error);
+        }
+    }
+
+    const checkShopExists = async (shopID) => {
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/shopkeepers/${shopID}`);
+            const data = await response.json();
+            return data.length > 0;
+        } catch (error) {
+            console.error('Error checking shop existence:', error);
+            return false;
         }
     }
 
@@ -87,7 +121,7 @@ export default function SearchShops({ route }) {
                     <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
                 </View>
                 <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {customerName}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {shopID}</Text>
                     <Text style={styles.pincodeText}>Shops at Pincode: {pincode}</Text>
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>
@@ -109,7 +143,8 @@ export default function SearchShops({ route }) {
                                     {/* Add shop details here */}
                                     <Text>{item.shopkeeperName}</Text>
                                     <Text>Pincode: {item.pincode}</Text>
-                                    <Text>Pincode: {item.selectedCategory}</Text>
+                                    <Text>Shop: {item.selectedCategory}</Text>
+                                    
                                     {/* Add more shop details as needed */}
                                 </View>
                                 {renderSeparator()}
@@ -134,7 +169,7 @@ export default function SearchShops({ route }) {
                             value={newPincode}
                             onChangeText={setNewPincode}
                         />
-                        <TouchableOpacity onPress={handlePincodeChange}>
+                        <TouchableOpacity onPress={ChangePincode}>
                             <Text style={styles.closeButton}>Change</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setShowChangePincode(false)}>
