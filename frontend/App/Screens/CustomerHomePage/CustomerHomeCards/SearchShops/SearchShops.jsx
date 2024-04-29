@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { AntDesign } from '@expo/vector-icons'; // Import AntDesign icon
 import dummyData from "../../../dummy/dummy";
 import Colors from '../../../../utils/Colors';
 
@@ -19,7 +20,7 @@ export default function SearchShops({ route }) {
     const [error, setError] = useState('');
     const [shopID , setShopID] = useState("");
 
-     const handleSubmit = () => {
+    const handleSubmit = () => {
         setShowChangePincode(true);
     }
 
@@ -114,6 +115,10 @@ export default function SearchShops({ route }) {
         <View style={styles.separator} />
     );
 
+    const renderHeartIcon = () => (
+        <AntDesign name="hearto" size={24} color="black" />
+    );
+
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
@@ -135,25 +140,27 @@ export default function SearchShops({ route }) {
                 <Text style={styles.errorText}>{error}</Text>
             ) : (
                 <FlatList
-                    data={filteredShops}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleShopPress(item.shopID)}>
-                            <View>
-                                <View style={styles.itemContainer}>
-                                    {/* Add shop details here */}
-                                    <Text>{item.shopkeeperName}</Text>
-                                    <Text>Pincode: {item.pincode}</Text>
-                                    <Text>Shop: {item.selectedCategory}</Text>
-                                    
-                                    {/* Add more shop details as needed */}
-                                </View>
-                                {renderSeparator()}
+                data={filteredShops}
+                renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => handleShopPress(item.shopID)}>
+                        <View style={styles.itemContainer}>
+                            {/* Shop details */}
+                            <View style={styles.shopDetails}>
+                                <Text>{item.shopkeeperName}</Text>
+                                <Text>Pincode: {item.pincode}</Text>
+                                <Text>Shop: {item.selectedCategory}</Text>
                             </View>
-                        </TouchableOpacity>
-                    )}
-                    keyExtractor={item => item.id.toString()}
-                    ListEmptyComponent={<Text>No shops found</Text>}
-                />
+                            {/* Heart icon */}
+                            <View style={styles.heartIcon}>
+                                <AntDesign name="hearto" size={24} color="black" />
+                            </View>
+                        </View>
+                        {renderSeparator()}
+                    </TouchableOpacity>
+                )}
+                keyExtractor={item => item.id.toString()}
+                ListEmptyComponent={<Text>No shops found</Text>}
+            />
             )}
             {/* Render ChangePincode component as a modal */}
             <Modal
@@ -169,7 +176,7 @@ export default function SearchShops({ route }) {
                             value={newPincode}
                             onChangeText={setNewPincode}
                         />
-                        <TouchableOpacity onPress={ChangePincode}>
+                        <TouchableOpacity onPress={handlePincodeChange}>
                             <Text style={styles.closeButton}>Change</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setShowChangePincode(false)}>
@@ -178,23 +185,6 @@ export default function SearchShops({ route }) {
                     </View>
                 </View>
             </Modal>
-        </View>
-    );
-}
-const ChangePincode = ({ newPincode, setNewPincode, handlePincodeChange }) => {
-    return (
-        <View style={styles.card}>
-            <Text style={styles.heading}>Change Pincode</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Enter new pincode"
-                keyboardType="numeric"
-                value={newPincode}
-                onChangeText={text => setNewPincode(text)}
-            />
-            <TouchableOpacity style={styles.button} onPress={handlePincodeChange}>
-                <Text style={styles.buttonText}>Search Shops</Text>
-            </TouchableOpacity>
         </View>
     );
 }
@@ -247,7 +237,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     itemContainer: {
-        flexDirection: 'column',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 20,
     },
     separator: {
@@ -296,5 +288,17 @@ const styles = StyleSheet.create({
         color: 'blue',
         fontSize: 16,
         marginTop: 10,
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    shopDetails: {
+        flex: 1,
+    },
+    heartIcon: {
+        marginLeft: 10,
     },
 });
