@@ -312,6 +312,7 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
                         if (results.length > 0) {
                             res.status(200).json(results[0]);
                         } else {
+                            // If no results found by shopID as well
                             res.status(404).json({ message: 'Shopkeeper not found' });
                         }
                     }
@@ -320,6 +321,7 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
         }
     );
 });
+
 
 
 app.get('/mainServices/:subcategory', (req, res) => {

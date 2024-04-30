@@ -3,7 +3,7 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, 
 import { MaterialIcons } from '@expo/vector-icons';
 
 const MyServices = ({ route, navigation }) => {
-    const { phoneNumber, storeImage, shopkeeperName , userType } = route.params;
+    const { phoneNumber, storeImage, shopkeeperName , userType , shopID  , shopkeeperPhonenumber , firstcustomerName  } = route.params;
     const [mainServices, setMainServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -24,7 +24,7 @@ const MyServices = ({ route, navigation }) => {
     }, [phoneNumber]);
 
     const handleMainServiceClick = (mainServiceId) => {
-        navigation.navigate('SelectedServices', { phoneNumber, mainServiceId  , userType:userType});
+        navigation.navigate('SelectedServices', { phoneNumber, mainServiceId  , userType:userType , shopID :shopID  , firstcustomerName:firstcustomerName});
     };
 
     return (
@@ -32,9 +32,12 @@ const MyServices = ({ route, navigation }) => {
             <View style={styles.headerContainer}>
             <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
+                    <Text style={styles.welcomeText}>Welcome : {firstcustomerName}</Text>
+                    
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
-                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                    {userType !== 'customer' && (
+                        <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                    )}
                 </View>
             </View>
 

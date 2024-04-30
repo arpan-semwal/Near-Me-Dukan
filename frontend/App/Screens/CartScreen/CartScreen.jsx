@@ -8,44 +8,43 @@ import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = ({ route }) => {
     const { cartItems, removeFromCart } = useCart();
-    const { customerName, shopID, shopName, custPhoneNumber } = useCustomer();
+    const { phoneNumber    } = cartItems[0] || {}; // Extract phoneNumber from the first item in cartItems
+    const { firstCustomerName } = cartItems[0] || {}; // Extract firstCustomerName from the first item in cartItems
+
+  
+    const { customerName, shopID, shopName, custPhoneNumber  } = useCustomer();
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemCount, setItemCount] = useState(0);
     const [shopkeeperDetails, setShopkeeperDetails] = useState(null); // State to store shopkeeper details
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
+    const [storeName, setStoreName] = useState();
+    const [shopkeeperName , setShopkeeperName] = useState();
+    const [shopname , setShopName] = useState();
     const navigation = useNavigation();
-
-    function calculateTotalPrice(items) {
-        return items.reduce((total, item) => total + (item.price * item.quantity), 0);
-    }
-
-    function calculateItemCount(items) {
-        return items.reduce((total, item) => total + item.quantity, 0);
-    }
 
     useEffect(() => {
         setTotalPrice(calculateTotalPrice(cartItems));
         setItemCount(calculateItemCount(cartItems));
 
         // Fetch shopkeeper details when component mounts
-        //fetchShopkeeperDetails();
-    }, [cartItems]);
+        if (phoneNumber) {
+            fetchShopkeeperDetails(phoneNumber);
+        }
+    }, [cartItems, phoneNumber]);
 
     useEffect(() => {
         // Clear cart items when the phone number changes
         removeFromCart();
     }, [custPhoneNumber]);
 
-    // Fetch shopkeeper details based on shopID
-    //const fetchShopkeeperDetails = () => {
-    //    fetch(`http://192.168.29.68:3000/shopkeeperDetails/${shopID}`)
-    //        .then(response => response.json())
-    //        .then(data => {
-    //            setShopkeeperDetails(data);
-    //        })
-    //        .catch(error => console.error('Error fetching shopkeeper details:', error));
-    //};
+    const calculateTotalPrice = (items) => {
+        return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    };
+
+    const calculateItemCount = (items) => {
+        return items.reduce((total, item) => total + item.quantity, 0);
+    };
 
     const handleIncreaseQuantity = (item) => {
         item.quantity++;
@@ -73,26 +72,19 @@ const CartScreen = ({ route }) => {
     };
 
     const handleCheckout = () => {
-        navigation.navigate("Checkout", { cartItems, totalPrice, shopkeeperName: shopkeeperDetails.shopkeeperName });
+        navigation.navigate("Checkout", { cartItems, totalPrice , phoneNumber:phoneNumber });
     };
 
-    const handleSelectDate = (date) => {
-        setSelectedDate(date);
-    };
-
-    const handleSelectTime = async () => {
+    const fetchShopkeeperDetails = async (phoneNumber) => {
         try {
-            const { action, hour, minute } = await TimePickerAndroid.open({
-                hour: 12,
-                minute: 0,
-                is24Hour: false,
-                mode: 'spinner'
-            });
-            if (action !== TimePickerAndroid.dismissedAction) {
-                setSelectedTime(`${hour}:${minute}`);
-            }
-        } catch ({ code, message }) {
-            console.warn('Cannot open time picker', message);
+            const response = await fetch(`http://192.168.29.68:3000/shopkeeperDetails/${phoneNumber}`);
+            const data = await response.json();
+            // Set shopkeeper details state
+            setShopkeeperDetails(data);
+            setShopkeeperName(data.shopkeeperName);
+            setShopName(data.shopID);
+        } catch (error) {
+            console.error('Error fetching shopkeeper details:', error);
         }
     };
 
@@ -101,10 +93,9 @@ const CartScreen = ({ route }) => {
             <View style={styles.headerContainer}>
                 <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome: {shopID}</Text>
-                    <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
-                    <Text style={styles.shoppingAt}>Shop ID: {shopID}</Text>
-                     
+                    <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
+                    <Text style={styles.shoppingAt}>Shopping at: {shopname}</Text>
+                    <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                 </View>
             </View>
             <View style={styles.line} />
@@ -142,37 +133,20 @@ const CartScreen = ({ route }) => {
                 ListFooterComponent={
                     <View style={styles.totalPriceContainer}>
                         <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
-                        {shopkeeperDetails && shopkeeperDetails.selectedCategory === 'Salon Shop' ? (
-                            <>
+                        {shopkeeperDetails && (
+                            <View>
                                 <Text style={styles.deliveryText}>Shop Address</Text>
-                                <Text style={styles.addressText}>{shopkeeperDetails.address}</Text>
-                                <Text style={styles.addressText}>{shopkeeperDetails.city}, {shopkeeperDetails.state}</Text>
-                                <View style={styles.buttonContainer}>
-                                    <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
-                                        <Text style={styles.buttonText}>Continue Shopping</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.button} onPress={handleCheckout}>
-                                        <Text style={styles.buttonText}>Proceed to Pay</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </>
-                        ) : (
-                            <>
-                                <Text style={styles.deliveryText}>Select Appointment Date and Time</Text>
-                                {Platform.OS === 'ios' ? (
-                                    <DatePickerIOS
-                                        date={selectedDate}
-                                        onDateChange={handleSelectDate}
-                                        mode="date"
-                                    />
-                                ) : (
-                                    <TouchableOpacity style={styles.button} onPress={handleSelectTime}>
-                                        <Text style={styles.buttonText}>Select Time</Text>
-                                    </TouchableOpacity>
-                                )}
-                                {selectedTime !== '' && <Text style={styles.selectedDateTime}>Selected Time: {selectedTime}</Text>}
-                            </>
+                                <Text style={styles.addressText}>{shopkeeperDetails.address}, {shopkeeperDetails.city}, {shopkeeperDetails.state}</Text>
+                            </View>
                         )}
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
+                                <Text style={styles.buttonText}>Continue Shopping</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={handleCheckout}>
+                                <Text style={styles.buttonText}>Proceed to Pay</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 }
             />

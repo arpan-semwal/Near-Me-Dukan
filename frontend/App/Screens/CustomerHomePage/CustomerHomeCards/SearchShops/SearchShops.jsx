@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
 
 export default function SearchShops({ route }) {
-    const { phoneNumber , userType } = route.params || {};
+    const { phoneNumber , userType , firstcustomerName } = route.params || {};
     const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
@@ -99,8 +99,8 @@ export default function SearchShops({ route }) {
             setLoading(false);
         }
     }
-    const handleShopPress = (phoneNumber, storeImage, shopkeeperName, shopkeeperPhoneNumber) => {
-        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, shopkeeperPhoneNumber , userType:userType });
+    const handleShopPress = (phoneNumber, storeImage, shopkeeperName ) => {
+        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, shopkeeperPhoneNumber:shopkeeperPhonenumber , userType:userType , shopID: selectedShop , firstcustomerName:firstcustomerName });
     }
 
     const toggleShopSelection = (shopID) => {
@@ -118,7 +118,7 @@ export default function SearchShops({ route }) {
                     <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
                 </View>
                 <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {userType}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {firstcustomerName}</Text>
                     <Text style={styles.pincodeText}>Shops at Pincode: {shopkeeperPhonenumber}</Text>
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>

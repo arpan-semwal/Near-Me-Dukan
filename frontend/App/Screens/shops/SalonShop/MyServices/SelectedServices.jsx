@@ -4,7 +4,7 @@ import {useCart} from '../../../../Context/ContextApi';
 
 
 const SubServices = ({ route }) => {
-    const { phoneNumber, mainServiceId, userType } = route.params;
+    const { phoneNumber, mainServiceId, userType  , firstcustomerName } = route.params;
     const { addToCart } = useCart(); // Access addToCart function from CartProvider
     const [subServices, setSubServices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,9 +30,11 @@ const SubServices = ({ route }) => {
             <View style={styles.headerContainer}>
                 <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome</Text>
+                    <Text style={styles.welcomeText}>Welcome : {firstcustomerName}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
+                   {userType !== 'customer' && (
                     <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                )}
                 </View>
             </View>
             <View style={styles.line}></View>
@@ -55,7 +57,7 @@ const SubServices = ({ route }) => {
                                     <Text style={styles.subServicePrice}>Price: ${item.subServicePrice.toFixed(2)}</Text>
                                     {/* Conditionally render Add to Cart button based on userType */}
                                     {userType === 'customer' && (
-                                        <TouchableOpacity onPress={() => addToCart(item)} style={styles.addToCartButton}>
+                                        <TouchableOpacity onPress={() => addToCart(item, phoneNumber, firstcustomerName)} style={styles.addToCartButton}>
                                             <Text style={styles.addToCartButtonText}>Add to Cart</Text>
                                         </TouchableOpacity>
                                     )}

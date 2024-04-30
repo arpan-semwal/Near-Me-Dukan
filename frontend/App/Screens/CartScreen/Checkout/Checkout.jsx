@@ -27,7 +27,7 @@ const saveOrder = async (customerName, custPhoneNumber, cartItems, totalPrice, s
 
 const Checkout = ({ route }) => {
   const { customerName, shopName, custPhoneNumber } = useCustomer();
-  const { cartItems, totalPrice, shopkeeperName } = route.params; 
+  const { cartItems, totalPrice, shopkeeperName , phoneNumber } = route.params; 
   const { shopID, storeName } = useCart();
   const navigation = useNavigation();
 
@@ -37,7 +37,7 @@ const Checkout = ({ route }) => {
         <View style={styles.headerContainer}>
           <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
           <View style={styles.headerText}>
-            <Text style={styles.welcomeText}>Welcome: {customerName}</Text>
+            <Text style={styles.welcomeText}>Welcome: {phoneNumber}</Text>
             <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
             <TouchableOpacity>
               <Text style={styles.shoppingAt}>Change Address</Text>

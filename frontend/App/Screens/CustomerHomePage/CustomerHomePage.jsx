@@ -8,7 +8,7 @@ import {useEffect, useState} from 'react';
 export default function CustomerHomePage({ route }) {
   const {  pincode , phoneNumber,userType } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
-  const [name, setName] = useState('');
+  const [firstcustomerName, setFirstCustomerName] = useState('');
   const [shopID, setShopID] = useState('');
  
   const navigation = useNavigation();
@@ -23,7 +23,7 @@ export default function CustomerHomePage({ route }) {
         const response = await fetch(`http://192.168.29.68:3000/customerDetails/${phoneNumber}`);
         const data = await response.json();
         setCustomerDetails(data);
-        setName(data.name); // Set the customer's name
+        setFirstCustomerName(data.name); // Set the customer's name
         setShopID(data.shop_id); // Set the customer's shop ID
       } catch (error) {
         console.error('Error fetching customer details:', error);
@@ -48,7 +48,7 @@ export default function CustomerHomePage({ route }) {
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, name: name, shopID: shopID, phoneNumber: phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, phoneNumber: phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
@@ -83,7 +83,7 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name, shopID: shopID, phoneNumber: phoneNumber , userType:userType })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, phoneNumber: phoneNumber , userType:userType })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
