@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
-import { AntDesign } from '@expo/vector-icons'; // Import AntDesign icon
-import dummyData from "../../../dummy/dummy";
+import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
-
-import StoreScreen from '../../StoreScreen/StoreScreen';
-import { useCart } from '../../../../Context/ContextApi';
 
 export default function SearchShops({ route }) {
     const { phoneNumber } = route.params || {};
@@ -18,30 +14,28 @@ export default function SearchShops({ route }) {
     const [filteredShops, setFilteredShops] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [shopID , setShopID] = useState("");
+    const [shopID , setShopID] = useState('');
+    const [selectedShop, setSelectedShop] = useState(null);
 
     const handleSubmit = () => {
         setShowChangePincode(true);
     }
 
     const handlePincodeChange = () => {
-        // Check if the new pincode is valid
         if (newPincode.trim() === '') {
             Alert.alert('Invalid Pincode', 'Please enter a valid pincode.');
             return;
         }
 
-        setPincode(newPincode); // Update the pincode state
+        setPincode(newPincode);
         setShowChangePincode(false);
     }
 
     useEffect(() => {
-        // Fetch customer's details when component mounts
         fetchCustomerDetails();
     }, []);
 
     useEffect(() => {
-        // Fetch shops based on the pincode when pincode changes
         if (pincode) {
             fetchShopsInArea(pincode);
         }
@@ -51,11 +45,10 @@ export default function SearchShops({ route }) {
         try {
             const response = await fetch(`http://192.168.29.68:3000/customerDetails/${phoneNumber}`);
             const data = await response.json();
-            setCustomerName(data.name); // Set customer's name
-            setPincode(data.pincode); // Set customer's pincode
-            setShopID(data.shopID); // Set customer's shopID
+            setCustomerName(data.name);
+            setPincode(data.pincode);
+            setShopID(data.shopID);
     
-            // Prioritize the customer's shop if available
             if (data.shopID) {
                 prioritizeShop(data.shopID);
             }
@@ -70,10 +63,8 @@ export default function SearchShops({ route }) {
             const response = await fetch(`http://192.168.29.68:3000/shopDetails/${shopID}`);
             const data = await response.json();
 
-            // Check if the shopID exists in the shopkeepers database
             const shopExists = await checkShopExists(shopID);
             if (shopExists) {
-                // Move the shop with the matching shopID to the beginning of the array
                 setFilteredShops([data, ...filteredShops.filter(shop => shop.shopID !== shopID)]);
             }
         } catch (error) {
@@ -111,12 +102,12 @@ export default function SearchShops({ route }) {
         // Implement navigation logic here
     }
 
+    const toggleShopSelection = (shopID) => {
+        setSelectedShop(shopID === selectedShop ? null : shopID);
+    };
+
     const renderSeparator = () => (
         <View style={styles.separator} />
-    );
-
-    const renderHeartIcon = () => (
-        <AntDesign name="hearto" size={24} color="black" />
     );
 
     return (
@@ -140,29 +131,32 @@ export default function SearchShops({ route }) {
                 <Text style={styles.errorText}>{error}</Text>
             ) : (
                 <FlatList
-                data={filteredShops}
-                renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleShopPress(item.shopID)}>
-                        <View style={styles.itemContainer}>
-                            {/* Shop details */}
-                            <View style={styles.shopDetails}>
-                                <Text>{item.shopkeeperName}</Text>
-                                <Text>Pincode: {item.pincode}</Text>
-                                <Text>Shop: {item.selectedCategory}</Text>
+                    data={filteredShops}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity onPress={() => handleShopPress(item.shopID)}>
+                            <View style={styles.itemContainer}>
+                                <View style={styles.shopDetails}>
+                                    <Text>{item.shopkeeperName}</Text>
+                                    <Text>Pincode: {item.pincode}</Text>
+                                    <Text>Shop: {item.selectedCategory}</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => toggleShopSelection(item.shopID)}>
+                                    <View style={styles.heartIcon}>
+                                        <AntDesign
+                                            name={selectedShop === item.shopID ? "heart" : "hearto"}
+                                            size={24}
+                                            color={selectedShop === item.shopID ? "red" : "black"}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
                             </View>
-                            {/* Heart icon */}
-                            <View style={styles.heartIcon}>
-                                <AntDesign name="hearto" size={24} color="black" />
-                            </View>
-                        </View>
-                        {renderSeparator()}
-                    </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id.toString()}
-                ListEmptyComponent={<Text>No shops found</Text>}
-            />
+                            {renderSeparator()}
+                        </TouchableOpacity>
+                    )}
+                    keyExtractor={(item) => item.id.toString()}
+                    ListEmptyComponent={<Text>No shops found</Text>}
+                />
             )}
-            {/* Render ChangePincode component as a modal */}
             <Modal
                 visible={showChangePincode}
                 transparent={true}
@@ -247,7 +241,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         marginBottom: 10,
     },
-    // Modal styles
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -288,12 +281,6 @@ const styles = StyleSheet.create({
         color: 'blue',
         fontSize: 16,
         marginTop: 10,
-    },
-    itemContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 20,
     },
     shopDetails: {
         flex: 1,
