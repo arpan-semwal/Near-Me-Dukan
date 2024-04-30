@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {useEffect, useState} from 'react';
 
 export default function CustomerHomePage({ route }) {
-  const {  pincode , phoneNumber } = route.params || {};
+  const {  pincode , phoneNumber,userType } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
   const [name, setName] = useState('');
   const [shopID, setShopID] = useState('');
@@ -64,7 +64,7 @@ export default function CustomerHomePage({ route }) {
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Orders </Text>
+                <Text style={styles.cardText}>My Orders : {userType} </Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -83,19 +83,19 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name, shopID: shopID, phoneNumber: phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, name: name, shopID: shopID, phoneNumber: phoneNumber , userType:userType })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>Search Shops {shopID}</Text>
+                <Text style={styles.cardText}>Search Shops </Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
 
         <View>
-          <Text style={styles.headingText}>Types of shops</Text>
+          <Text style={styles.headingText}>Types of shops </Text>
         </View>
 
         <View style={styles.container1}>

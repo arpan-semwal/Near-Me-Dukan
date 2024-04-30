@@ -3,7 +3,7 @@ import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, 
 import { MaterialIcons } from '@expo/vector-icons';
 
 const MyServices = ({ route, navigation }) => {
-    const { phoneNumber, storeImage, shopkeeperName } = route.params;
+    const { phoneNumber, storeImage, shopkeeperName , userType } = route.params;
     const [mainServices, setMainServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -19,12 +19,12 @@ const MyServices = ({ route, navigation }) => {
                 setLoading(false);
             }
         };
-
+    
         fetchMainServices();
     }, [phoneNumber]);
 
     const handleMainServiceClick = (mainServiceId) => {
-        navigation.navigate('SelectedServices', { phoneNumber, mainServiceId });
+        navigation.navigate('SelectedServices', { phoneNumber, mainServiceId  , userType:userType});
     };
 
     return (

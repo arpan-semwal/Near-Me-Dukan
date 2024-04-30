@@ -42,11 +42,13 @@ export default function OtpScreen2({ route }) {
                     const data = await response.json();
                     // Navigate user based on userType
                     if (userType === 'shopkeeper') {
-                        navigation.navigate('ShopkeeperHome', { phoneNumber });
-                    } else if (userType === 'customer') {
-                        navigation.navigate('CustomerHomePage', { phoneNumber:phoneNumber });
-                    } else if (userType === 'unregistered') {
-                        navigation.navigate('Register', { phoneNumber });
+                        navigation.navigate('ShopkeeperHome', { phoneNumber: phoneNumber, userType: userType });
+                    } 
+                    else if (userType === 'customer') {
+                        navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType });
+                    }
+                    else if (userType === 'unregistered') {
+                        navigation.navigate('Register', { phoneNumber: phoneNumber, userType: userType });
                     }
                 } else {
                     console.error('Error creating session:', response.statusText);

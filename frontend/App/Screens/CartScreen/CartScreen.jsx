@@ -29,7 +29,7 @@ const CartScreen = ({ route }) => {
         setItemCount(calculateItemCount(cartItems));
 
         // Fetch shopkeeper details when component mounts
-        fetchShopkeeperDetails();
+        //fetchShopkeeperDetails();
     }, [cartItems]);
 
     useEffect(() => {
@@ -38,14 +38,14 @@ const CartScreen = ({ route }) => {
     }, [custPhoneNumber]);
 
     // Fetch shopkeeper details based on shopID
-    const fetchShopkeeperDetails = () => {
-        fetch(`http:/ 192.168.29.68:3000/shopkeeperDetails/${shopID}`)
-            .then(response => response.json())
-            .then(data => {
-                setShopkeeperDetails(data);
-            })
-            .catch(error => console.error('Error fetching shopkeeper details:', error));
-    };
+    //const fetchShopkeeperDetails = () => {
+    //    fetch(`http://192.168.29.68:3000/shopkeeperDetails/${shopID}`)
+    //        .then(response => response.json())
+    //        .then(data => {
+    //            setShopkeeperDetails(data);
+    //        })
+    //        .catch(error => console.error('Error fetching shopkeeper details:', error));
+    //};
 
     const handleIncreaseQuantity = (item) => {
         item.quantity++;
@@ -101,12 +101,10 @@ const CartScreen = ({ route }) => {
             <View style={styles.headerContainer}>
                 <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome: {customerName}</Text>
+                    <Text style={styles.welcomeText}>Welcome: {shopID}</Text>
                     <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {shopID}</Text>
-                    {shopkeeperDetails && (
-                        <Text style={styles.shoppingAt}>Shopkeeper: {shopkeeperDetails.shopkeeperName}</Text>
-                    )}
+                     
                 </View>
             </View>
             <View style={styles.line} />

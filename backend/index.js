@@ -753,13 +753,17 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber/:mainServiceId', (req, res
         }
     );
 });
-
 app.get('/shopkeeperDetails/:shopID', (req, res) => {
     const shopID = req.params.shopID;
 
+    // Check if shopID is a number
+    if (isNaN(shopID)) {
+        return res.status(400).json({ message: 'Invalid shop ID' });
+    }
+
     // Query the database to fetch shopkeeper details based on shop ID
     db.query(
-        'SELECT * FROM shopkeepers WHERE shopID = ? OR shop_id = ? OR id = ?',
+        'SELECT * FROM shopkeepers WHERE phoneNumber = ? OR shop_id = ? OR id = ?',
         [shopID, shopID, shopID],
         (err, result) => {
             if (err) {
@@ -776,7 +780,6 @@ app.get('/shopkeeperDetails/:shopID', (req, res) => {
         }
     );
 });
-
 
 
 
@@ -913,7 +916,7 @@ app.get('/shopsInArea/:pincode', async (req, res) => {
 
         // Format the data to match the frontend expectation
         const formattedShops = await Promise.all(result.map(async shop => {
-            const { id, shopkeeperName, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, registrationDate, shopID } = shop;
+            const { id, shopkeeperName, phoneNumber, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, registrationDate, shopID } = shop;
             return {
                 id,
                 shopkeeperName,
@@ -925,7 +928,8 @@ app.get('/shopsInArea/:pincode', async (req, res) => {
                 selectedCategory,
                 selectedSubCategory,
                 registrationDate,
-                shopID
+                shopID,
+                phoneNumber // Include shopkeeper's phone number
             };
         }));
 

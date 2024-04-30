@@ -21,21 +21,28 @@ export const CartProvider = ({ children }) => {
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
   const [storeName, setStoreName] = useState('');
-  const [userType, setUserType] = useState('customer'); // Add userType state
+  const [userType, setUserType] = useState('customer');
   const [custPhoneNumber, setCustPhoneNumber] = useState('');
 
-  const addToCart = (product) => { // Modify addToCart to accept userType
-    // Check if the product is already in the cart
-    const existingItem = cartItems.find(item => item.id === product.id);
-    if (existingItem) {
-      // If the product already exists, increase its quantity
-      existingItem.quantity++;
-      setCartItems([...cartItems]); // Update the cartItems state
+  const addToCart = (service) => {
+    const existingItemIndex = cartItems.findIndex(item => item.id === service.id);
+
+    if (existingItemIndex !== -1) {
+        const updatedCartItems = [...cartItems];
+        updatedCartItems[existingItemIndex].quantity++;
+        setCartItems(updatedCartItems);
     } else {
-      // If the product is not in the cart, add it with quantity 1
-      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+        setCartItems(prevItems => [
+            ...prevItems,
+            { 
+                id: service.id, 
+                name: service.subServiceName, // Add the name of the service
+                price: service.subServicePrice, // Add the price of the service
+                quantity: 1 
+            }
+        ]);
     }
-  };
+};
 
   const removeFromCart = (productId) => {
     setCartItems(cartItems.filter(item => item.id !== productId));
@@ -67,8 +74,10 @@ export const CartProvider = ({ children }) => {
       setCity,
       storeName,  
       setStoreName,  
-      userType, // Include userType in the context value
-      setUserType, // Include setUserType in the context value
+      userType,
+      setUserType,
+      custPhoneNumber, 
+      setCustPhoneNumber 
     }}>
       <CustomerContext.Provider value={{ 
         customerName, 

@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
 
 export default function SearchShops({ route }) {
-    const { phoneNumber } = route.params || {};
+    const { phoneNumber , userType } = route.params || {};
     const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
@@ -16,7 +16,7 @@ export default function SearchShops({ route }) {
     const [error, setError] = useState('');
     const [shopID , setShopID] = useState('');
     const [selectedShop, setSelectedShop] = useState(null);
-
+    const [shopkeeperPhonenumber , setShopkeeperPhonenumber] = useState();
     const handleSubmit = () => {
         setShowChangePincode(true);
     }
@@ -48,6 +48,7 @@ export default function SearchShops({ route }) {
             setCustomerName(data.name);
             setPincode(data.pincode);
             setShopID(data.shopID);
+            
     
             if (data.shopID) {
                 prioritizeShop(data.shopID);
@@ -89,6 +90,7 @@ export default function SearchShops({ route }) {
             const response = await fetch(`http://192.168.29.68:3000/shopsInArea/${pincode}`);
             const data = await response.json();
             setFilteredShops(data);
+            setShopkeeperPhonenumber(data.phoneNumber)
             setError('');
         } catch (error) {
             console.error('Error fetching shops in area:', error);
@@ -97,9 +99,8 @@ export default function SearchShops({ route }) {
             setLoading(false);
         }
     }
-
-    const handleShopPress = (shopID) => {
-        // Implement navigation logic here
+    const handleShopPress = (phoneNumber, storeImage, shopkeeperName, shopkeeperPhoneNumber) => {
+        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, shopkeeperPhoneNumber , userType:userType });
     }
 
     const toggleShopSelection = (shopID) => {
@@ -117,8 +118,8 @@ export default function SearchShops({ route }) {
                     <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
                 </View>
                 <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {shopID}</Text>
-                    <Text style={styles.pincodeText}>Shops at Pincode: {pincode}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {userType}</Text>
+                    <Text style={styles.pincodeText}>Shops at Pincode: {shopkeeperPhonenumber}</Text>
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>
                     </TouchableOpacity>
@@ -133,12 +134,13 @@ export default function SearchShops({ route }) {
                 <FlatList
                     data={filteredShops}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleShopPress(item.shopID)}>
+                        <TouchableOpacity onPress={() => handleShopPress(item.phoneNumber, item.storeImage, item.shopkeeperName)}>
                             <View style={styles.itemContainer}>
                                 <View style={styles.shopDetails}>
                                     <Text>{item.shopkeeperName}</Text>
                                     <Text>Pincode: {item.pincode}</Text>
                                     <Text>Shop: {item.selectedCategory}</Text>
+                                    <Text>Shop: {item.phoneNumber}</Text>
                                 </View>
                                 <TouchableOpacity onPress={() => toggleShopSelection(item.shopID)}>
                                     <View style={styles.heartIcon}>
