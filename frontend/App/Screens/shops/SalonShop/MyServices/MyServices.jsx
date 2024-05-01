@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import {useCart} from '../../../../Context/ContextApi';
 
 const MyServices = ({ route, navigation }) => {
-    const { phoneNumber, storeImage, shopkeeperName , userType , shopID  , shopkeeperPhonenumber , firstcustomerName  } = route.params;
+    const { phoneNumber,   userType , shopID  ,   firstcustomerName , custPhoneNumber  } = route.params;
     const [mainServices, setMainServices] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { setGlobalPhoneNumber } = useCart();
 
     useEffect(() => {
         const fetchMainServices = async () => {
@@ -19,12 +21,13 @@ const MyServices = ({ route, navigation }) => {
                 setLoading(false);
             }
         };
+        setGlobalPhoneNumber(phoneNumber);
     
         fetchMainServices();
-    }, [phoneNumber]);
+    }, [phoneNumber , setGlobalPhoneNumber]);
 
     const handleMainServiceClick = (mainServiceId) => {
-        navigation.navigate('SelectedServices', { phoneNumber, mainServiceId  , userType:userType , shopID :shopID  , firstcustomerName:firstcustomerName});
+        navigation.navigate('SelectedServices', { shopPhoneNumber:phoneNumber, mainServiceId  , userType:userType , shopID :shopID  , firstcustomerName:firstcustomerName , custPhoneNumber:custPhoneNumber});
     };
 
     return (
@@ -33,6 +36,7 @@ const MyServices = ({ route, navigation }) => {
             <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
                     <Text style={styles.welcomeText}>Welcome : {firstcustomerName}</Text>
+                    <Text style={styles.welcomeText}>Welcome : {custPhoneNumber}</Text>
                     
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                     {userType !== 'customer' && (

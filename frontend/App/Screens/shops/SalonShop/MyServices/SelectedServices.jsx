@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator , StyleSheet } from 'react-native';
-import {useCart} from '../../../../Context/ContextApi';
-
+import { useCart, useCustomer } from '../../../../Context/ContextApi'; // Import useCustomer hook
 
 const SubServices = ({ route }) => {
-    const { phoneNumber, mainServiceId, userType, firstcustomerName } = route.params;
-    const { addToCart } = useCart(); // Access addToCart function from CartProvider
+    const { shopPhoneNumber, mainServiceId, userType, firstcustomerName , custPhoneNumber } = route.params;
+    const { addToCart, setCustPhoneNumber } = useCart(); // Access addToCart function and setCustPhoneNumber from CartProvider
     const [subServices, setSubServices] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchSubServices();
-    }, [phoneNumber, mainServiceId]);
+        // Set custPhoneNumber globally
+        setCustPhoneNumber(custPhoneNumber);
+    }, [shopPhoneNumber, mainServiceId]);
 
     const fetchSubServices = async () => {
         try {
-            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices/${phoneNumber}/${mainServiceId}`);
+            const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedSubServices/${shopPhoneNumber}/${mainServiceId}`);
             const data = await response.json();
             setSubServices(data);
         } catch (error) {
@@ -27,7 +28,8 @@ const SubServices = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            {/* Header and other components */}
+           <Text style={styles.welcomeText}>Welcome :{custPhoneNumber}  </Text>
+           <Text style={styles.welcomeText}>Shop Phone number :{shopPhoneNumber}  </Text>
             {/* Your existing code */}
 
             {loading ? (
@@ -48,7 +50,7 @@ const SubServices = ({ route }) => {
                                 <Text style={styles.subServicePrice}>Price: ₹{item.subServicePrice.toFixed(2)}</Text>
                                 {/* Conditionally render Add to Cart button based on userType */}
                                 {userType === 'customer' && (
-                                    <TouchableOpacity onPress={() => addToCart(item, phoneNumber, firstcustomerName)} style={styles.addToCartButton}>
+                                    <TouchableOpacity onPress={() => addToCart(item, custPhoneNumber, firstcustomerName , shopPhoneNumber)} style={styles.addToCartButton}>
                                         <Text style={styles.addToCartButtonText}>Add to Cart</Text>
                                     </TouchableOpacity>
                                 )}
@@ -60,7 +62,6 @@ const SubServices = ({ route }) => {
         </View>
     );
 };
- 
 
 const styles = StyleSheet.create({
     container: {

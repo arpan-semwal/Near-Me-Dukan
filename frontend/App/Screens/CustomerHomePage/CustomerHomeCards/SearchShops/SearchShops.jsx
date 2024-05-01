@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
 
 export default function SearchShops({ route }) {
-    const { phoneNumber , userType , firstcustomerName } = route.params || {};
+    const { custPhoneNumber , userType , firstcustomerName } = route.params || {};
     const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
@@ -43,7 +43,7 @@ export default function SearchShops({ route }) {
 
     const fetchCustomerDetails = async () => {
         try {
-            const response = await fetch(`http://192.168.29.68:3000/customerDetails/${phoneNumber}`);
+            const response = await fetch(`http://192.168.29.68:3000/customerDetails/${custPhoneNumber}`);
             const data = await response.json();
             setCustomerName(data.name);
             setPincode(data.pincode);
@@ -100,7 +100,7 @@ export default function SearchShops({ route }) {
         }
     }
     const handleShopPress = (phoneNumber, storeImage, shopkeeperName ) => {
-        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, shopkeeperPhoneNumber:shopkeeperPhonenumber , userType:userType , shopID: selectedShop , firstcustomerName:firstcustomerName });
+        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName,   userType:userType , shopID: selectedShop , firstcustomerName:firstcustomerName , custPhoneNumber:custPhoneNumber });
     }
 
     const toggleShopSelection = (shopID) => {
@@ -119,7 +119,8 @@ export default function SearchShops({ route }) {
                 </View>
                 <View style={styles.rightContainer}>
                     <Text style={styles.welcomeText}>Welcome, {firstcustomerName}</Text>
-                    <Text style={styles.pincodeText}>Shops at Pincode: {shopkeeperPhonenumber}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {custPhoneNumber}</Text>
+                    <Text style={styles.pincodeText}>Shops at Pincode: </Text>
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>
                     </TouchableOpacity>

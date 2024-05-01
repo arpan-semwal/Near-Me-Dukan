@@ -7,20 +7,20 @@ import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = ({ route }) => {
-    const { cartItems, removeFromCart } = useCart();
-    const { phoneNumber    } = cartItems[0] || {}; // Extract phoneNumber from the first item in cartItems
-    const { firstCustomerName } = cartItems[0] || {}; // Extract firstCustomerName from the first item in cartItems
+    const { cartItems, removeFromCart , phoneNumber } = useCart();
+    const { custPhoneNumber } = useCustomer(); // Access custPhoneNumber from CustomerContext
+    const { shopPhoneNumber } = cartItems[0] || {}; // Extract phoneNumber from the first item in cartItems
+    
 
-  
-    const { customerName, shopID, shopName, custPhoneNumber  } = useCustomer();
+    const { customerName, shopID, shopName } = useCustomer();
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemCount, setItemCount] = useState(0);
     const [shopkeeperDetails, setShopkeeperDetails] = useState(null); // State to store shopkeeper details
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const [storeName, setStoreName] = useState();
-    const [shopkeeperName , setShopkeeperName] = useState();
-    const [shopname , setShopName] = useState();
+    const [shopkeeperName, setShopkeeperName] = useState();
+    const [shopname, setShopName] = useState();
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -28,10 +28,10 @@ const CartScreen = ({ route }) => {
         setItemCount(calculateItemCount(cartItems));
 
         // Fetch shopkeeper details when component mounts
-        if (phoneNumber) {
-            fetchShopkeeperDetails(phoneNumber);
+        if (shopPhoneNumber) {
+            fetchShopkeeperDetails(shopPhoneNumber);
         }
-    }, [cartItems, phoneNumber]);
+    }, [cartItems, shopPhoneNumber]);
 
     useEffect(() => {
         // Clear cart items when the phone number changes
@@ -72,7 +72,7 @@ const CartScreen = ({ route }) => {
     };
 
     const handleCheckout = () => {
-        navigation.navigate("Checkout", { cartItems, totalPrice , phoneNumber:phoneNumber  , shopname:shopname});
+        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopname: shopname });
     };
 
     const fetchShopkeeperDetails = async (phoneNumber) => {
@@ -93,8 +93,9 @@ const CartScreen = ({ route }) => {
             <View style={styles.headerContainer}>
                 <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
-                    <Text style={styles.shoppingAt}>Shopping at: {shopname}</Text>
+                    <Text style={styles.welcomeText}>Welcome: {custPhoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Shopping at: {phoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                 </View>
             </View>

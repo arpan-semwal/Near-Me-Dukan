@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Image, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../utils/Colors';
-
+import { useCustomer } from '../../Context/ContextApi';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function OtpScreen1() {
+    const { setCustPhoneNumber } = useCustomer();
     const [phoneNumber, setPhoneNumber] = useState('');
     const navigation = useNavigation();
+    
+    useEffect(() => {
+        // Set custPhoneNumber when the component mounts
+        setCustPhoneNumber(phoneNumber);
+    }, []);
 
     const handleSubmitPhoneNumber = () => {
         // Validate phone number

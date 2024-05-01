@@ -6,9 +6,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {useEffect, useState} from 'react';
 
 export default function CustomerHomePage({ route }) {
-  const {  pincode , phoneNumber,userType } = route.params || {};
+  const {  pincode , custPhoneNumber,userType } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
   const [firstcustomerName, setFirstCustomerName] = useState('');
+   
   const [shopID, setShopID] = useState('');
  
   const navigation = useNavigation();
@@ -20,20 +21,21 @@ export default function CustomerHomePage({ route }) {
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://192.168.29.68:3000/customerDetails/${phoneNumber}`);
+        const response = await fetch(`http://192.168.29.68:3000/customerDetails/${custPhoneNumber}`);
         const data = await response.json();
         setCustomerDetails(data);
         setFirstCustomerName(data.name); // Set the customer's name
         setShopID(data.shop_id); // Set the customer's shop ID
+        
       } catch (error) {
         console.error('Error fetching customer details:', error);
       }
     };
 
-    if (phoneNumber) {
+    if (custPhoneNumber) {
       fetchCustomerDetails();
     }
-  }, [phoneNumber]);
+  }, [custPhoneNumber]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -48,7 +50,7 @@ export default function CustomerHomePage({ route }) {
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, phoneNumber: phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
@@ -83,7 +85,7 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, phoneNumber: phoneNumber , userType:userType })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
@@ -95,7 +97,7 @@ export default function CustomerHomePage({ route }) {
         </View>
 
         <View>
-          <Text style={styles.headingText}>Types of shops </Text>
+          <Text style={styles.headingText}>Types of shops:{custPhoneNumber} </Text>
         </View>
 
         <View style={styles.container1}>

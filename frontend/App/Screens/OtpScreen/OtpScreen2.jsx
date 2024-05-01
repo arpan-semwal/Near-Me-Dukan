@@ -45,7 +45,7 @@ export default function OtpScreen2({ route }) {
                         navigation.navigate('ShopkeeperHome', { phoneNumber: phoneNumber, userType: userType });
                     } 
                     else if (userType === 'customer') {
-                        navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType });
+                        navigation.navigate('CustomerHomePage', { custPhoneNumber: phoneNumber, userType: userType });
                     }
                     else if (userType === 'unregistered') {
                         navigation.navigate('Register', { phoneNumber: phoneNumber, userType: userType });
