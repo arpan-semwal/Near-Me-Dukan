@@ -5,12 +5,13 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 
 import { useCart, useCustomer } from '../../../Context/ContextApi';
 
-const Pay = () => {
+const Pay = ({route}) => {
   
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-  const { customerName, shopName, custPhoneNumber } = useCustomer();
-  const { shopID, storeName } = useCart();
+  const { customerName, shopName,   } = useCustomer();
+  const { custName  , custPhoneNumber , cartItems , totalPrice ,shopID , shopkeeperName  , phoneNumber  } = route.params || {};
+  const {    storeName } = useCart();
 
   useEffect(() => {
     startAnimation();
@@ -30,7 +31,7 @@ const Pay = () => {
 
   const goToOrderPage = () => {
     // Navigate to the order page and pass customerPhone and shopID as params
-    navigation.navigate('Orders', { customerPhone: custPhoneNumber, shopID: shopID });
+    navigation.navigate('Orders', { customerPhone: custPhoneNumber, shopID: shopID , custName:custName  , custPhoneNumber:custPhoneNumber , cartItems:cartItems , totalPrice:totalPrice ,shopID:shopID , shopkeeperName:shopkeeperName  , phoneNumber:phoneNumber  });
   };
 
   return (

@@ -521,12 +521,12 @@ app.post('/saveOrder', (req, res) => {
 
 
 app.get('/orders', (req, res) => {
-    const { customerPhoneNumber, shopID } = req.query;
+    const { customerPhoneNumber, phoneNumber } = req.query;
 
-    // Fetch orders from the database based on customerPhoneNumber and shopID
+    // Fetch orders from the database based on customerPhoneNumber and shopkeeperPhoneNumber
     db.query(
-        'SELECT * FROM tbl_orders WHERE custPhoneNumber = ? AND shopID = ?',
-        [customerPhoneNumber, shopID],
+        'SELECT * FROM tbl_orders WHERE custPhoneNumber = ? AND shopkeeperPhonenumber = ?',
+        [customerPhoneNumber, phoneNumber],
         (err, results) => {
             if (err) {
                 console.error('Error fetching orders:', err);
@@ -536,7 +536,6 @@ app.get('/orders', (req, res) => {
         }
     );
 });
-
 
 
 

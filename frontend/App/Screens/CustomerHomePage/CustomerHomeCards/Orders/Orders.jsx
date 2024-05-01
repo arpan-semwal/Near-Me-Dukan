@@ -3,20 +3,20 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Colors from '../../../../utils/Colors';
 import { useCart, useCustomer } from '../../../../Context/ContextApi';
-export default function Orders() {
+export default function Orders({route}) {
     const navigation = useNavigation();
     
-    const { customerName, shopID, shopName, custPhoneNumber } = useCustomer();
+    
+    const { custName  , custPhoneNumber , cartItems , totalPrice ,shopID , shopkeeperName  , phoneNumber  } = route.params || {};
 
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         fetchOrders();
     }, []);
-
     const fetchOrders = () => {
-        // Make API call to fetch orders and shopkeeper details based on customerPhone and shopID
-        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${custPhoneNumber}&shopID=${shopID}`)
+        // Make API call to fetch orders and shopkeeper details based on customerPhone and shopkeeperPhoneNumber
+        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${custPhoneNumber}&phoneNumber=${phoneNumber}`)
             .then(response => response.json())
             .then(data => {
                 setOrders(data);
@@ -29,8 +29,7 @@ export default function Orders() {
         return orders.map((order, index) => (
             <View key={index} style={styles.orderContainer}>
                 <Text style={styles.orderText}>Order ID: {order.id}</Text>
-                <Text style={styles.orderText}>Shop ID: {order.shopID}</Text>
-                <Text style={styles.orderText}>Shopkeeper: {order.shopkeeperName}</Text>
+                <Text style={styles.orderText}>Shopkeeper Phone: {order.shopkeeperPhonenumber}</Text>
                 <Text style={styles.orderText}>Total Price: {order.totalPrice}</Text>
                 <Text style={styles.orderText}>Date: {order.created_at}</Text>
                 <Text style={styles.orderText}>Cart Items:</Text>

@@ -74,7 +74,7 @@ const Checkout = ({ route }) => {
         <TouchableOpacity
   style={styles.paymentButton}
   onPress={() => {
-    navigation.navigate('Pay');
+    navigation.navigate('Pay' , {custName:custName , custPhoneNumber:custPhoneNumber, cartItems:cartItems, totalPrice:totalPrice,shopID:shopID, shopkeeperName:shopkeeperName , phoneNumber:phoneNumber});
     saveOrder(custName, custPhoneNumber, cartItems, totalPrice, '', '', shopID, shopkeeperName , phoneNumber ); // Pass shopID
   }}
 >
