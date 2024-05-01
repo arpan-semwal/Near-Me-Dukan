@@ -4,7 +4,7 @@ import {useCart} from '../../../../Context/ContextApi';
 
 
 const SubServices = ({ route }) => {
-    const { phoneNumber, mainServiceId, userType  , firstcustomerName } = route.params;
+    const { phoneNumber, mainServiceId, userType  , firstcustomerName , enteredPrices  } = route.params;
     const { addToCart } = useCart(); // Access addToCart function from CartProvider
     const [subServices, setSubServices] = useState([]);
     const [loading, setLoading] = useState(true);
