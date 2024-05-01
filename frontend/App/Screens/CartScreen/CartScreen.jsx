@@ -12,7 +12,7 @@ const CartScreen = ({ route }) => {
     const { shopPhoneNumber } = cartItems[0] || {}; // Extract phoneNumber from the first item in cartItems
     
 
-    const { customerName, shopID, shopName } = useCustomer();
+    const { customerName,   shopName } = useCustomer();
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemCount, setItemCount] = useState(0);
     const [shopkeeperDetails, setShopkeeperDetails] = useState(null); // State to store shopkeeper details
@@ -77,7 +77,7 @@ const CartScreen = ({ route }) => {
     };
 
     const handleCheckout = () => {
-        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopname: shopname , custName:custName , custPhoneNumber:custPhoneNumber , shopkeeperName:shopkeeperName });
+        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopID: shopname , custName:custName , custPhoneNumber:custPhoneNumber , shopkeeperName:shopkeeperName });
     };
 
     const fetchShopkeeperDetails = async (phoneNumber) => {

@@ -501,12 +501,12 @@ app.get('/customerDetails/:phoneNumber', (req, res) => {
 
 // API endpoint to save orders
 app.post('/saveOrder', (req, res) => {
-    const { custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopname, shopkeeperName, phoneNumber } = req.body;
+    const { custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber } = req.body;
 
     // Save order details to the database
     db.query(
         'INSERT INTO tbl_orders (customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, shopkeeperPhonenumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [custName, custPhoneNumber, JSON.stringify(cartItems), totalPrice, selectedDate, selectedTime, shopname, shopkeeperName, phoneNumber],
+        [custName, custPhoneNumber, JSON.stringify(cartItems), totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber],
         (err, result) => {
             if (err) {
                 console.error('Error saving order:', err);
@@ -517,7 +517,6 @@ app.post('/saveOrder', (req, res) => {
         }
     );
 });
-
 
 
 
