@@ -72,7 +72,7 @@ const CartScreen = ({ route }) => {
     };
 
     const handleCheckout = () => {
-        navigation.navigate("Checkout", { cartItems, totalPrice , phoneNumber:phoneNumber });
+        navigation.navigate("Checkout", { cartItems, totalPrice , phoneNumber:phoneNumber  , shopname:shopname});
     };
 
     const fetchShopkeeperDetails = async (phoneNumber) => {
