@@ -16,10 +16,12 @@ const CartScreen = ({ route }) => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemCount, setItemCount] = useState(0);
     const [shopkeeperDetails, setShopkeeperDetails] = useState(null); // State to store shopkeeper details
+    const [customerDetails, setCustomerDetails] = useState(null); // State to store shopkeeper details
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const [storeName, setStoreName] = useState();
     const [shopkeeperName, setShopkeeperName] = useState();
+    const [custName , setCustName] = useState();
     const [shopname, setShopName] = useState();
     const navigation = useNavigation();
 
@@ -28,10 +30,13 @@ const CartScreen = ({ route }) => {
         setItemCount(calculateItemCount(cartItems));
 
         // Fetch shopkeeper details when component mounts
-        if (shopPhoneNumber) {
-            fetchShopkeeperDetails(shopPhoneNumber);
+        if (phoneNumber) {
+            fetchShopkeeperDetails(phoneNumber);
         }
-    }, [cartItems, shopPhoneNumber]);
+        if(custPhoneNumber){
+            fetchCustomerDetails(custPhoneNumber);
+        }
+    }, [cartItems, phoneNumber , custPhoneNumber]);
 
     useEffect(() => {
         // Clear cart items when the phone number changes
@@ -72,7 +77,7 @@ const CartScreen = ({ route }) => {
     };
 
     const handleCheckout = () => {
-        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopname: shopname });
+        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopname: shopname , custName:custName , custPhoneNumber:custPhoneNumber , shopkeeperName:shopkeeperName });
     };
 
     const fetchShopkeeperDetails = async (phoneNumber) => {
@@ -81,8 +86,20 @@ const CartScreen = ({ route }) => {
             const data = await response.json();
             // Set shopkeeper details state
             setShopkeeperDetails(data);
-            setShopkeeperName(data.shopkeeperName);
             setShopName(data.shopID);
+            setShopkeeperName(data.shopkeeperName)
+        } catch (error) {
+            console.error('Error fetching shopkeeper details:', error);
+        }
+    };
+    const fetchCustomerDetails = async (phoneNumber) => {
+        try {
+            const response = await fetch(`http://192.168.29.68:3000/customerDetails/${custPhoneNumber}`);
+            const data = await response.json();
+            // Set shopkeeper details state
+            setCustomerDetails(data);
+            setCustName(data.name); 
+             
         } catch (error) {
             console.error('Error fetching shopkeeper details:', error);
         }
@@ -93,10 +110,11 @@ const CartScreen = ({ route }) => {
             <View style={styles.headerContainer}>
                 <Image source={require('../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome: {custPhoneNumber}</Text>
-                    <Text style={styles.shoppingAt}>Shopping at: {phoneNumber}</Text>
+                    <Text style={styles.welcomeText}>Welcome: {custName}</Text>
+                    <Text style={styles.shoppingAt}>Shopping at: {shopname}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
-                    <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Shopkeeper Name: {shopkeeperName}</Text>
+                   
                 </View>
             </View>
             <View style={styles.line} />

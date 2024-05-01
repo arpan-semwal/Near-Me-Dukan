@@ -51,7 +51,7 @@ export default function Orders() {
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
-                <Text style={styles.orderTitle}>My Previous Orders : </Text>
+                <Text style={styles.orderTitle}>My Previous Orders :{shopID} </Text>
                 {/* Body section */}
                 {renderOrders()}
             </View>

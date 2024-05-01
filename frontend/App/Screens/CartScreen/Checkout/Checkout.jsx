@@ -5,17 +5,18 @@ import { useNavigation } from '@react-navigation/native';
 import { useCart, useCustomer } from '../../../Context/ContextApi';
 import axios from 'axios';
 
-const saveOrder = async (customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName) => {
+const saveOrder = async (custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopName, shopkeeperName, phoneNumber) => {
   try {
     const response = await axios.post('http://192.168.29.68:3000/saveOrder', {
-      customerName: customerName,
+      custName: custName,
       custPhoneNumber: custPhoneNumber,
       cartItems: cartItems,
       totalPrice: totalPrice,
       selectedDate: selectedDate || null, // Pass null if selectedDate is empty
       selectedTime: selectedTime || null, // Pass null if selectedTime is empty
-      shopID: shopID, // Pass shopID
-      shopkeeperName: shopkeeperName, // Pass shopkeeperName
+      shopName: shopName,
+      shopkeeperName: shopkeeperName,
+      phoneNumber: phoneNumber // Add phoneNumber parameter
     });
     console.log(response.data.message);
     // Redirect to success page or show a success message
@@ -25,9 +26,10 @@ const saveOrder = async (customerName, custPhoneNumber, cartItems, totalPrice, s
   }
 };
 
+
 const Checkout = ({ route }) => {
-  const { customerName,  custPhoneNumber } = useCustomer();
-  const { cartItems, totalPrice, shopkeeperName , phoneNumber  , shopname} = route.params; 
+   
+  const { cartItems, totalPrice, shopkeeperName, phoneNumber, shopname, custName, custPhoneNumber } = route.params; 
   const { shopID, storeName } = useCart();
   const navigation = useNavigation();
 
@@ -37,13 +39,14 @@ const Checkout = ({ route }) => {
         <View style={styles.headerContainer}>
           <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
           <View style={styles.headerText}>
-            <Text style={styles.welcomeText}>Welcome: { }</Text>
+            <Text style={styles.welcomeText}>Welcome: {custName}</Text>
             <Text style={styles.shoppingAt}>Shopping at: {shopname}</Text>
             <TouchableOpacity>
               <Text style={styles.shoppingAt}>Change Address</Text>
             </TouchableOpacity>
             <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
             <Text style={styles.shoppingAt}>ShopKeeper Name: {shopkeeperName}</Text>
+            <Text style={styles.shoppingAt}>Customer Phone: {custPhoneNumber}</Text>
           </View>
         </View>
         <View>
@@ -72,7 +75,7 @@ const Checkout = ({ route }) => {
   style={styles.paymentButton}
   onPress={() => {
     navigation.navigate('Pay');
-    saveOrder(customerName, custPhoneNumber, cartItems, totalPrice, '', '', shopID, shopkeeperName);
+    saveOrder(custName, custPhoneNumber, cartItems, totalPrice, '', '', shopname, shopkeeperName , phoneNumber);
     
   }}
 >
