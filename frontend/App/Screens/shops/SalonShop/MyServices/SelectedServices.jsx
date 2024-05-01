@@ -4,7 +4,7 @@ import {useCart} from '../../../../Context/ContextApi';
 
 
 const SubServices = ({ route }) => {
-    const { phoneNumber, mainServiceId, userType  , firstcustomerName , enteredPrices  } = route.params;
+    const { phoneNumber, mainServiceId, userType, firstcustomerName } = route.params;
     const { addToCart } = useCart(); // Access addToCart function from CartProvider
     const [subServices, setSubServices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,18 +27,9 @@ const SubServices = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
-                <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome : {firstcustomerName}</Text>
-                    <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
-                   {userType !== 'customer' && (
-                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
-                )}
-                </View>
-            </View>
-            <View style={styles.line}></View>
-            
+            {/* Header and other components */}
+            {/* Your existing code */}
+
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : subServices.length === 0 ? (
@@ -50,18 +41,17 @@ const SubServices = ({ route }) => {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.card}>
-                            <View style={styles.cardContent}>
-                                <Image source={require('../../../../../assets/logo.png')} style={styles.serviceImage} />
-                                <View style={styles.detailsContainer}>
-                                    <Text style={styles.subServiceName}>Sub Service: {item.subServiceName}</Text>
-                                    <Text style={styles.subServicePrice}>Price: ${item.subServicePrice.toFixed(2)}</Text>
-                                    {/* Conditionally render Add to Cart button based on userType */}
-                                    {userType === 'customer' && (
-                                        <TouchableOpacity onPress={() => addToCart(item, phoneNumber, firstcustomerName)} style={styles.addToCartButton}>
-                                            <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
+                            {/* Your existing card content */}
+                            {/* Display sub service name and fetched price */}
+                            <View style={styles.detailsContainer}>
+                                <Text style={styles.subServiceName}>Sub Service: {item.subServiceName}</Text>
+                                <Text style={styles.subServicePrice}>Price: ₹{item.subServicePrice.toFixed(2)}</Text>
+                                {/* Conditionally render Add to Cart button based on userType */}
+                                {userType === 'customer' && (
+                                    <TouchableOpacity onPress={() => addToCart(item, phoneNumber, firstcustomerName)} style={styles.addToCartButton}>
+                                        <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         </View>
                     )}

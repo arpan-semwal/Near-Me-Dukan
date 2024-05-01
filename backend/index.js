@@ -642,11 +642,10 @@ app.post('/saveSelectedServices', async (req, res) => {
     try {
         const { phoneNumber, selectedServices } = req.body;
 
-        // Assuming selectedServices is an array of objects with mainServiceId and subServiceId
         for (const service of selectedServices) {
             await db.query(
-                'INSERT INTO tbl_selected_services (phoneNumber, mainServiceId, subServiceId) VALUES (?, ?, ?)',
-                [phoneNumber, service.mainServiceId, service.subServiceId]
+                'INSERT INTO tbl_selected_services (phoneNumber, mainServiceId, subServiceId, price) VALUES (?, ?, ?, ?)',
+                [phoneNumber, service.mainServiceId, service.subServiceId, service.price]
             );
         }
 
@@ -656,6 +655,10 @@ app.post('/saveSelectedServices', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
+
+
 
 app.get('/myServices/:phoneNumber', async (req, res) => {
     try {
@@ -755,6 +758,7 @@ app.get('/shopkeeper/selectedSubServices/:phoneNumber/:mainServiceId', (req, res
         }
     );
 });
+
 app.get('/shopkeeperDetails/:shopID', (req, res) => {
     const shopID = req.params.shopID;
 

@@ -74,10 +74,14 @@ export default function SubSalonService({ route, navigation }) {
                 },
                 body: JSON.stringify({
                     phoneNumber: phoneNumber,
-                    selectedServices: selectedServices.map(service => ({ mainServiceId, subServiceId: service.id, price: service.price }))
+                    selectedServices: selectedServices.map(service => ({
+                        mainServiceId,
+                        subServiceId: service.id,
+                        price: service.price
+                    }))
                 }),
             });
-
+    
             setSelectedServices([]);
             navigation.navigate('MyServices', { phoneNumber: phoneNumber });
         } catch (error) {
