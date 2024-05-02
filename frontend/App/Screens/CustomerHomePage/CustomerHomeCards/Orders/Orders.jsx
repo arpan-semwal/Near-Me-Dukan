@@ -3,56 +3,54 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Colors from '../../../../utils/Colors';
 import { useCart, useCustomer } from '../../../../Context/ContextApi';
-export default function Orders({route}) {
-    const navigation = useNavigation();
-    
-    
-    const { custName  , custPhoneNumber , cartItems , totalPrice ,shopID , shopkeeperName  , phoneNumber  } = route.params || {};
 
-    const [orders, setOrders] = useState([]);
+export default function Orders({ route }) {
+    const navigation = useNavigation();
+    const { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber } = route.params || {};
+    const [shops, setShops] = useState([]);
 
     useEffect(() => {
-        fetchOrders();
+        fetchShops();
     }, []);
-    const fetchOrders = () => {
-        // Make API call to fetch orders and shopkeeper details based on customerPhone and shopkeeperPhoneNumber
-        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${custPhoneNumber}&phoneNumber=${phoneNumber}`)
+    const fetchShops = () => {
+        fetch(`http://192.168.29.68:3000/orders/shops?customerPhoneNumber=${custPhoneNumber}`)
             .then(response => response.json())
             .then(data => {
-                setOrders(data);
+                const uniqueShops = {};
+                data.forEach(shop => {
+                    uniqueShops[shop.shopID] = {
+                        shopID: shop.shopID,
+                        phoneNumber: shop.phoneNumber,
+                        shopkeeperPhoneNumber: shop.shopkeeperPhoneNumber
+                    };
+                });
+                setShops(Object.values(uniqueShops));
             })
-            .catch(error => console.error('Error fetching orders:', error));
+            .catch(error => console.error('Error fetching shops:', error));
     };
 
-    // Render orders
-    const renderOrders = () => {
-        return orders.map((order, index) => (
-            <View key={index} style={styles.orderContainer}>
-                <Text style={styles.orderText}>Order ID: {order.id}</Text>
-                <Text style={styles.orderText}>Shopkeeper Phone: {order.shopkeeperPhonenumber}</Text>
-                <Text style={styles.orderText}>Total Price: {order.totalPrice}</Text>
-                <Text style={styles.orderText}>Date: {order.created_at}</Text>
-                <Text style={styles.orderText}>Cart Items:</Text>
-                {renderCartItems(order.cartItems)}
-                {/* Add other order details */}
-            </View>
-        ));
-    };
-
-    // Render cart items
-    const renderCartItems = (cartItems) => {
-        const parsedCartItems = JSON.parse(cartItems);
-        return parsedCartItems.map((item, index) => (
-            <Text key={index}>{item.name}</Text>
-        ));
+    const handleViewOrders = (shopID, shopkeeperPhoneNumber) => {
+        navigation.navigate('ViewOrders', {
+            shopID: shopID,
+            custPhoneNumber: custPhoneNumber,
+            phoneNumber: phoneNumber,
+            shopkeeperPhoneNumber: shopkeeperPhoneNumber
+        });
     };
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
-                <Text style={styles.orderTitle}>My Previous Orders :{shopID} </Text>
-                {/* Body section */}
-                {renderOrders()}
+                <Text style={styles.title}>My Orders</Text>
+                {shops.map((shop, index) => (
+                    <View key={index} style={styles.shopContainer}>
+                        <Text style={styles.shopTitle}>Shop ID: {shop.shopID}</Text>
+                        <Text style={styles.shopkeeperPhoneNumber}>Shopkeeper Phone: {phoneNumber}</Text>
+                        <TouchableOpacity style={styles.button} onPress={() => handleViewOrders(shop.shopID, phoneNumber)}>
+                            <Text style={styles.buttonText}>View Orders</Text>
+                        </TouchableOpacity>
+                    </View>
+                ))}
             </View>
         </ScrollView>
     );
@@ -67,20 +65,36 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    orderContainer: {
-        backgroundColor: '#E4E4E4',
-        padding: 20,
-        marginBottom: 20,
-        borderRadius: 10,
-    },
-    orderTitle: {
+    title: {
         fontSize: 26,
         fontWeight: 'bold',
         marginBottom: 20,
         textAlign: 'center',
     },
-    orderText: {
+    shopContainer: {
+        marginBottom: 20,
+        padding: 20,
+        backgroundColor: '#E4E4E4',
+        borderRadius: 10,
+    },
+    shopTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    shopkeeperPhoneNumber: {
         fontSize: 16,
-        marginBottom: 5,
+        marginBottom: 10,
+    },
+    button: {
+        backgroundColor: '#007bff',
+        padding: 10,
+        borderRadius: 5,
+        alignSelf: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });

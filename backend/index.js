@@ -537,6 +537,21 @@ app.get('/orders', (req, res) => {
     );
 });
 
+app.get('/orders/shops', (req, res) => {
+    const { customerPhoneNumber } = req.query;
+
+    db.query(
+        'SELECT DISTINCT shopID FROM tbl_orders WHERE custPhoneNumber = ?',
+        [customerPhoneNumber],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching shops:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json(results);
+        }
+    );
+});
 
 
 app.post('/preferredShops/add', (req, res) => {

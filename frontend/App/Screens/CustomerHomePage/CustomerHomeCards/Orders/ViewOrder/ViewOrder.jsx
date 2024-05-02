@@ -1,41 +1,79 @@
-import React from 'react';
-import { View, Text, FlatList } from 'react-native';
-import { useCart } from '../../../../../Context/ContextApi'; // Import useCart hook
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import Colors from '../../../../../utils/Colors';
 
-const ViewOrder = ({ route }) => {
-  const { storeName } = route.params; // Extract storeName from route params
-  const { cartItems, totalPrice } = useCart(); 
 
-  // Filter orders based on storeName
-  const storeOrders = cartItems.filter(item => item.storeName === storeName);
+export default function ViewOrders() {
+    const route = useRoute();
+    const { shopID, custPhoneNumber, phoneNumber } = route.params || {};
+    const [orders, setOrders] = useState([]);
 
-  return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>
-        Orders from: {storeName}
-      </Text>
-      <FlatList
-        data={storeOrders}
-        keyExtractor={(item, index) => `${item.id}_${index}`}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 20 }}>
-            <Text style={{ fontWeight: 'bold' }}>Order Number: {item.orderNumber}</Text>
-            <Text style={{ marginBottom: 10 }}>Total Price: ₹{item.totalPrice}</Text>
-            <FlatList
-              data={item.products}
-              keyExtractor={(product, index) => `${product.id}_${index}`}
-              renderItem={({ product }) => (
-                <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-                  <Text>{product.title}</Text>
-                  <Text style={{ marginLeft: 10 }}>Quantity: {product.quantity}</Text>
-                </View>
-              )}
-            />
-          </View>
-        )}
-      />
-    </View>
-  );
-};
+    useEffect(() => {
+        fetchOrders();
+    }, []);
 
-export default ViewOrder;
+    const fetchOrders = () => {
+        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${custPhoneNumber}&phoneNumber=${phoneNumber}`)
+            .then(response => response.json())
+            .then(data => {
+                setOrders(data);
+            })
+            .catch(error => console.error('Error fetching orders:', error));
+    };
+
+    const renderOrders = () => {
+        return orders.map((order, index) => (
+            <View key={index} style={styles.orderContainer}>
+                <Text style={styles.orderText}>Order ID: {order.id}</Text>
+                <Text style={styles.orderText}>Shopkeeper Phone: {order.shopkeeperPhonenumber}</Text>
+                <Text style={styles.orderText}>Total Price: {order.totalPrice}</Text>
+                <Text style={styles.orderText}>Date: {order.created_at}</Text>
+                <Text style={styles.orderText}>Cart Items:</Text>
+                {renderCartItems(order.cartItems)}
+            </View>
+        ));
+    };
+
+    const renderCartItems = (cartItems) => {
+        const parsedCartItems = JSON.parse(cartItems);
+        return parsedCartItems.map((item, index) => (
+            <Text key={index}>{item.name}</Text>
+        ));
+    };
+
+    return (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.container}>
+                <Text style={styles.orderTitle}>Orders from Shop ID: {shopID}</Text>
+                {renderOrders()}
+            </View>
+        </ScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    scrollContainer: {
+        flexGrow: 1,
+        backgroundColor: Colors.BACKGROUND,
+        padding: 20,
+    },
+    container: {
+        flex: 1,
+    },
+    orderContainer: {
+        backgroundColor: '#E4E4E4',
+        padding: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+    },
+    orderTitle: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    orderText: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+});
