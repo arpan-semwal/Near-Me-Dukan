@@ -3,10 +3,9 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Colors from '../../../../../utils/Colors';
 
-
 export default function ViewOrders() {
     const route = useRoute();
-    const { shopID, custPhoneNumber, phoneNumber } = route.params || {};
+    const { shopkeeperPhoneNumber } = route.params || {};
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -14,7 +13,7 @@ export default function ViewOrders() {
     }, []);
 
     const fetchOrders = () => {
-        fetch(`http://192.168.29.68:3000/orders?customerPhoneNumber=${custPhoneNumber}&phoneNumber=${phoneNumber}`)
+        fetch(`http://192.168.29.68:3000/orders/shop/${shopkeeperPhoneNumber}`)
             .then(response => response.json())
             .then(data => {
                 setOrders(data);
@@ -34,18 +33,22 @@ export default function ViewOrders() {
             </View>
         ));
     };
-
     const renderCartItems = (cartItems) => {
         const parsedCartItems = JSON.parse(cartItems);
         return parsedCartItems.map((item, index) => (
-            <Text key={index}>{item.name}</Text>
+            <View key={index} style={styles.cartItemContainer}>
+                <Text style={styles.cartItemText}>Name: {item.name}</Text>
+                <Text style={styles.cartItemText}>Price: {item.price}</Text>
+                <Text style={styles.cartItemText}>Quantity: {item.quantity}</Text>
+                {/* Add other cart item details */}
+            </View>
         ));
     };
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.container}>
-                <Text style={styles.orderTitle}>Orders from Shop ID: {shopID}</Text>
+                <Text style={styles.orderTitle}>Orders for Shopkeeper Phone: {shopkeeperPhoneNumber}</Text>
                 {renderOrders()}
             </View>
         </ScrollView>
@@ -75,5 +78,15 @@ const styles = StyleSheet.create({
     orderText: {
         fontSize: 16,
         marginBottom: 5,
+    },
+    cartItemContainer: {
+        backgroundColor: '#F0F0F0',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 5,
+    },
+    cartItemText: {
+        fontSize: 14,
+        marginBottom: 3,
     },
 });

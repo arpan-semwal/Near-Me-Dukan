@@ -61,7 +61,7 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('Orders')}>
+            <TouchableOpacity onPress={() => navigateToScreen('Orders'  ,{ pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />

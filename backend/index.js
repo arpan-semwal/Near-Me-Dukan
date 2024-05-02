@@ -465,7 +465,7 @@ app.get('/salons', (req, res) => {
 });
 
  
-// API endpoint to get customer details by shop ID
+ 
 // Get customer details by phone number
 app.get('/customerDetails/:phoneNumber', (req, res) => {
     const phoneNumber = req.params.phoneNumber;
@@ -499,7 +499,7 @@ app.get('/customerDetails/:phoneNumber', (req, res) => {
 
 
 
-// API endpoint to save orders
+ //order api
 app.post('/saveOrder', (req, res) => {
     const { custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber } = req.body;
 
@@ -519,29 +519,12 @@ app.post('/saveOrder', (req, res) => {
 });
 
 
-
-app.get('/orders', (req, res) => {
-    const { customerPhoneNumber, phoneNumber } = req.query;
-
-    // Fetch orders from the database based on customerPhoneNumber and shopkeeperPhoneNumber
-    db.query(
-        'SELECT * FROM tbl_orders WHERE custPhoneNumber = ? AND shopkeeperPhonenumber = ?',
-        [customerPhoneNumber, phoneNumber],
-        (err, results) => {
-            if (err) {
-                console.error('Error fetching orders:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-            res.status(200).json(results);
-        }
-    );
-});
-
+ 
 app.get('/orders/shops', (req, res) => {
     const { customerPhoneNumber } = req.query;
 
     db.query(
-        'SELECT DISTINCT shopID FROM tbl_orders WHERE custPhoneNumber = ?',
+        'SELECT shopID, shopkeeperPhonenumber FROM tbl_orders WHERE custPhoneNumber = ? GROUP BY shopID, shopkeeperPhonenumber',
         [customerPhoneNumber],
         (err, results) => {
             if (err) {
@@ -553,6 +536,21 @@ app.get('/orders/shops', (req, res) => {
     );
 });
 
+app.get('/orders/shop/:shopkeeperPhoneNumber', (req, res) => {
+    const { shopkeeperPhoneNumber } = req.params;
+
+    db.query(
+        'SELECT * FROM tbl_orders WHERE shopkeeperPhonenumber = ?',
+        [shopkeeperPhoneNumber],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching orders:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json(results);
+        }
+    );
+});
 
 app.post('/preferredShops/add', (req, res) => {
     const { phoneNumber, shopID } = req.body;
