@@ -5,25 +5,33 @@ import { useCart, useCustomer } from '../../Context/ContextApi';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
+import AppointmentPicker from '../../Components/Appointment/Appointment';
 
 const CartScreen = ({ route }) => {
-    const { cartItems, removeFromCart , phoneNumber } = useCart();
+    const { cartItems, removeFromCart, phoneNumber } = useCart();
     const { custPhoneNumber } = useCustomer(); // Access custPhoneNumber from CustomerContext
     const { shopPhoneNumber } = cartItems[0] || {}; // Extract phoneNumber from the first item in cartItems
     
 
-    const { customerName,   shopName } = useCustomer();
+    const { customerName, shopName } = useCustomer();
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemCount, setItemCount] = useState(0);
     const [shopkeeperDetails, setShopkeeperDetails] = useState(null); // State to store shopkeeper details
     const [customerDetails, setCustomerDetails] = useState(null); // State to store shopkeeper details
-    const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedTime, setSelectedTime] = useState('');
+
     const [storeName, setStoreName] = useState();
     const [shopkeeperName, setShopkeeperName] = useState();
-    const [custName , setCustName] = useState();
+    const [custName, setCustName] = useState();
     const [shopname, setShopName] = useState();
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [appointmentDateTime, setAppointmentDateTime] = useState(null);
+    const [showAppointmentForm, setShowAppointmentForm] = useState(false);
+    const [appointmentDate, setAppointmentDate] = useState(new Date());
+    const [appointmentTime, setAppointmentTime] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
+    const [selectedTime, setSelectedTime] = useState('');
     const navigation = useNavigation();
+    
 
     useEffect(() => {
         setTotalPrice(calculateTotalPrice(cartItems));
@@ -33,10 +41,10 @@ const CartScreen = ({ route }) => {
         if (phoneNumber) {
             fetchShopkeeperDetails(phoneNumber);
         }
-        if(custPhoneNumber){
+        if (custPhoneNumber) {
             fetchCustomerDetails(custPhoneNumber);
         }
-    }, [cartItems, phoneNumber , custPhoneNumber]);
+    }, [cartItems, phoneNumber, custPhoneNumber]);
 
     useEffect(() => {
         // Clear cart items when the phone number changes
@@ -77,33 +85,89 @@ const CartScreen = ({ route }) => {
     };
 
     const handleCheckout = () => {
-        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopID: shopname , custName:custName , custPhoneNumber:custPhoneNumber , shopkeeperName:shopkeeperName });
+        navigation.navigate("Checkout", { cartItems, totalPrice, phoneNumber: phoneNumber, shopID: shopname, custName: custName, custPhoneNumber: custPhoneNumber, shopkeeperName: shopkeeperName ,  selectedDate:selectedDate, selectedTime:selectedTime });
     };
 
     const fetchShopkeeperDetails = async (phoneNumber) => {
         try {
             const response = await fetch(`http://192.168.29.68:3000/shopkeeperDetails/${phoneNumber}`);
             const data = await response.json();
+
             // Set shopkeeper details state
             setShopkeeperDetails(data);
             setShopName(data.shopID);
-            setShopkeeperName(data.shopkeeperName)
+            setShopkeeperName(data.shopkeeperName);
+
+            // Check if the shop is a salon
+            if (data.selectedCategory === 'Salon Shop') {
+                // If it's a salon shop, you can handle appointment scheduling logic here
+                // For example, display a button to make an appointment
+                console.log('This is a salon shop');
+                // You can also get the subcategory if needed
+                console.log('Subcategory:', data.selectedSubCategory);
+            } else {
+                console.log('This is not a salon shop');
+            }
         } catch (error) {
             console.error('Error fetching shopkeeper details:', error);
         }
     };
+
     const fetchCustomerDetails = async (phoneNumber) => {
         try {
             const response = await fetch(`http://192.168.29.68:3000/customerDetails/${custPhoneNumber}`);
             const data = await response.json();
             // Set shopkeeper details state
             setCustomerDetails(data);
-            setCustName(data.name); 
-             
+            setCustName(data.name);
+
         } catch (error) {
             console.error('Error fetching shopkeeper details:', error);
         }
     };
+
+    const handleMakeAppointment = () => {
+        setShowAppointmentForm(true);
+    };
+
+    const handleAppointmentDateChange = (date) => {
+        setAppointmentDate(date);
+    };
+
+    const handleAppointmentTimeChange = (time) => {
+        setAppointmentTime(time);
+    };
+
+    const handleScheduleAppointment = () => {
+        // Combine date and time into a single datetime string
+        const dateTime = `${appointmentDate.toDateString()}, ${appointmentTime}`;
+        setAppointmentDateTime(dateTime);
+        // Now you can send this appointment datetime to your backend to schedule an appointment
+        // Remember to include customerId, shopId, etc. in your appointment request payload
+        console.log('Appointment scheduled:', dateTime);
+        // You can reset the form and hide it after successful scheduling
+        setShowAppointmentForm(false);
+        setAppointmentDate(new Date());
+        setAppointmentTime('');
+    };
+    
+    const handleAppointmentDateSelect = (date) => {
+        setSelectedDate(date);
+    };
+    
+    const handleAppointmentTimeSelect = (time) => {
+        setSelectedTime(time);
+    };
+    
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
+    const handleTimeChange = (time) => {
+        setSelectedTime(time);
+    };
+    
+    
 
     return (
         <View style={styles.container}>
@@ -114,7 +178,7 @@ const CartScreen = ({ route }) => {
                     <Text style={styles.shoppingAt}>Shopping at: {shopname}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                     <Text style={styles.shoppingAt}>Shopkeeper Name: {shopkeeperName}</Text>
-                   
+
                 </View>
             </View>
             <View style={styles.line} />
@@ -152,13 +216,39 @@ const CartScreen = ({ route }) => {
                 ListFooterComponent={
                     <View style={styles.totalPriceContainer}>
                         <Text style={[styles.totalPriceText, styles.bold]}>Total Price: ₹{totalPrice}</Text>
-                        {shopkeeperDetails && (
+                        {shopkeeperDetails && selectedCategory === 'Salon' && (
                             <View>
-                                <Text style={styles.deliveryText}>Shop Address</Text>
-                                <Text style={styles.addressText}>{shopkeeperDetails.address}, {shopkeeperDetails.city}, {shopkeeperDetails.state}</Text>
+                                <TouchableOpacity style={styles.button} onPress={handleMakeAppointment}>
+                                    <Text style={styles.buttonText}>Make Appointment</Text>
+                                </TouchableOpacity>
+                                {showAppointmentForm && (
+                                    <View>
+                                        <DatePickerIOS
+                                            date={appointmentDate}
+                                            onDateChange={handleAppointmentDateChange}
+                                            mode="date"
+                                        />
+                                        <TimePickerAndroid
+                                            value={appointmentTime}
+                                            onChange={handleAppointmentTimeChange}
+                                        />
+                                        <TouchableOpacity style={styles.button} onPress={handleScheduleAppointment}>
+                                            <Text style={styles.buttonText}>Schedule Appointment</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                             </View>
                         )}
+                        {shopkeeperDetails && shopkeeperDetails.selectedCategory === 'Salon Shop' && (
+                            // Display appointment picker for salon shops
+                            <AppointmentPicker
+                            onDateSelect={handleAppointmentDateSelect}
+                            onTimeSelect={handleAppointmentTimeSelect}
+                        />
+                        )}
                         <View style={styles.buttonContainer}>
+                        <Text style={styles.selectedDateTime}>Selected Date: {selectedDate}</Text>
+                            <Text style={styles.selectedDateTime}>Selected Time: {selectedTime}</Text>
                             <TouchableOpacity style={styles.button} onPress={handleContinueShopping}>
                                 <Text style={styles.buttonText}>Continue Shopping</Text>
                             </TouchableOpacity>
@@ -166,6 +256,7 @@ const CartScreen = ({ route }) => {
                                 <Text style={styles.buttonText}>Proceed to Pay</Text>
                             </TouchableOpacity>
                         </View>
+
                     </View>
                 }
             />
@@ -275,8 +366,9 @@ const styles = StyleSheet.create({
     totalPriceContainer: {
         borderTopWidth: 1,
         borderColor: '#ccc',
-        paddingTop: 10,
-        marginTop: 10,
+        paddingTop: 20,
+        marginTop: 20,
+        paddingBottom:50,
         alignItems: 'center',
     },
     button: {
@@ -319,4 +411,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CartScreen;
+export default CartScreen

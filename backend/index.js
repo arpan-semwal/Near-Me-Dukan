@@ -323,7 +323,6 @@ app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {
 });
 
 
-
 app.get('/mainServices/:subcategory', (req, res) => {
     const subcategory = req.params.subcategory;
 

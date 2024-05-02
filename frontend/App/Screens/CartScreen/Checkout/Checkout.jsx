@@ -12,8 +12,8 @@ const saveOrder = async (custName, custPhoneNumber, cartItems, totalPrice, selec
       custPhoneNumber: custPhoneNumber,
       cartItems: cartItems,
       totalPrice: totalPrice,
-      selectedDate: selectedDate || null,
-      selectedTime: selectedTime || null,
+      selectedDate: selectedDate, 
+      selectedTime: selectedTime ,
       shopID: shopID, // Pass shopID parameter
       shopkeeperName: shopkeeperName,
       phoneNumber: phoneNumber
@@ -29,7 +29,7 @@ const saveOrder = async (custName, custPhoneNumber, cartItems, totalPrice, selec
 
 const Checkout = ({ route }) => {
    
-  const { cartItems, totalPrice, shopkeeperName, phoneNumber, shopID, custName, custPhoneNumber } = route.params; 
+  const { cartItems, totalPrice, shopkeeperName, phoneNumber, shopID, custName, custPhoneNumber , selectedDate  , selectedTime } = route.params; 
   const { storeName } = useCart();
   const navigation = useNavigation();
 
@@ -46,7 +46,8 @@ const Checkout = ({ route }) => {
             </TouchableOpacity>
             <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
             <Text style={styles.shoppingAt}>ShopKeeper Name: {shopkeeperName}</Text>
-            <Text style={styles.shoppingAt}>Customer Phone: {custPhoneNumber}</Text>
+            <Text style={styles.shoppingAt}>Customer Phone: {selectedDate}</Text>
+            <Text style={styles.shoppingAt}>Customer Phone: {selectedTime}</Text>
           </View>
         </View>
         <View>
@@ -74,8 +75,8 @@ const Checkout = ({ route }) => {
         <TouchableOpacity
   style={styles.paymentButton}
   onPress={() => {
-    navigation.navigate('Pay' , {custName:custName , custPhoneNumber:custPhoneNumber, cartItems:cartItems, totalPrice:totalPrice,shopID:shopID, shopkeeperName:shopkeeperName , phoneNumber:phoneNumber});
-    saveOrder(custName, custPhoneNumber, cartItems, totalPrice, '', '', shopID, shopkeeperName , phoneNumber ); // Pass shopID
+    navigation.navigate('Pay', { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber, selectedDate, selectedTime });
+    saveOrder(custName, custPhoneNumber, cartItems, totalPrice, selectedDate || null, selectedTime || null, shopID, shopkeeperName, phoneNumber); // Pass selectedDate and selectedTime with null check
   }}
 >
   <Text style={styles.paymentButtonText}>Pay At Shop</Text>
