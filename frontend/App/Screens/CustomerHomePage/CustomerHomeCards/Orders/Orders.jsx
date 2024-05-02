@@ -8,7 +8,7 @@ import { useCart, useCustomer } from '../../../../Context/ContextApi';
 
 export default function Orders({ route }) {
     const navigation = useNavigation();
-    const { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber } = route.params || {};
+    const { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber , selectedDate,selectedTime } = route.params || {};
     const [shops, setShops] = useState([]);
 
     useEffect(() => {

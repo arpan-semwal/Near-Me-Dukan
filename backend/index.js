@@ -539,7 +539,7 @@ app.get('/orders/shop/:shopkeeperPhoneNumber', (req, res) => {
     const { shopkeeperPhoneNumber } = req.params;
 
     db.query(
-        'SELECT * FROM tbl_orders WHERE shopkeeperPhonenumber = ?',
+        'SELECT id, shopID, cartItems, totalPrice, selectedDate, selectedTime, created_at, customerName, custPhoneNumber FROM tbl_orders WHERE shopkeeperPhonenumber = ?',
         [shopkeeperPhoneNumber],
         (err, results) => {
             if (err) {

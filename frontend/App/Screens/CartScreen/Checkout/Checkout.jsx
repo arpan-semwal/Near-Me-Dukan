@@ -73,11 +73,11 @@ const Checkout = ({ route }) => {
 
         <Text style={styles.paymentMethod}>Select Payment Method</Text>
         <TouchableOpacity
-  style={styles.paymentButton}
-  onPress={() => {
-    navigation.navigate('Pay', { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber, selectedDate, selectedTime });
-    saveOrder(custName, custPhoneNumber, cartItems, totalPrice, selectedDate || null, selectedTime || null, shopID, shopkeeperName, phoneNumber); // Pass selectedDate and selectedTime with null check
-  }}
+            style={styles.paymentButton}
+            onPress={() => {
+              navigation.navigate('Pay', { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber, selectedDate, selectedTime });
+              saveOrder(custName, custPhoneNumber, cartItems, totalPrice, selectedDate || null, selectedTime || null, shopID, shopkeeperName, phoneNumber); // Pass selectedDate and selectedTime with null check
+            }}
 >
   <Text style={styles.paymentButtonText}>Pay At Shop</Text>
 </TouchableOpacity>

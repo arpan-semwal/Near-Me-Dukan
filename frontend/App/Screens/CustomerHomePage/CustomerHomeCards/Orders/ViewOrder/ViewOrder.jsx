@@ -25,9 +25,9 @@ export default function ViewOrders() {
         return orders.map((order, index) => (
             <View key={index} style={styles.orderContainer}>
                 <Text style={styles.orderText}>Order ID: {order.id}</Text>
-                <Text style={styles.orderText}>Shopkeeper Phone: {order.shopkeeperPhonenumber}</Text>
                 <Text style={styles.orderText}>Total Price: {order.totalPrice}</Text>
-                <Text style={styles.orderText}>Date: {order.created_at}</Text>
+                <Text style={styles.orderText}>Date: {formatDate(order.created_at)}</Text>
+                <Text style={styles.orderText}>Selected Time: {order.selectedTime}</Text>
                 <Text style={styles.orderText}>Cart Items:</Text>
                 {renderCartItems(order.cartItems)}
             </View>
@@ -43,6 +43,14 @@ export default function ViewOrders() {
                 {/* Add other cart item details */}
             </View>
         ));
+    };
+    
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
 
     return (

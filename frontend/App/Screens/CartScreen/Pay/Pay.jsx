@@ -10,7 +10,7 @@ const Pay = ({route}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
   const { customerName, shopName,   } = useCustomer();
-  const { custName  , custPhoneNumber , cartItems , totalPrice ,shopID , shopkeeperName  , phoneNumber  } = route.params || {};
+  const { custName  , custPhoneNumber , cartItems , totalPrice ,shopID , shopkeeperName  , phoneNumber,selectedDate,selectedTime  } = route.params || {};
   const {    storeName } = useCart();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Pay = ({route}) => {
 
   const goToOrderPage = () => {
     // Navigate to the order page and pass customerPhone and shopID as params
-    navigation.navigate('Orders', { customerPhone: custPhoneNumber, shopID: shopID , custName:custName  , custPhoneNumber:custPhoneNumber , cartItems:cartItems , totalPrice:totalPrice ,shopID:shopID , shopkeeperName:shopkeeperName  , phoneNumber:phoneNumber  });
+    navigation.navigate('Orders', { customerPhone: custPhoneNumber, shopID: shopID , custName:custName  , custPhoneNumber:custPhoneNumber , cartItems:cartItems , totalPrice:totalPrice ,shopID:shopID , shopkeeperName:shopkeeperName  , phoneNumber:phoneNumber ,selectedDate:selectedDate, selectedTime:selectedTime  });
   };
 
   return (
