@@ -57,7 +57,16 @@ export default function SalonShop({ route }) {
                 shopkeeperName: shopkeeperName,
                 storeImage: require('../../../../assets/logo.png') // Pass the image source
             });
-        } else {
+        }else if (screenName === 'ShopkeeperOrders') {
+            // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
+            navigation.navigate('ShopkeeperOrders', { 
+                shopkeeperPhoneNumber: shopkeeperPhoneNumber, 
+                shopkeeperName: shopkeeperName,
+                selectedSubCategory: selectedSubCategory,
+                
+            })
+        } 
+        else {
             navigation.navigate(screenName);
         }
     };

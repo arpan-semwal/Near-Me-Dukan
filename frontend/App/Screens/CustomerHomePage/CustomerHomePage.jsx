@@ -46,7 +46,7 @@ export default function CustomerHomePage({ route }) {
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome, {customerDetails ? customerDetails.name : ''}</Text>
+        <Text style={styles.welcomeText}>Welcome, {customerDetails ? customerDetails.name :''}</Text>
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
@@ -55,7 +55,7 @@ export default function CustomerHomePage({ route }) {
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Preferred Shops :{shopID}  </Text>
+                <Text style={styles.cardText}>My Preferred Shops</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -66,7 +66,7 @@ export default function CustomerHomePage({ route }) {
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Orders : {userType} </Text>
+                <Text style={styles.cardText}>My Orders</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -97,7 +97,7 @@ export default function CustomerHomePage({ route }) {
         </View>
 
         <View>
-          <Text style={styles.headingText}>Types of shops:{custPhoneNumber} </Text>
+          <Text style={styles.headingText}>Types of shops</Text>
         </View>
 
         <View style={styles.container1}>

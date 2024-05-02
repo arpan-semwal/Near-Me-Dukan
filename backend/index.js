@@ -959,6 +959,25 @@ app.get('/shopsInArea/:pincode', async (req, res) => {
     }
 });
 
+
+
+app.get('/orders/shopkeeper/:shopkeeperPhoneNumber', (req, res) => {
+    const { shopkeeperPhoneNumber } = req.params;
+
+    db.query(
+        'SELECT * FROM tbl_orders WHERE shopkeeperPhonenumber = ?',
+        [shopkeeperPhoneNumber],
+        (err, results) => {
+            if (err) {
+                console.error('Error fetching orders:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json(results);
+        }
+    );
+});
+
+
  
 
 

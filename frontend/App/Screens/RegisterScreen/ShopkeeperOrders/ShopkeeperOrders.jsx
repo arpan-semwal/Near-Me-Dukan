@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { dummyOrders } from './dummyOrders'; // Importing dummyOrders object
 
-export default function ShopkeeperOrders() {
+export default function ShopkeeperOrders({ route }) {
     const [selectedButton, setSelectedButton] = useState('Today');
+    const [orders, setOrders] = useState([]);
+    const { shopkeeperPhoneNumber, shopkeeperName } = route.params || {};
+
+    useEffect(() => {
+        fetchShopkeeperOrders(); // Fetch orders when the component mounts
+    }, []);
 
     const buttonsData = [
         { id: 1, title: 'Today' },
@@ -14,8 +19,19 @@ export default function ShopkeeperOrders() {
         { id: 6, title: 'Select Date Range' },
     ];
 
-    const renderItem = ({ item, index }) => (
+    const fetchShopkeeperOrders = () => {
+        // Replace the URL with your backend endpoint
+        fetch(`http://192.168.29.68:3000/orders/shopkeeper/${shopkeeperPhoneNumber}`)
+            .then(response => response.json())
+            .then(data => {
+                setOrders(data);
+            })
+            .catch(error => console.error('Error fetching shopkeeper orders:', error));
+    };
+
+    const renderItem = ({ item }) => (
         <TouchableOpacity
+            key={item.id}
             style={[styles.button, selectedButton === item.title && styles.selectedButton]}
             onPress={() => setSelectedButton(item.title)}>
             <Text style={[styles.buttonText, selectedButton === item.title && styles.selectedButtonText]}>
@@ -24,118 +40,81 @@ export default function ShopkeeperOrders() {
         </TouchableOpacity>
     );
 
-    // Function to render orders based on selected button
-    const renderOrders = () => {
-        switch (selectedButton) {
-            case 'Today':
-                return dummyOrders.today;
-            case 'Yesterday':
-                return dummyOrders.yesterday;
-            case 'One Week':
-                return dummyOrders.oneWeek;
-            case '30 Days':
-                return dummyOrders.thirtyDays;
-            case 'All Time':
-                return dummyOrders.allTime;
-            case 'Select Date Range':
-                return dummyOrders.selectedRange;
-            default:
-                return [];
-        }
-    };
+    const renderOrderItem = ({ item }) => (
+        <View style={styles.orderContainer}>
+            <Text>Order ID: {item.id}</Text>
+            <Text>Total Price: {item.totalPrice}</Text>
+            {/* Add more order details as needed */}
+            <View style={styles.productButtonsRow}>
+                <TouchableOpacity
+                    style={[styles.productButton, styles.fullFillButton]}
+                    onPress={() => handleProductAction('Full Fill Order')}>
+                    <Text style={styles.productButtonText}>Full Fill Order</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.productButton, styles.viewDetailsButton]}
+                    onPress={() => handleProductAction('View Details')}>
+                    <Text style={styles.productButtonText}>View Details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.productButton, styles.cancelButton]}
+                    onPress={() => handleProductAction('Cancel Order')}>
+                    <Text style={styles.productButtonText}>Cancel Order</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 
-    // Function to handle actions on product
     const handleProductAction = (action) => {
-        // Handle the action here
         console.log('Action:', action);
     };
 
-    const renderProductItem = ({ item }) => (
-		<View style={styles.productContainer}>
-			{/* First Row: Product Image and Details */}
-			<View style={styles.productRow}>
-				<Image source={item.image} style={styles.productImage} />
-				<View style={styles.productDetails}>
-					<Text style={styles.title}>{item.name}</Text>
-					<Text style={styles.info}>Price: {item.price}</Text>
-					<Text style={styles.info}>Weight: {item.weight}</Text>
-				</View>
-			</View>
-			{/* Second Row: Action Buttons */}
-			<View style={styles.productButtonsRow}>
-				<TouchableOpacity
-					style={[styles.productButton, styles.fullFillButton]}
-					onPress={() => handleProductAction('Full Fill Order')}
-				>
-					<Text style={styles.productButtonText}>Full Fill Order</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={[styles.productButton, styles.viewDetailsButton]}
-					onPress={() => handleProductAction('View Details')}
-				>
-					<Text style={styles.productButtonText}>View Details</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={[styles.productButton, styles.cancelButton]}
-					onPress={() => handleProductAction('Cancel Order')}
-				>
-					<Text style={styles.productButtonText}>Cancel Order</Text>
-				</TouchableOpacity>
-			</View>
-		</View>
-	);
-
     return (
         <FlatList
-            style={styles.container}
-            data={[{ key: 'content' }]} // Dummy data for the FlatList
-            renderItem={() => (
-                <>
+            data={[{ key: 'content' }]}
+            renderItem={({ item }) => (
+                <View style={styles.container}>
                     <View style={styles.headerContainer}>
                         <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
                         <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome: </Text>
-                            <Text style={styles.shoppingAt}>Shop ID: </Text>
+                            <Text style={styles.welcomeText}>Welcome: {shopkeeperName}</Text>
+                            <Text style={styles.shoppingAt}>Shop ID: {shopkeeperPhoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>
                     </View>
 
-                    {/* First Image (Full Width) */}
                     <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
 
-                    {/* Second Image (Circular with Overlay) */}
                     <View style={styles.circularImageContainer}>
                         <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
                     </View>
 
-                    {/* My Orders Heading */}
                     <Text style={styles.ordersHeading}>My Orders</Text>
 
-                    {/* Buttons */}
-                    <FlatList
-                        data={buttonsData}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id.toString()}
-                        numColumns={3}
-                        contentContainerStyle={styles.buttonContainer}
-                    />
+                    <View style={styles.buttonContainer}>
+                        {buttonsData.map(item => renderItem({ item }))}
+                    </View>
 
-                    {/* Render orders based on selected button */}
                     <FlatList
-                        data={renderOrders()}
-                        renderItem={renderProductItem}
+                        data={orders}
+                        renderItem={renderOrderItem}
                         keyExtractor={(item) => item.id.toString()}
                     />
-                </>
+                </View>
             )}
+            keyExtractor={(item) => item.key}
+            style={styles.flatList}
         />
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    flatList: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    container: {
+        flex: 1,
         padding: 20,
     },
     headerContainer: {
@@ -175,7 +154,7 @@ const styles = StyleSheet.create({
     },
     circularImageContainer: {
         alignItems: 'center',
-        marginBottom: 20, // Add marginBottom to create space between images and heading
+        marginBottom: 20,
     },
     circularImage: {
         width: 100,
@@ -189,101 +168,57 @@ const styles = StyleSheet.create({
         transform: [{ translateX: -60 }, { translateY: -60 }],
     },
     buttonContainer: {
-        justifyContent: 'center',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        paddingVertical: 10,
+        flexWrap: 'wrap',
+        marginBottom: 20,
     },
     button: {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#C7BC00',
         margin: 5,
-        width: '30%', // Adjust the width according to your preference
-        height: 25,
+        width: '30%',
+        height: 40,
         borderRadius: 50,
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 14,
         color: '#fff',
         fontWeight: 'bold',
     },
     selectedButton: {
-        backgroundColor: '#333', // Change background color when selected
+        backgroundColor: '#333',
     },
     selectedButtonText: {
-        color: '#fff', // Change text color when selected
+        color: '#fff',
     },
     ordersHeading: {
         marginTop: 20,
         fontSize: 26,
         fontWeight: 'bold',
-        textAlign: 'center', // Center the heading
+        textAlign: 'center',
     },
-    orderItem: {
+    orderContainer: {
+        backgroundColor: '#E4E4E4',
+        padding: 20,
+        marginBottom: 20,
+        borderRadius: 10,
+    },
+    productButtonsRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderColor: '#ccc',
-        paddingVertical: 10,
-        paddingHorizontal: 5,
-    },
-	productContainer: {
-		marginVertical: 7,
-		padding: 10,
-		borderRadius: 10,
-		backgroundColor: '#FFFFFF',
-		elevation: 3, // Add elevation for shadow (Android)
-		shadowColor: '#000000', // Add shadow color (iOS)
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
-	},
-	productRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	productDetails: {
-		flex: 1,
-		marginLeft: 10, // Add margin to separate from the image
-	},
-	productButtonsRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginTop: 10,
-	},
-   
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    info: {
-        fontSize: 17,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    productButtons: {
-        flexDirection: 'column', // Arrange buttons in a column
-        alignItems: 'flex-end', // Align buttons to the end of the container
-    },
-	productImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginRight: 10,
+        marginTop: 10,
     },
     productButton: {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 5,
-        paddingVertical: 5,
-        marginVertical: 5,
-        minWidth: 100, // Set minimum width for buttons
-        maxWidth: '100%', // Set maximum width to ensure buttons don't overflow
+        paddingVertical: 10,
+        marginVertical: 7,
+        minWidth: 100,
+        maxWidth: '100%',
     },
     productButtonText: {
         color: '#fff',
