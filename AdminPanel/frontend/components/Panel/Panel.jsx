@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography, Grid, Container } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import StoreIcon from '@mui/icons-material/Store';
@@ -25,7 +26,26 @@ const icons = [
   <CategoryIcon fontSize="large" />,
 ];
 
+const cardNames = [
+  'Shopkeepers',
+  'Admin',
+  'Add Sales Associates',
+  'Sales Associates',
+  'Sales Associates Team',
+  'Sales Asssociates-Income Stream',
+  'Commission Setting',
+  'Users',
+  'Products Master',
+  'Product in Store',
+  'Categorys',
+  'Service Provider',
+  'Add Service Type',
+  'Add Service Category',
+  'Add Service Sub Category',
+];
+
 export default function Panel() {
+  const cardHeight = 100; // Decreased card height
   const laptopViewportHeight = window.innerHeight;
 
   return (
@@ -35,20 +55,32 @@ export default function Panel() {
       </Typography>
       <Grid container spacing={3} alignItems="flex-start">
         {icons.map((icon, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index} style={{ maxHeight: laptopViewportHeight / 5 }}>
-            <Card style={{ height: '100%', padding: '10px', width: '100%' }}> {/* Adjust width here */}
-              <CardContent style={{ display: 'flex' }}>
-                <div style={{ marginRight: 16 }}>{icon}</div>
-                <div>
-                  <Typography variant="h7" component="div">
-                    Card {index + 1}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Description of card {index + 1}
-                  </Typography>
-                </div>
-              </CardContent>
-            </Card>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            {cardNames[index] === 'Shopkeepers' ? (
+              <Link to={`/shopkeeper`}>
+                <Card style={{ height: cardHeight, padding: '10px', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                      <div style={{ marginRight: '16px' }}>{icon}</div>
+                      <Typography variant="body1" component="div">
+                        {cardNames[index]}
+                      </Typography>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ) : (
+              <Card style={{ height: cardHeight, padding: '10px', display: 'flex', flexDirection: 'column' }}>
+                <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                    <div style={{ marginRight: '16px' }}>{icon}</div>
+                    <Typography variant="body1" component="div">
+                      {cardNames[index]}
+                    </Typography>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </Grid>
         ))}
       </Grid>
