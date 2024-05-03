@@ -1,5 +1,5 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
-import React, { useState } from 'react';
+import   { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Drawer, List, ListItem, ListItemText, Collapse, Typography, Divider, Avatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { CssBaseline } from '@mui/material';
@@ -12,7 +12,7 @@ import SubcategoryIcon from '@mui/icons-material/Category';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
+ 
 import { Transition } from 'react-transition-group';
 
 export default function Navbar() {
@@ -212,8 +212,8 @@ export default function Navbar() {
           <Divider style={{ width: '80%', marginTop: '10px', marginBottom: '10px' }} />
 		  <Typography variant="subtitle1" sx={{ color: 'white', marginBottom: '10px' }}>Settings</Typography>
 		  <div style={{ display: 'flex', alignItems: 'center', padding: '10px' }}>
-            <SettingsIcon />
-            <Typography variant="subtitle1" sx={{ marginLeft: '10px', color: 'white' }}>Settings</Typography>
+            <AccountCircleIcon />
+            <Typography variant="subtitle1" sx={{ marginLeft: '10px', color: 'white' }}>Profile</Typography>
           </div>
 
           {/* Logout */}
