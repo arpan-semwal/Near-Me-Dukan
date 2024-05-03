@@ -44,6 +44,7 @@ export default function ShopkeeperOrders({ route }) {
         <View style={styles.orderContainer}>
             <Text>Order ID: {item.id}</Text>
             <Text>Total Price: {item.totalPrice}</Text>
+            <Text>Total Price: {item.selectedDate}</Text>
             {/* Add more order details as needed */}
             <View style={styles.productButtonsRow}>
                 <TouchableOpacity
