@@ -1,0 +1,23 @@
+.shopkeeper-cards {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center; /* Center horizontally */
+	gap: 20px; /* Spacing between cards */
+  }
+  
+  .shopkeeper-card {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 20px;
+	width: 300px; /* Set fixed width */
+	max-width: 100%; /* Allow cards to take full width on smaller screens */
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+	text-align: center; /* Center text */
+	background-color: #fff; /* Add background color */
+  }
+  
+  .shopkeeper-card h2 {
+	margin-top: 0;
+	font-size: 1.5rem; /* Adjust the font size */
+  }
+  
