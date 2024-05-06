@@ -86,6 +86,19 @@ app.post('/sales-executives', (req, res) => {
       res.status(200).json({ message: 'Sales executive added successfully' });
     });
   });
+  
+  app.get('/sales-executives', (req, res) => {
+    const sql = 'SELECT * FROM tbl_salesexecutives';
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      console.log('Sales Associates:', result);
+      res.json(result);
+    });
+  });
 
 
 

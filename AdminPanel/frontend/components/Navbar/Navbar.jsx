@@ -49,6 +49,9 @@ export default function Navbar() {
     navigate('/addmaincategory'); // Navigate to viewcategory page
   };
 
+  const handleDashboardNavigation = () => {
+      navigate('/');    
+  }
   return (
     <div style={{ margin: 0, padding: 0 }}>
       <CssBaseline />
@@ -90,7 +93,7 @@ export default function Navbar() {
           <Divider style={{ width: '80%', marginTop: '10px', marginBottom: '10px' }} />
           <div style={{ display: 'flex', alignItems: 'center', padding: '10px' }}>
             <DashboardIcon />
-            <Typography variant="subtitle1" sx={{ marginLeft: '10px', color: 'white' }}>Dashboard</Typography>
+            <Typography onClick={handleDashboardNavigation} variant="subtitle1" sx={{ marginLeft: '10px', color: 'white' } }>Dashboard</Typography>
           </div>
           <div>
             <Typography variant="subtitle1" sx={{ marginLeft: '10px', color: 'white' }}>Shop</Typography>

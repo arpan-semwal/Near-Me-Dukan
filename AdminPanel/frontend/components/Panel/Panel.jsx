@@ -30,7 +30,7 @@ const cardNames = [
   'Shopkeepers',
   'Admin',
   <Link to="/add_sales_assosiate">Add Sales Associates</Link>, 
-  'Sales Associates',
+  <Link to="/view_sales_associate">View Sales Associate</Link>,
   'Sales Associates Team',
   'Sales Asssociates-Income Stream',
   'Commission Setting',
