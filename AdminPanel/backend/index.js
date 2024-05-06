@@ -72,6 +72,23 @@ app.post('/categories', (req, res) => {
 
 
 
+//Add sales exucutive
+app.post('/sales-executives', (req, res) => {
+    const { mobileNo, firstName, lastName, pincode, upi, pancard, aadhar } = req.body;
+    const sql = 'INSERT INTO tbl_salesexecutives (mobileNo, firstName, lastName, pincode, upi, pancard, aadhar) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [mobileNo, firstName, lastName, pincode, upi, pancard, aadhar], (err, result) => {
+      if (err) {
+        console.error('Error adding sales executive:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      console.log('Sales executive added successfully');
+      res.status(200).json({ message: 'Sales executive added successfully' });
+    });
+  });
+
+
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
