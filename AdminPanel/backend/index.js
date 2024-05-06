@@ -99,6 +99,40 @@ app.post('/sales-executives', (req, res) => {
       res.json(result);
     });
   });
+  
+  //update sales associate
+  app.get('/sales-executives/:mobileNo', (req, res) => {
+    const mobileNo = req.params.mobileNo;
+    const sql = 'SELECT * FROM tbl_salesexecutives WHERE mobileNo = ?';
+    db.query(sql, [mobileNo], (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      if (result.length === 0) {
+        res.status(404).json({ message: 'Sales associate not found' });
+        return;
+      }
+      console.log('Sales Associate:', result[0]);
+      res.json(result[0]);
+    });
+  });
+  
+  app.put('/sales-executives/:mobileNo', (req, res) => {
+    const { firstName, lastName, pincode, upi, pancard, aadhar } = req.body;
+    const mobileNo = req.params.mobileNo;
+    const sql = 'UPDATE tbl_salesexecutives SET firstName=?, lastName=?, pincode=?, upi=?, pancard=?, aadhar=? WHERE mobileNo=?';
+    db.query(sql, [firstName, lastName, pincode, upi, pancard, aadhar, mobileNo], (err, result) => {
+      if (err) {
+        console.error('Error updating sales executive:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      console.log('Sales executive updated successfully');
+      res.status(200).json({ message: 'Sales executive updated successfully' });
+    });
+  });
 
 
 

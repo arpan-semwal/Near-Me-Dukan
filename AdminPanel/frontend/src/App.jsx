@@ -6,6 +6,7 @@ import ViewCategoryPage from "../Pages/ViewCategoryPage/ViewCategoryPage";
 import AddMainCategory from "../Pages/AddMainCategory/AddMainCategory";
 import AddSalesAssosiate from "../Pages/AddSalesAssosiate/AddSalesAssosiate";
 import ViewSalesAssociate from "../Pages/ViewSalesAssociate/ViewSalesAssociate";
+import UpdateSalesAssociate from "../Pages/ViewSalesAssociate/UpdateSalesAssociate/UpdateSalesAssociate";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/addmaincategory" element={<AddMainCategory/>}/>
           <Route path="/add_sales_assosiate" element={<AddSalesAssosiate/>}/>
           <Route path="/view_sales_associate" element={<ViewSalesAssociate/>}/>
+          <Route path="/update_sales/:mobileNo" element={<UpdateSalesAssociate/>}/>
           <Route/>
       </Routes>
     </BrowserRouter>
