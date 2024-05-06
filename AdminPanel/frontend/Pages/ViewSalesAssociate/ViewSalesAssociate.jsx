@@ -1,6 +1,7 @@
-import  { useState, useEffect } from 'react';
+import   { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
 
 export default function ViewSalesAssociate() {
   const [salesAssociates, setSalesAssociates] = useState([]);
@@ -23,6 +24,13 @@ export default function ViewSalesAssociate() {
     fetchSalesAssociates();
   }, []);
 
+  const downloadSalesAssociatesAsExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(salesAssociates);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'SalesAssociates');
+    XLSX.writeFile(workbook, 'sales_associates.xlsx');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -34,6 +42,7 @@ export default function ViewSalesAssociate() {
   return (
     <div>
       <h2>Sales Associates</h2>
+      <button onClick={downloadSalesAssociatesAsExcel}>Export to Excel</button>
       <table>
         <thead>
           <tr>
