@@ -1,4 +1,4 @@
-import React from 'react';
+/* eslint-disable react/jsx-key */
 import { Link } from 'react-router-dom';
 import { Card, CardContent, Typography, Grid, Container } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -29,7 +29,7 @@ const icons = [
 const cardNames = [
   'Shopkeepers',
   'Admin',
-  'Add Sales Associates',
+  <Link to="/add_sales_assosiate">Add Sales Associates</Link>, 
   'Sales Associates',
   'Sales Associates Team',
   'Sales Asssociates-Income Stream',
@@ -46,7 +46,7 @@ const cardNames = [
 
 export default function Panel() {
   const cardHeight = 100; // Decreased card height
-  const laptopViewportHeight = window.innerHeight;
+ 
 
   return (
     <Container maxWidth="lg" sx={{ paddingX: 4 }}>
