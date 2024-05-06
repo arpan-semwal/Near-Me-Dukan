@@ -1,12 +1,15 @@
-import   { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
+import Navbar from '../../components/Navbar/Navbar';
 
 export default function ViewSalesAssociate() {
   const [salesAssociates, setSalesAssociates] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage] = useState(4);
 
   useEffect(() => {
     async function fetchSalesAssociates() {
@@ -31,6 +34,23 @@ export default function ViewSalesAssociate() {
     XLSX.writeFile(workbook, 'sales_associates.xlsx');
   };
 
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = salesAssociates.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(salesAssociates.length / entriesPerPage);
+
+  const nextPage = () => {
+    if (indexOfLastEntry < salesAssociates.length) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -41,6 +61,7 @@ export default function ViewSalesAssociate() {
 
   return (
     <div>
+      <Navbar />
       <h2>Sales Associates</h2>
       <button onClick={downloadSalesAssociatesAsExcel}>Export to Excel</button>
       <table>
@@ -57,7 +78,7 @@ export default function ViewSalesAssociate() {
           </tr>
         </thead>
         <tbody>
-          {salesAssociates.map((associate, index) => (
+          {currentEntries.map((associate, index) => (
             <tr key={index}>
               <td>{associate.mobileNo}</td>
               <td>{associate.firstName}</td>
@@ -73,6 +94,15 @@ export default function ViewSalesAssociate() {
           ))}
         </tbody>
       </table>
+      <div>
+        <button onClick={prevPage} disabled={currentPage === 1}>
+          {'<'}
+        </button>
+        <span>{currentPage}</span>
+        <button onClick={nextPage} disabled={indexOfLastEntry >= salesAssociates.length}>
+          {'>'}
+        </button>
+      </div>
     </div>
   );
 }
