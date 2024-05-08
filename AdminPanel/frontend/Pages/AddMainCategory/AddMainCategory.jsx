@@ -4,14 +4,16 @@ import Navbar from '../../components/Navbar/Navbar';
 
 export default function AddMainCategory() {
   const [categoryName, setCategoryName] = useState('');
+  const [categoryType, setCategoryType] = useState('service');
   const [error, setError] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post('http://localhost:3001/categories', { name: categoryName });
+      await axios.post('http://localhost:3001/categories', { name: categoryName, type: categoryType });
       alert('Category added successfully');
       setCategoryName('');
+      setCategoryType('service');
     } catch (error) {
       console.error('Error adding category:', error);
       setError('Failed to add category');
@@ -19,9 +21,8 @@ export default function AddMainCategory() {
   };
 
   return (
-	
     <div>
-		<Navbar />
+      <Navbar />
       <h1>Add Main Category</h1>
       {error && <div>Error: {error}</div>}
       <form onSubmit={handleSubmit}>
@@ -32,6 +33,10 @@ export default function AddMainCategory() {
           placeholder="Enter category name"
           required
         />
+        <select value={categoryType} onChange={(e) => setCategoryType(e.target.value)}>
+          <option value="service">service</option>
+          <option value="product">product</option>
+        </select>
         <button type="submit">Add Category</button>
       </form>
     </div>

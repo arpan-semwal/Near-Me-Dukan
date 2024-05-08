@@ -119,7 +119,7 @@ export default function ShopkeeperScreen({ route }) {
             
             
             navigation.navigate('Subscription', {
-                userType:userType,
+            userType:userType,
             phoneNumber: phoneNumber,
             selectedSubCategory: selectedSubCategory,
             selectedSubCategoryId: selectedSubCategoryId,
@@ -326,26 +326,6 @@ export default function ShopkeeperScreen({ route }) {
         </Picker>
     </View>
 )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Upload Shop Banner*</Text>
                     <Button

@@ -21,3 +21,44 @@
 	font-size: 1.5rem; /* Adjust the font size */
   }
   
+  .popup-form {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: white;
+	padding: 20px;
+	border: 1px solid #ccc;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+  }
+  
+  .popup-form label {
+	display: block;
+	margin-bottom: 10px;
+  }
+  
+  .popup-form input {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+  }
+  
+  .popup-form button {
+	padding: 8px 16px;
+	margin-right: 10px;
+	border: none;
+	background-color: #007bff;
+	color: white;
+	cursor: pointer;
+	border-radius: 4px;
+  }
+  
+  .popup-form button:last-child {
+	margin-right: 0;
+	background-color: #dc3545;
+  }
+  
+  

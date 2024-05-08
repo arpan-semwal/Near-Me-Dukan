@@ -40,34 +40,65 @@ app.get('/shopkeepers', (req, res) => {
     });
 });
 
-// Route to get all categories
-app.get('/categories', (req, res) => {
-    const sql = 'SELECT * FROM nkd.category';
-    db.query(sql, (err, result) => {
-        if (err) {
-            console.error('Error executing query:', err);
-            res.status(500).json({ error: 'Internal server error' });
-            return;
-        }
-        console.log('Categories:', result); // Log the result
-        res.json(result);
-    });
+ 
+
+// Route to add a new shopkeeper
+app.post('/shopkeepers', (req, res) => {
+  const { shopkeeperName, phoneNumber, address, city, shopState, pincode, selectedCategory , shopID } = req.body;
+  const sql = 'INSERT INTO nkd.shopkeepers (shopkeeperName, phoneNumber, address, city, shopState, pincode, selectedCategory , shopID) VALUES (?, ?, ?, ?, ?, ?, ?,?)';
+  db.query(sql, [shopkeeperName, phoneNumber, address, city, shopState, pincode, selectedCategory,shopID], (err, result) => {
+    if (err) {
+      console.error('Error adding shopkeeper:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    console.log('Shopkeeper added successfully');
+    res.status(200).json({ message: 'Shopkeeper added successfully' });
+  });
 });
 
 
+// Route to get all categories
 // Route to add a new category
 app.post('/categories', (req, res) => {
-    const { name } = req.body;
-    const sql = 'INSERT INTO nkd.category (name) VALUES (?)';
-    db.query(sql, [name], (err, result) => {
-        if (err) {
-            console.error('Error adding category:', err);
-            res.status(500).json({ error: 'Internal server error' });
-            return;
-        }
-        console.log('Category added successfully');
-        res.status(200).json({ message: 'Category added successfully' });
-    });
+  const { name, type } = req.body;
+  const sql = 'INSERT INTO nkd.category (name, type) VALUES (?, ?)';
+  
+  // Check if type parameter exists
+  if (type) {
+      db.query(sql, [name, type], (err, result) => {
+          if (err) {
+              console.error('Error adding category:', err);
+              res.status(500).json({ error: 'Internal server error' });
+              return;
+          }
+          console.log('Category added successfully');
+          res.status(200).json({ message: 'Category added successfully' });
+      });
+  } else {
+      db.query(sql, [name], (err, result) => {
+          if (err) {
+              console.error('Error adding category:', err);
+              res.status(500).json({ error: 'Internal server error' });
+              return;
+          }
+          console.log('Category added successfully');
+          res.status(200).json({ message: 'Category added successfully' });
+      });
+  }
+});
+
+app.get('/categories', (req, res) => {
+  const sql = 'SELECT * FROM nkd.category';
+  db.query(sql, (err, result) => {
+      if (err) {
+          console.error('Error executing query:', err);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+      }
+      console.log('Categories:', result); // Log the result
+      res.json(result);
+  });
 });
 
 
