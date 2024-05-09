@@ -3,13 +3,30 @@ const express = require('express');
 const bodyParser = require('body-parser'); // Import body-parser
 const app = express();
 const crypto = require('crypto');
- 
+const multer = require('multer');
+
+
+
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'Noodle@123',
   database: 'nkd'
 });
+
+
+
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/'); // Directory where images will be stored
+    },
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname); // Unique filename
+    }
+});
+
+const upload = multer({ storage: storage });
 
 app.use(bodyParser.json());
 
@@ -228,7 +245,7 @@ app.post('/register', (req, res) => {
  
 // API endpoint for shopkeeper registration
  
-app.post('/shopkeeperRegister', (req, res) => {
+app.post('/shopkeeperRegister', upload.fields([{ name: 'shopBanner', maxCount: 1 }, { name: 'profilePicture', maxCount: 1 }]), (req, res) => {
     const {
         phoneNumber,
         shopkeeperName,
@@ -239,13 +256,17 @@ app.post('/shopkeeperRegister', (req, res) => {
         address,
         salesAssociateNumber,
         selectedCategory,
-        selectedSubCategory,  // Add this line to handle the subcategory
+        selectedSubCategory,
     } = req.body;
+
+    // Get filenames of uploaded images
+    const shopBanner = req.files['shopBanner'][0].filename;
+    const profilePicture = req.files['profilePicture'][0].filename;
 
     // Insert new shopkeeper into the database
     db.query(
-        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',  // Update query to include selectedSubCategory
-        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],  // Add selectedSubCategory in the array
+        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, shopBanner, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, shopBanner, profilePicture],
         (err, result) => {
             if (err) {
                 console.error('Error registering shopkeeper:', err);

@@ -3,6 +3,13 @@ import { View, Text, TextInput, StyleSheet, Button, ScrollView, Dimensions, Imag
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
+import { Camera } from 'expo-camera';
+import { ImageManipulator } from 'expo-image-manipulator';
+
+
+
+
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -27,7 +34,7 @@ export default function ShopkeeperScreen({ route }) {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
 
-    
+   
     
     const { phoneNumber , userType } = route.params || {};
 
@@ -89,24 +96,31 @@ export default function ShopkeeperScreen({ route }) {
         }
     
         try {
+            const formData = new FormData();
+            formData.append('phoneNumber', phoneNumber);
+            formData.append('shopkeeperName', shopkeeperName);
+            formData.append('shopID', shopID);
+            formData.append('pincode', pincode);
+            formData.append('shopState', shopState);
+            formData.append('city', city);
+            formData.append('address', address);
+            formData.append('salesAssociateNumber', salesAssociateNumber);
+            formData.append('selectedCategory', selectedCategory);
+            formData.append('selectedSubCategory', selectedSubCategory);
+            formData.append('shopBanner', {
+                uri: shopBanner.uri,
+                name: 'shopBanner.jpg',
+                type: 'image/jpeg',
+            });
+            formData.append('profilePicture', {
+                uri: profilePicture.uri,
+                name: 'profilePicture.jpg',
+                type: 'image/jpeg',
+            });
+    
             const response = await fetch('http://192.168.29.68:3000/shopkeeperRegister', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    phoneNumber,
-                    shopkeeperName,
-                    shopID,
-                    pincode,
-                    shopState,
-                    city,
-                    address,
-                    salesAssociateNumber,
-                    selectedCategory,
-                    selectedSubCategory,
-                    selectedSubCategoryId, // Include selectedSubCategoryId
-                }),
+                body: formData,
             });
     
             if (!response.ok) {
@@ -116,14 +130,13 @@ export default function ShopkeeperScreen({ route }) {
             const responseData = await response.json();
             alert("Shopkeeper registered")
             console.log(responseData.message);
-            
-            
+    
             navigation.navigate('Subscription', {
-            userType:userType,
-            phoneNumber: phoneNumber,
-            selectedSubCategory: selectedSubCategory,
-            selectedSubCategoryId: selectedSubCategoryId,
-        });
+                userType: userType,
+                phoneNumber: phoneNumber,
+                selectedSubCategory: selectedSubCategory,
+                selectedSubCategoryId: selectedSubCategoryId,
+            });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);
             Alert.alert('Error', 'Failed to register shopkeeper. Please try again later.');
@@ -167,41 +180,63 @@ export default function ShopkeeperScreen({ route }) {
 
     const handleShopBannerUpload = async () => {
         try {
-            const result = await ImagePicker.launchImageLibraryAsync({
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'Sorry, we need camera permissions to make this work!');
+                return;
+            }
+    
+            const result = await ImagePicker.launchCameraAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 1,
             });
     
-            console.log("Shop Banner Result:", result);
-    
             if (!result.cancelled) {
-                setShopBanner(result);
+                // Resize image
+                const resizedImage = await ImageManipulator.manipulateAsync(
+                    result.uri,
+                    [{ resize: { width: 200, height: 200 } }],
+                    { compress: 1, format: 'png' }
+                );
+                setShopBanner({ uri: resizedImage.uri });
             }
         } catch (error) {
-            console.error("Error while uploading shop banner:", error);
+            console.error("Error while capturing shop banner:", error);
         }
     };
     
     const handleProfilePictureUpload = async () => {
         try {
-            const result = await ImagePicker.launchImageLibraryAsync({
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Required', 'Sorry, we need camera permissions to make this work!');
+                return;
+            }
+    
+            const result = await ImagePicker.launchCameraAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 aspect: [1, 1],
                 quality: 1,
             });
     
-            console.log("Profile Picture Result:", result);
-    
             if (!result.cancelled) {
-                setProfilePicture(result);
+                // Resize image
+                const resizedImage = await ImageManipulator.manipulateAsync(
+                    result.uri,
+                    [{ resize: { width: 200, height: 200 } }],
+                    { compress: 1, format: 'png' }
+                );
+                setProfilePicture({ uri: resizedImage.uri });
             }
         } catch (error) {
-            console.error("Error while uploading profile picture:", error);
+            console.error("Error while capturing profile picture:", error);
         }
     };
+    
+    
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
@@ -403,5 +438,28 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200,
         marginTop: 10,
-    }
+    },
+    cameraContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    camera: {
+        width: windowWidth * 0.8,
+        height: windowHeight * 0.4,
+    },
+    cameraControls: {
+        flex: 1,
+        backgroundColor: 'transparent',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        margin: 20,
+    },
+    previewImage: {
+        width: windowWidth * 0.4,
+        height: windowHeight * 0.2,
+        marginLeft: 20,
+    },
 });
