@@ -11,7 +11,12 @@ export default function SalesHomePage({route}) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Card name={mobileNumber} />
-      <Card name="Card 2" />
+	  
+	  
+	  <TouchableOpacity  onPress={() => navigation.navigate('IncomeCalculator' , {mobileNumber:mobileNumber})}>
+	  <Card name="Income Caluclator" />
+	  </TouchableOpacity>
+     
       <TouchableOpacity onPress={() => navigation.navigate('AddTeamMember' , {mobileNumber:mobileNumber})}>
         <Card name="Add a Team Member" />
       </TouchableOpacity>
