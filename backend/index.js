@@ -245,7 +245,7 @@ app.post('/register', (req, res) => {
  
 // API endpoint for shopkeeper registration
  
-app.post('/shopkeeperRegister', upload.fields([{ name: 'shopBanner', maxCount: 1 }, { name: 'profilePicture', maxCount: 1 }]), (req, res) => {
+app.post('/shopkeeperRegister', (req, res) => {
     const {
         phoneNumber,
         shopkeeperName,
@@ -259,14 +259,10 @@ app.post('/shopkeeperRegister', upload.fields([{ name: 'shopBanner', maxCount: 1
         selectedSubCategory,
     } = req.body;
 
-    // Get filenames of uploaded images
-    const shopBanner = req.files['shopBanner'][0].filename;
-    const profilePicture = req.files['profilePicture'][0].filename;
-
     // Insert new shopkeeper into the database
     db.query(
-        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, shopBanner, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, shopBanner, profilePicture],
+        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
         (err, result) => {
             if (err) {
                 console.error('Error registering shopkeeper:', err);
