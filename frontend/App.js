@@ -61,6 +61,13 @@ import MyServices from './App/Screens/shops/SalonShop/MyServices/MyServices.jsx'
 import SalonProfile from './App/Screens/shops/SalonShop/SalonProfile/SalonProfile.jsx';
 import SubSalonService from './App/Screens/shops/SalonShop/Inventory/SubSalonService/SubSalonService.jsx';
 import SelectedServices from './App/Screens/shops/SalonShop/MyServices/SelectedServices.jsx';
+import SalesHomePage from './App/Screens/SalesExecutive/SalesHomePage.jsx';
+import AddTeamMember from './App/Screens/SalesExecutive/Cards/AddTeamMember.jsx';
+import RegisterSales from './App/Screens/SalesExecutive/RegisterSalesAssociate/RegisterSales.jsx';
+import OtpScreen from './App/Screens/SalesExecutive/Otp/OtpScreen.jsx';
+import MyTeam from './App/Screens/SalesExecutive/Cards/MyTeam.jsx';
+import MyProfile from './App/Screens/SalesExecutive/Cards/MyProfile.jsx';
+import RegisterShop from './App/Screens/SalesExecutive/Cards/RegisterShop.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -121,6 +128,14 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="SalonProfile" component={SalonProfile}options={{ headerShown: false }} />
       <Stack.Screen name="SubSalonService" component={SubSalonService}options={{ headerShown: false }} />
       <Stack.Screen name="SelectedServices" component={SelectedServices}options={{ headerShown: false }} />
+      <Stack.Screen name="SalesHomePage" component={SalesHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="AddTeamMember" component={AddTeamMember}options={{ headerShown: false }} />
+      <Stack.Screen name="RegisterSales" component={RegisterSales}options={{ headerShown: false }} />
+      <Stack.Screen name="OtpScreen" component={OtpScreen}options={{ headerShown: false }} />
+      <Stack.Screen name="MyTeam" component={MyTeam}options={{ headerShown: false }} />
+      <Stack.Screen name="MyProfile" component={MyProfile}options={{ headerShown: false }} />
+      <Stack.Screen name="RegisterShop" component={RegisterShop}options={{ headerShown: false }} />
+      
      
     
     </Stack.Navigator>
@@ -160,7 +175,7 @@ function MyDrawer() {
     <Drawer.Navigator initialRouteName="NKD" drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name="NKD" component={TabNavigator} />
       <Drawer.Screen name="AboutUs" component={MoreScreen} />
-      <Drawer.Screen name="Register as an Associate" component={MoreScreen} />
+      <Drawer.Screen name="Register as an Associate" component={RegisterSales} />
       <Drawer.Screen name="Privacy Policy" component={MoreScreen} />
       <Drawer.Screen name="Terms & Conditions" component={MoreScreen} />
       <Drawer.Screen name="Refund & Cancellations" component={MoreScreen} />

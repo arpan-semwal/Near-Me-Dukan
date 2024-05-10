@@ -995,6 +995,85 @@ app.get('/orders/shopkeeper/:shopkeeperPhoneNumber', (req, res) => {
 });
 
 
+//Sales executive
+app.post('/submit-form', (req, res) => {
+    const { firstName, lastName, mobileNumber, pincode } = req.body;
+    const sql = 'INSERT INTO tbl_salesexecutives (firstName, lastName, mobileNo, pincode) VALUES (?, ?, ?, ?)';
+    db.query(sql, [firstName, lastName, mobileNumber, pincode], (err, result) => {
+      if (err) {
+        console.error('Error saving data to database:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      console.log('Data saved to database');
+      res.json({ success: true });
+    });
+  });
+  
+  
+  app.post('/submit-team-member', (req, res) => {
+    const { mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy } = req.body;
+    const sql = 'INSERT INTO tbl_salesexecutives (mobileNo, firstName, lastName, pincode, aadhar, upi, pancard, addedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy], (err, result) => {
+      if (err) {
+        console.error('Error adding team member:', err);
+        res.status(500).send('Error adding team member');
+        return;
+      }
+      console.log('Team member added successfully');
+      res.status(200).send('Team member added successfully');
+    });
+  });
+  app.get('/my-team/:mobileNumber', (req, res) => {
+    const { mobileNumber } = req.params;
+    const sql = 'SELECT * FROM tbl_salesexecutives WHERE addedBy = ?';
+    db.query(sql, [mobileNumber], (err, result) => {
+      if (err) {
+        console.error('Error fetching data from database:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      console.log('Data fetched successfully');
+      res.json(result);
+    });
+  });
+  
+  
+  app.get('/my-profile/:mobileNumber', (req, res) => {
+    const mobileNumber = req.params.mobileNumber;
+    const sql = 'SELECT * FROM tbl_salesexecutives WHERE mobileNo = ?';
+    db.query(sql, [mobileNumber], (err, result) => {
+      if (err) {
+        console.error('Error fetching profile:', err);
+        res.status(500).send('Error fetching profile');
+        return;
+      }
+      if (result.length === 0) {
+        res.status(404).send('Profile not found');
+        return;
+      }
+      res.status(200).json(result[0]);
+    });
+  });
+  
+  // Route to update user's profile
+  app.post('/update-profile', (req, res) => {
+    const { mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard } = req.body;
+    const sql = 'UPDATE tbl_salesexecutives SET firstName = ?, lastName = ?, pincode = ?, aadhar = ?, upi = ?, pancard = ? WHERE mobileNo = ?';
+    db.query(sql, [firstName, lastName, pincode, aadhar, upi, pancard, mobileNumber], (err, result) => {
+      if (err) {
+        console.error('Error updating profile:', err);
+        res.status(500).send('Error updating profile');
+        return;
+      }
+      console.log('Profile updated successfully');
+      res.status(200).send('Profile updated successfully');
+    });
+  });
+
+
+
+
  
 
 
