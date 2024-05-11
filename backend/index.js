@@ -1071,6 +1071,24 @@ app.post('/submit-form', (req, res) => {
     });
   });
 
+  
+  app.get('/shops', (req, res) => {
+    const { salesAssociateNumber } = req.query;
+    const query = `
+        SELECT * 
+        FROM shopkeeper 
+        WHERE salesAssociateNumber = ?;
+    `;
+    connection.query(query, [salesAssociateNumber], (error, results) => {
+        if (error) {
+            console.error('Error fetching shops:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
 
 
 

@@ -22,6 +22,8 @@ export default function RegisterShop({ route }) {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
 	const [phoneNumber, setPhoneNumber] = useState('');
+	
+	const { mobileNumber } = route.params;
 
     
 
@@ -55,7 +57,7 @@ export default function RegisterShop({ route }) {
                     }
                 }
             } catch (error) {
-                console.error('Error fetching sub-categories:', error);
+                console.error('Error fetching sub-categories: ', error);
             }
         };
 
@@ -110,7 +112,7 @@ export default function RegisterShop({ route }) {
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
             <View style={styles.container}>
-                <Text style={styles.heading}>Shopkeeper Registration</Text>
+                <Text style={styles.heading}>Shopkeeper Registration:{mobileNumber}</Text>
 				<View style={styles.inputContainer}>
                 <Text style={styles.label}>Shopkeeper Phone Number</Text>
                 <TextInput

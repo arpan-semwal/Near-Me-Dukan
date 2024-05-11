@@ -10,8 +10,10 @@ export default function SalesHomePage({route}) {
 	
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Card name={mobileNumber} />
-	  
+   
+   <TouchableOpacity  onPress={() => navigation.navigate('TotalShopAndIncome' , {mobileNumber:mobileNumber})}>
+	  <Card name="Total shops and Total income" />
+	  </TouchableOpacity>
 	  
 	  <TouchableOpacity  onPress={() => navigation.navigate('IncomeCalculator' , {mobileNumber:mobileNumber})}>
 	  <Card name="Income Caluclator" />
@@ -22,7 +24,7 @@ export default function SalesHomePage({route}) {
       </TouchableOpacity>
 	  
 	  <TouchableOpacity onPress={() => navigation.navigate('MyTeam' , {mobileNumber:mobileNumber})}>
-	  		<Card name="My Team"/>
+	  		<Card name="My Team : " />
 	  </TouchableOpacity>
      
       <TouchableOpacity  onPress={() => navigation.navigate('MyProfile' , {mobileNumber:mobileNumber})}>
@@ -33,11 +35,7 @@ export default function SalesHomePage({route}) {
 	  <Card name="Register Shop" />
 	  </TouchableOpacity>
      
-      <Card name="Card 7" />
-	  
-      <Card name="Card 8" />
-      <Card name="Card 9" />
-      <Card name="Card 10" />
+   
     </ScrollView>
   );
 }
@@ -56,7 +54,7 @@ const styles = {
   },
   card: {
     height: 100,
-    backgroundColor: 'red',
+    backgroundColor: '#FDE0D9',
     borderRadius: 8,
     margin: 10,
     justifyContent: 'center',

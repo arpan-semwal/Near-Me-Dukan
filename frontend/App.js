@@ -69,6 +69,7 @@ import MyTeam from './App/Screens/SalesExecutive/Cards/MyTeam.jsx';
 import MyProfile from './App/Screens/SalesExecutive/Cards/MyProfile.jsx';
 import RegisterShop from './App/Screens/SalesExecutive/Cards/RegisterShop.jsx';
 import IncomeCalculator from './App/Screens/SalesExecutive/Cards/IncomeCalculator.jsx';
+import TotalShopAndIncome from './App/Screens/SalesExecutive/Cards/TotalShopAndIncome.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -137,6 +138,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="MyProfile" component={MyProfile}options={{ headerShown: false }} />
       <Stack.Screen name="RegisterShop" component={RegisterShop}options={{ headerShown: false }} />
       <Stack.Screen name="IncomeCalculator" component={IncomeCalculator}options={{ headerShown: false }} />
+      <Stack.Screen name="TotalShopAndIncome" component={TotalShopAndIncome}options={{ headerShown: false }} />
       
      
     
