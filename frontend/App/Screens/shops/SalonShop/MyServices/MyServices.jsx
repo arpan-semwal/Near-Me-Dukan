@@ -12,7 +12,7 @@ const MyServices = ({ route, navigation }) => {
     useEffect(() => {
         const fetchMainServices = async () => {
             try {
-                const response = await fetch(`http://192.168.29.68:3000/shopkeeper/selectedMainServices/${phoneNumber}`);
+                const response = await fetch(`http://172.16.16.145:3000/shopkeeper/selectedMainServices/${phoneNumber}`);
                 const data = await response.json();
                 setMainServices(data);
             } catch (error) {

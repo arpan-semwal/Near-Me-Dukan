@@ -15,7 +15,7 @@ export default function BarberSearchShops({ route }) {
   useEffect(() => {
     const fetchSalonShops = async () => {
       try {
-        const response = await fetch(`http://192.168.29.68:3000/salons?shopID=${shopID}`);
+        const response = await fetch(`http://172.16.16.145:3000/salons?shopID=${shopID}`);
         const data = await response.json();
         console.log('Fetched shops:', data); // Check the fetched data
         if (data) {
@@ -33,7 +33,7 @@ export default function BarberSearchShops({ route }) {
 
   const fetchShopDetails = async (phoneNumber) => {
     try {
-      const response = await fetch(`http://192.168.29.68:3000/preferredShops/${phoneNumber}`);
+      const response = await fetch(`http://172.16.16.145:3000/preferredShops/${phoneNumber}`);
       const data = await response.json();
       console.log('Fetched shop details:', data); // Log fetched shop details
       return data;
@@ -88,7 +88,7 @@ export default function BarberSearchShops({ route }) {
       });
       setShops(updatedShops);
 
-      const response = await fetch('http://192.168.29.68:3000/preferredShops/add', {
+      const response = await fetch('http://172.16.16.145:3000/preferredShops/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

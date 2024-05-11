@@ -15,7 +15,7 @@ const Inventory = ({ route }) => {
 
     const fetchMainServices = async () => {
         try {
-            const response = await fetch(`http://192.168.29.68:3000/mainServices/${selectedSubCategory}`);
+            const response = await fetch(`http://172.16.16.145:3000/mainServices/${selectedSubCategory}`);
             if (response.ok) {
                 const data = await response.json();
                 setServices(data);

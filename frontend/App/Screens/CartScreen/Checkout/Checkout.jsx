@@ -7,7 +7,7 @@ import axios from 'axios';
 
 const saveOrder = async (custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber) => {
   try {
-    const response = await axios.post('http://192.168.29.68:3000/saveOrder', {
+    const response = await axios.post('http://172.16.16.145:3000/saveOrder', {
       custName: custName,
       custPhoneNumber: custPhoneNumber,
       cartItems: cartItems,

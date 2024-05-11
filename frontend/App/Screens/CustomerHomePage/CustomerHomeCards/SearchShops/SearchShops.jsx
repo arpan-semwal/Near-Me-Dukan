@@ -43,7 +43,7 @@ export default function SearchShops({ route }) {
 
     const fetchCustomerDetails = async () => {
         try {
-            const response = await fetch(`http://192.168.29.68:3000/customerDetails/${custPhoneNumber}`);
+            const response = await fetch(`http://172.16.16.145:3000/customerDetails/${custPhoneNumber}`);
             const data = await response.json();
             setCustomerName(data.name);
             setPincode(data.pincode);
@@ -61,7 +61,7 @@ export default function SearchShops({ route }) {
 
     const prioritizeShop = async (shopID) => {
         try {
-            const response = await fetch(`http://192.168.29.68:3000/shopDetails/${shopID}`);
+            const response = await fetch(`http://172.16.16.145:3000/shopDetails/${shopID}`);
             const data = await response.json();
 
             const shopExists = await checkShopExists(shopID);
@@ -75,7 +75,7 @@ export default function SearchShops({ route }) {
 
     const checkShopExists = async (shopID) => {
         try {
-            const response = await fetch(`http://192.168.29.68:3000/shopkeepers/${shopID}`);
+            const response = await fetch(`http://172.16.16.145:3000/shopkeepers/${shopID}`);
             const data = await response.json();
             return data.length > 0;
         } catch (error) {
@@ -87,7 +87,7 @@ export default function SearchShops({ route }) {
     const fetchShopsInArea = async (pincode) => {
         setLoading(true);
         try {
-            const response = await fetch(`http://192.168.29.68:3000/shopsInArea/${pincode}`);
+            const response = await fetch(`http://172.16.16.145:3000/shopsInArea/${pincode}`);
             const data = await response.json();
             setFilteredShops(data);
             setShopkeeperPhonenumber(data.phoneNumber)
