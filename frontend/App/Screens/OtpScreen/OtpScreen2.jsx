@@ -30,7 +30,7 @@ export default function OtpScreen2({ route }) {
             
             try {
                 // Make a request to create a session in the backend
-                const response = await fetch('http://172.16.16.145:3000/login', {
+                const response = await fetch('http://192.168.29.67:3000/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

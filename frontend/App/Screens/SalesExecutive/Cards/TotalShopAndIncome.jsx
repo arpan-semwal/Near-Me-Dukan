@@ -15,7 +15,7 @@ export default function TotalShopAndIncome({ route }) {
 
     const fetchShops = async () => {
         try {
-            const response = await fetch(`http://172.16.16.145:3000/shops?salesAssociateNumber=${mobileNumber}`);
+            const response = await fetch(`http://192.168.29.67:3000/shops?salesAssociateNumber=${mobileNumber}`);
             if (response.ok) {
                 const data = await response.json();
                 setShops(data);

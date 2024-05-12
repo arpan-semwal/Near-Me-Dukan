@@ -70,6 +70,7 @@ import MyProfile from './App/Screens/SalesExecutive/Cards/MyProfile.jsx';
 import RegisterShop from './App/Screens/SalesExecutive/Cards/RegisterShop.jsx';
 import IncomeCalculator from './App/Screens/SalesExecutive/Cards/IncomeCalculator.jsx';
 import TotalShopAndIncome from './App/Screens/SalesExecutive/Cards/TotalShopAndIncome.jsx';
+import MobileSales from './App/Screens/SalesExecutive/RegisterSalesAssociate/MobileSales.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -139,6 +140,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="RegisterShop" component={RegisterShop}options={{ headerShown: false }} />
       <Stack.Screen name="IncomeCalculator" component={IncomeCalculator}options={{ headerShown: false }} />
       <Stack.Screen name="TotalShopAndIncome" component={TotalShopAndIncome}options={{ headerShown: false }} />
+      <Stack.Screen name="MobileSales" component={MobileSales}options={{ headerShown: false }} />
       
      
     
@@ -179,7 +181,7 @@ function MyDrawer() {
     <Drawer.Navigator initialRouteName="NKD" drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name="NKD" component={TabNavigator} />
       <Drawer.Screen name="AboutUs" component={MoreScreen} />
-      <Drawer.Screen name="Register as an Associate" component={RegisterSales} />
+      <Drawer.Screen name="Register as an Associate" component={MobileSales} />
       <Drawer.Screen name="Privacy Policy" component={MoreScreen} />
       <Drawer.Screen name="Terms & Conditions" component={MoreScreen} />
       <Drawer.Screen name="Refund & Cancellations" component={MoreScreen} />

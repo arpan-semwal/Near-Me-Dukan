@@ -11,7 +11,7 @@ export default function MoreScreen() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://172.16.16.145:3000/');
+      const response = await axios.get('http://192.168.29.67:3000/');
       setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);

@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import axios from 'axios';
 
-export default function RegisterSales({ navigation }) {
+export default function RegisterSales({ navigation , route }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [mobileNumber, setMobileNumber] = useState('');
+ 
   const [pincode, setPincode] = useState('');
+  
+  const {mobileNumber} = route.params
 
   const handleSubmit = () => {
-    axios.post('http://172.16.16.145:3000/submit-form', {
+    axios.post('http://192.168.29.67:3000/submit-form', {
       firstName,
-      lastName,
+      lastName, 
       mobileNumber,
       pincode
     })

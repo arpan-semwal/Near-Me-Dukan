@@ -13,7 +13,7 @@ export default function MyProfile({ route }) {
 
   useEffect(() => {
     // Fetch user's existing info
-    axios.get(`http://172.16.16.145:3000/my-profile/${mobileNumber}`)
+    axios.get(`http://192.168.29.67:3000/my-profile/${mobileNumber}`)
       .then(response => {
         const { firstName, lastName, pincode, aadhar, upi, pancard } = response.data;
         setFirstName(firstName);
@@ -29,7 +29,7 @@ export default function MyProfile({ route }) {
   }, [mobileNumber]);
 
   const handleUpdate = () => {
-    axios.post('http://172.16.16.145:3000/update-profile', {
+    axios.post('http://192.168.29.67:3000/update-profile', {
       mobileNumber,
       firstName,
       lastName,

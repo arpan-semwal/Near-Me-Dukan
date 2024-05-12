@@ -1089,6 +1089,24 @@ app.post('/submit-form', (req, res) => {
     });
 });
 
+app.post('/check-user', (req, res) => {
+    const { mobileNumber } = req.body;
+    const sql = 'SELECT * FROM tbl_salesexecutives WHERE mobileNo = ?';
+    db.query(sql, [mobileNumber], (err, results) => {
+      if (err) {
+        console.error('Error checking user:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+  
+      if (results.length > 0) {
+        res.json({ exists: true });
+      } else {
+        res.json({ exists: false });
+      }
+    });
+  });
+
 
 
 

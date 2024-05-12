@@ -90,7 +90,7 @@ const CartScreen = ({ route }) => {
 
     const fetchShopkeeperDetails = async (phoneNumber) => {
         try {
-            const response = await fetch(`http://172.16.16.145:3000/shopkeeperDetails/${phoneNumber}`);
+            const response = await fetch(`http://192.168.29.67:3000/shopkeeperDetails/${phoneNumber}`);
             const data = await response.json();
 
             // Set shopkeeper details state
@@ -115,7 +115,7 @@ const CartScreen = ({ route }) => {
 
     const fetchCustomerDetails = async (phoneNumber) => {
         try {
-            const response = await fetch(`http://172.16.16.145:3000/customerDetails/${custPhoneNumber}`);
+            const response = await fetch(`http://192.168.29.67:3000/customerDetails/${custPhoneNumber}`);
             const data = await response.json();
             // Set shopkeeper details state
             setCustomerDetails(data);

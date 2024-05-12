@@ -18,7 +18,7 @@ export default function SubSalonService({ route, navigation }) {
     useEffect(() => {
         const fetchSubServices = async () => {
             try {
-                const response = await fetch(`http://172.16.16.145:3000/subservices/mainservice/${mainServiceId}`);
+                const response = await fetch(`http://192.168.29.67:3000/subservices/mainservice/${mainServiceId}`);
                 const data = await response.json();
                 setSubServices(data);
             } catch (error) {
@@ -67,7 +67,7 @@ export default function SubSalonService({ route, navigation }) {
     
     const goToMyServices = async () => {
         try {
-            await fetch('http://172.16.16.145:3000/saveSelectedServices', {
+            await fetch('http://192.168.29.67:3000/saveSelectedServices', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
