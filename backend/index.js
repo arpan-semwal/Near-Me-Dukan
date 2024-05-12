@@ -1024,6 +1024,14 @@ app.post('/submit-form', (req, res) => {
       res.status(200).send('Team member added successfully');
     });
   });
+  
+  
+  
+  
+  
+  
+  
+  
   app.get('/my-team/:mobileNumber', (req, res) => {
     const { mobileNumber } = req.params;
     const sql = 'SELECT * FROM tbl_salesexecutives WHERE addedBy = ?';
@@ -1106,10 +1114,67 @@ app.post('/check-user', (req, res) => {
       }
     });
   });
+  
+  
+  
+  app.get('/total-commission', (req, res) => {
+    const { mobileNumber } = req.query;
+    const sql = `
+        SELECT
+            (SELECT COUNT(*) FROM nkd.shopkeepers WHERE salesAssociateNumber = ?) * 500 AS l1Commission,
+            (SELECT COUNT(*) FROM nkd.shopkeepers AS s1
+                JOIN nkd.tbl_salesexecutives AS s2 ON s1.salesAssociateNumber = s2.mobileNo
+                WHERE s1.salesAssociateNumber <> ? AND s2.addedBy = ?) * 250 AS l2Commission
+    `;
+    db.query(sql, [mobileNumber, mobileNumber, mobileNumber], (err, results) => {
+        if (err) {
+            console.error('Error calculating total commission:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
 
+        const l1Commission = results[0].l1Commission;
+        const l2Commission = results[0].l2Commission;
 
+        // Total commission earned by L1
+        let totalCommission = l1Commission;
 
+        // Additional commission earned by L2
+        totalCommission += l2Commission;
 
+        res.json({
+            totalCommission: totalCommission
+        });
+    });
+});
+
+  
+  
+  
+  
+
+// Assuming you're using Express
+app.post('/add-team-member', (req, res) => {
+    const { mobileNumber, firstName, lastName, pincode, upi, pancard, aadhar } = req.body;
+    
+    // Insert the new team member into the database
+    const sql = `
+      INSERT INTO nkd.tbl_salesexecutives 
+      (mobileNo, firstName, lastName, pincode, upi, pancard, aadhar, addedBy, commission) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0.00)
+    `;
+    db.query(sql, [mobileNumber, firstName, lastName, pincode, upi, pancard, aadhar, mobileNumber], (err, results) => {
+        if (err) {
+            console.error('Error adding team member:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+        
+        res.json({ message: 'Team member added successfully' });
+    });
+});
+  
+ 
  
 
 
