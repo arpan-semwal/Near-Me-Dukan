@@ -65,11 +65,11 @@ export default function RegisterShop({ route }) {
     }, [selectedCategoryId]);
 
     const handleSubmit = async () => {
-        if (!shopkeeperName.trim() || !shopID.trim() || !pincode.trim() || !shopState.trim() || !city.trim() || !address.trim() || !salesAssociateNumber || !selectedCategory) {
+        if (!shopkeeperName.trim() || !shopID.trim() || !pincode.trim() || !shopState.trim() || !city.trim() || !address.trim() || !mobileNumber || !selectedCategory) {
             Alert.alert("Missing Fields", "Please fill in all required fields.");
             return;
         }
-
+    
         try {
             const response = await fetch('http://192.168.29.67:3000/shopkeeperRegister', {
                 method: 'POST',
@@ -84,20 +84,20 @@ export default function RegisterShop({ route }) {
                     shopState,
                     city,
                     address,
-                    salesAssociateNumber,
+                    salesAssociateNumber: mobileNumber, // Use mobileNumber from route params
                     selectedCategory,
                     selectedSubCategory,
                 }),
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to register shopkeeper');
             }
-
+    
             const responseData = await response.json();
             alert("Shopkeeper registered");
             console.log(responseData.message);
-
+    
             navigation.navigate('Subscription', {
                 phoneNumber: phoneNumber,
                 selectedSubCategory: selectedSubCategory,
@@ -142,15 +142,15 @@ export default function RegisterShop({ route }) {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Sales Associate's Number (Optional)</Text>
-                    <TextInput
-                        style={[styles.input]}
-                        placeholder="Sales Associate's Number"
-                        value={salesAssociateNumber}
-                        onChangeText={(value) => setSalesAssociateNumber(value)}
-                        keyboardType="numeric"
-                    />
-                </View>
+    <Text style={styles.label}>Sales Associate's Number (Optional)</Text>
+    <TextInput
+        style={[styles.input]}
+        placeholder="Sales Associate's Number"
+        value={mobileNumber} // Set the value to mobileNumber
+        editable={false} // Make it read-only
+        keyboardType="numeric"
+    />
+</View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Pincode*</Text>
                     <TextInput

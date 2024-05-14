@@ -244,34 +244,6 @@ app.post('/register', (req, res) => {
 
  
 // API endpoint for shopkeeper registration
- 
-app.post('/shopkeeperRegister', (req, res) => {
-    const {
-        phoneNumber,
-        shopkeeperName,
-        shopID,
-        pincode,
-        shopState,
-        city,
-        address,
-        salesAssociateNumber,
-        selectedCategory,
-        selectedSubCategory,
-    } = req.body;
-
-    // Insert new shopkeeper into the database
-    db.query(
-        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
-        (err, result) => {
-            if (err) {
-                console.error('Error registering shopkeeper:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-            res.status(200).json({ message: 'Shopkeeper registered successfully' });
-        }
-    );
-});
 
 
 app.get('/categories', (req, res) => {
@@ -998,8 +970,9 @@ app.get('/orders/shopkeeper/:shopkeeperPhoneNumber', (req, res) => {
 //Sales executive
 app.post('/submit-form', (req, res) => {
     const { firstName, lastName, mobileNumber, pincode } = req.body;
-    const sql = 'INSERT INTO tbl_salesexecutives (firstName, lastName, mobileNo, pincode) VALUES (?, ?, ?, ?)';
-    db.query(sql, [firstName, lastName, mobileNumber, pincode], (err, result) => {
+    const commissionLevel = 'L1'; // Set commission level to L1 for new sales associate
+    const sql = 'INSERT INTO tbl_salesexecutives (firstName, lastName, mobileNo, pincode, level) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [firstName, lastName, mobileNumber, pincode, commissionLevel], (err, result) => {
       if (err) {
         console.error('Error saving data to database:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -1009,22 +982,47 @@ app.post('/submit-form', (req, res) => {
       res.json({ success: true });
     });
   });
+
   
   
   app.post('/submit-team-member', (req, res) => {
     const { mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy } = req.body;
-    const sql = 'INSERT INTO tbl_salesexecutives (mobileNo, firstName, lastName, pincode, aadhar, upi, pancard, addedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(sql, [mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy], (err, result) => {
-      if (err) {
-        console.error('Error adding team member:', err);
-        res.status(500).send('Error adding team member');
-        return;
-      }
-      console.log('Team member added successfully');
-      res.status(200).send('Team member added successfully');
+    let level = 'L2'; // Set level to L2 by default
+
+    // Check if the addedBy agent is L1 or L2
+    const sql = 'SELECT level FROM tbl_salesexecutives WHERE mobileNo = ?';
+    db.query(sql, [addedBy], (err, result) => {
+        if (err) {
+            console.error('Error fetching addedBy data:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+
+        if (result.length > 0) {
+            const addedByLevel = result[0].level;
+            if (addedByLevel === 'L1') {
+                level = 'L2';
+            } else if (addedByLevel === 'L2') {
+                level = 'L3';
+            }
+
+            const insertSql = 'INSERT INTO tbl_salesexecutives (mobileNo, firstName, lastName, pincode, aadhar, upi, pancard, addedBy, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            db.query(insertSql, [mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy, level], (err, result) => {
+                if (err) {
+                    console.error('Error saving data to database:', err);
+                    res.status(500).json({ error: 'Internal server error' });
+                    return;
+                }
+                console.log('Team member added successfully');
+                res.json({ success: true });
+            });
+        } else {
+            console.error('No data found for addedBy:', addedBy);
+            res.status(400).json({ error: 'Invalid addedBy' });
+        }
     });
-  });
-  
+});
+
   
   
   
@@ -1115,38 +1113,141 @@ app.post('/check-user', (req, res) => {
     });
   });
   
-  
-  
-  app.get('/total-commission', (req, res) => {
-    const { mobileNumber } = req.query;
-    const sql = `
-        SELECT
-            (SELECT COUNT(*) FROM nkd.shopkeepers WHERE salesAssociateNumber = ?) * 500 AS l1Commission,
-            (SELECT COUNT(*) FROM nkd.shopkeepers AS s1
-                JOIN nkd.tbl_salesexecutives AS s2 ON s1.salesAssociateNumber = s2.mobileNo
-                WHERE s1.salesAssociateNumber <> ? AND s2.addedBy = ?) * 250 AS l2Commission
-    `;
-    db.query(sql, [mobileNumber, mobileNumber, mobileNumber], (err, results) => {
+  // Calculate total commission for a given sales associate
+  // Calculate total commission for a given sales associate
+app.get('/total-commission/:mobileNumber', (req, res) => {
+    const { mobileNumber } = req.params;
+
+    // Fetch the level and addedBy of the user
+    db.query('SELECT level, addedBy FROM nkd.tbl_salesexecutives WHERE mobileNo = ?', [mobileNumber], (err, result) => {
         if (err) {
-            console.error('Error calculating total commission:', err);
+            console.error('Error fetching user data:', err);
             res.status(500).json({ error: 'Internal server error' });
             return;
         }
+        if (result.length === 0) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
 
-        const l1Commission = results[0].l1Commission;
-        const l2Commission = results[0].l2Commission;
+        const { level, addedBy } = result[0];
 
-        // Total commission earned by L1
-        let totalCommission = l1Commission;
+        // Fetch individual commission rate
+        db.query('SELECT commission_amount FROM nkd.commission WHERE level = ?', [level], (err, result) => {
+            if (err) {
+                console.error('Error fetching individual commission:', err);
+                res.status(500).json({ error: 'Internal server error' });
+                return;
+            }
 
-        // Additional commission earned by L2
-        totalCommission += l2Commission;
+            if (result.length === 0) {
+                res.status(404).json({ error: 'Individual commission data not found' });
+                return;
+            }
 
-        res.json({
-            totalCommission: totalCommission
+            const individualCommission = result[0].commission_amount;
+
+            // Fetch commission adjustment based on who registered the shop
+            db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', [addedBy, level], (err, result) => {
+                if (err) {
+                    console.error('Error fetching commission adjustment:', err);
+                    res.status(500).json({ error: 'Internal server error' });
+                    return;
+                }
+
+                const adjustment = result.length ? result[0].commission_amount : 0;
+
+                // Calculate total commission
+                db.query('SELECT COUNT(*) AS shopCount FROM shopkeepers WHERE salesAssociateNumber = ?', [mobileNumber], (err, result) => {
+                    if (err) {
+                        console.error('Error calculating total commission:', err);
+                        res.status(500).json({ error: 'Internal server error' });
+                        return;
+                    }
+
+                    const shopCount = result[0].shopCount;
+                    const totalCommission = (individualCommission + adjustment) * shopCount;
+
+                    res.json({ totalCommission });
+                });
+            });
         });
     });
 });
+
+
+
+
+
+app.get('/user-level/:mobileNumber', (req, res) => {
+    const { mobileNumber } = req.params;
+    const sql = 'SELECT level FROM nkd.tbl_salesexecutives WHERE mobileNo = ?';
+    db.query(sql, [mobileNumber], (err, result) => {
+        if (err) {
+            console.error('Error fetching user level:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+        if (result.length === 0) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+        res.json({ level: result[0].level });
+    });
+});
+
+
+app.get('/commission/:level', (req, res) => {
+  const level = req.params.level;
+
+  const sql = 'SELECT commission_amount FROM nkd.commission WHERE level = ?';
+  db.query(sql, [level], (err, result) => {
+    if (err) {
+      console.error('Error fetching commission:', err);
+      res.status(500).json({ success: false, error: 'Internal server error' });
+      return;
+    }
+
+    if (result.length === 0) {
+      res.status(404).json({ success: false, error: 'Commission data not found' });
+    } else {
+      const commission = result[0].commission_amount;
+      res.json({ success: true, commission });
+    }
+  });
+});
+  
+ 
+app.post('/shopkeeperRegister', (req, res) => {
+    const {
+        phoneNumber,
+        shopkeeperName,
+        shopID,
+        pincode,
+        shopState,
+        city,
+        address,
+        salesAssociateNumber,
+        selectedCategory,
+        selectedSubCategory,
+    } = req.body;
+
+    // Insert new shopkeeper into the database
+    db.query(
+        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
+        (err, result) => {
+            if (err) {
+                console.error('Error registering shopkeeper:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+            res.status(200).json({ message: 'Shopkeeper registered successfully' });
+        }
+    );
+});
+
+  
+
 
   
   
@@ -1154,26 +1255,7 @@ app.post('/check-user', (req, res) => {
   
 
 // Assuming you're using Express
-app.post('/add-team-member', (req, res) => {
-    const { mobileNumber, firstName, lastName, pincode, upi, pancard, aadhar } = req.body;
-    
-    // Insert the new team member into the database
-    const sql = `
-      INSERT INTO nkd.tbl_salesexecutives 
-      (mobileNo, firstName, lastName, pincode, upi, pancard, aadhar, addedBy, commission) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0.00)
-    `;
-    db.query(sql, [mobileNumber, firstName, lastName, pincode, upi, pancard, aadhar, mobileNumber], (err, results) => {
-        if (err) {
-            console.error('Error adding team member:', err);
-            res.status(500).json({ error: 'Internal server error' });
-            return;
-        }
-        
-        res.json({ message: 'Team member added successfully' });
-    });
-});
-  
+ 
  
  
 
