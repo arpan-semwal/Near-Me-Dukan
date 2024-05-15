@@ -1114,97 +1114,112 @@ app.post('/check-user', (req, res) => {
   });
   
   // Calculate total commission for a given sales associate
-app.get('/total-commission/:mobileNumber', (req, res) => {
+  app.get('/total-commission/:mobileNumber', (req, res) => {
     const { mobileNumber } = req.params;
 
     // Fetch the level and addedBy of the user
     db.query('SELECT level, addedBy FROM nkd.tbl_salesexecutives WHERE mobileNo = ?', [mobileNumber], (err, result) => {
         if (err) {
             console.error('Error fetching user data:', err);
-            res.status(500).json({ error: 'Internal server error' });
-            return;
+            return res.status(500).json({ error: 'Internal server error' });
         }
         if (result.length === 0) {
-            res.status(404).json({ error: 'User not found' });
-            return;
+            return res.status(404).json({ error: 'User not found' });
         }
 
         const { level, addedBy } = result[0];
+        console.log(`User Level: ${level}, Added By: ${addedBy}`);
 
         // Fetch individual commission rate
         db.query('SELECT commission_amount FROM nkd.commission WHERE level = ?', [level], (err, result) => {
             if (err) {
                 console.error('Error fetching individual commission:', err);
-                res.status(500).json({ error: 'Internal server error' });
-                return;
+                return res.status(500).json({ error: 'Internal server error' });
             }
 
             if (result.length === 0) {
-                res.status(404).json({ error: 'Individual commission data not found' });
-                return;
+                return res.status(404).json({ error: 'Individual commission data not found' });
             }
 
             const individualCommission = result[0].commission_amount;
+            console.log(`Individual Commission for ${level}: ${individualCommission}`);
 
             // Fetch commission adjustment based on who registered the shop
             db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', [addedBy, level], (err, result) => {
                 if (err) {
                     console.error('Error fetching commission adjustment:', err);
-                    res.status(500).json({ error: 'Internal server error' });
-                    return;
+                    return res.status(500).json({ error: 'Internal server error' });
                 }
 
                 const adjustment = result.length ? result[0].commission_amount : 0;
+                console.log(`Commission Adjustment from ${addedBy} to ${level}: ${adjustment}`);
 
                 // Calculate total commission
                 db.query('SELECT COUNT(*) AS shopCount FROM shopkeepers WHERE salesAssociateNumber = ?', [mobileNumber], (err, result) => {
                     if (err) {
                         console.error('Error calculating total commission:', err);
-                        res.status(500).json({ error: 'Internal server error' });
-                        return;
+                        return res.status(500).json({ error: 'Internal server error' });
                     }
 
                     const shopCount = result[0].shopCount;
+                    console.log(`Shop Count for ${mobileNumber}: ${shopCount}`);
 
-                    let totalCommission;
+                    let totalCommission = 0;
 
-                    // Calculate additional adjustments for L2 and L3
-                    if (level === 'L2') {
+                    if (level === 'L1') {
+                        // For L1, no additional adjustments
+                        totalCommission = individualCommission * shopCount;
+                        console.log(`Total Commission for ${mobileNumber} (L1): ${totalCommission}`);
+                        return res.json({ totalCommission });
+                    } else if (level === 'L2') {
                         totalCommission = (individualCommission + adjustment) * shopCount;
-                        res.json({ totalCommission });
+                        console.log(`Total Commission for ${mobileNumber} (L2): ${totalCommission}`);
+                        return res.json({ totalCommission });
                     } else if (level === 'L3') {
-                        db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', ['L3', 'L2'], (err, result) => {
+                        // Fetch commission adjustment for L3 to L2
+                        db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', ['L3', 'L2'], (err, l3ToL2Result) => {
                             if (err) {
                                 console.error('Error fetching commission adjustment for L3 to L2:', err);
-                                res.status(500).json({ error: 'Internal server error' });
-                                return;
+                                return res.status(500).json({ error: 'Internal server error' });
                             }
 
-                            const l3ToL2Adjustment = result.length ? result[0].commission_amount : 0;
+                            const l3ToL2Adjustment = l3ToL2Result.length ? l3ToL2Result[0].commission_amount : 0;
+                            console.log(`L3 to L2 Adjustment: ${l3ToL2Adjustment}`);
 
-                            db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', ['L2', 'L1'], (err, result) => {
+                            // Fetch commission adjustment for L2 to L1
+                            db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', ['L2', 'L1'], (err, l2ToL1Result) => {
                                 if (err) {
                                     console.error('Error fetching commission adjustment for L2 to L1:', err);
-                                    res.status(500).json({ error: 'Internal server error' });
-                                    return;
+                                    return res.status(500).json({ error: 'Internal server error' });
                                 }
 
-                                const l2ToL1Adjustment = result.length ? result[0].commission_amount : 0;
+                                const l2ToL1Adjustment = l2ToL1Result.length ? l2ToL1Result[0].commission_amount : 0;
+                                console.log(`L2 to L1 Adjustment: ${l2ToL1Adjustment}`);
 
-                                totalCommission = (individualCommission + adjustment + l3ToL2Adjustment + l2ToL1Adjustment) * shopCount;
-                                res.json({ totalCommission });
+                                totalCommission = (individualCommission + adjustment) * shopCount;
+                                const totalL2Commission = l3ToL2Adjustment * shopCount;
+                                const totalL1Commission = l2ToL1Adjustment * shopCount;
+
+                                console.log(`Total Commission for ${mobileNumber} (L3): ${totalCommission}`);
+                                console.log(`Total L2 Commission due to ${mobileNumber} (L3): ${totalL2Commission}`);
+                                console.log(`Total L1 Commission due to ${mobileNumber} (L3): ${totalL1Commission}`);
+
+                                return res.json({ 
+                                    totalCommission, 
+                                    additionalCommissions: {
+                                        totalL2Commission,
+                                        totalL1Commission
+                                    }
+                                });
                             });
                         });
-                    } else {
-                        // For L1, no additional adjustments
-                        totalCommission = (individualCommission + adjustment) * shopCount;
-                        res.json({ totalCommission });
                     }
                 });
             });
         });
     });
 });
+
 
 
 
