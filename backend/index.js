@@ -1114,7 +1114,6 @@ app.post('/check-user', (req, res) => {
   });
   
   // Calculate total commission for a given sales associate
-  // Calculate total commission for a given sales associate
 app.get('/total-commission/:mobileNumber', (req, res) => {
     const { mobileNumber } = req.params;
 
@@ -1166,14 +1165,53 @@ app.get('/total-commission/:mobileNumber', (req, res) => {
                     }
 
                     const shopCount = result[0].shopCount;
-                    const totalCommission = (individualCommission + adjustment) * shopCount;
 
-                    res.json({ totalCommission });
+                    let totalCommission;
+
+                    // Calculate additional adjustments for L2 and L3
+                    if (level === 'L2') {
+                        totalCommission = (individualCommission + adjustment) * shopCount;
+                        res.json({ totalCommission });
+                    } else if (level === 'L3') {
+                        db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', ['L3', 'L2'], (err, result) => {
+                            if (err) {
+                                console.error('Error fetching commission adjustment for L3 to L2:', err);
+                                res.status(500).json({ error: 'Internal server error' });
+                                return;
+                            }
+
+                            const l3ToL2Adjustment = result.length ? result[0].commission_amount : 0;
+
+                            db.query('SELECT commission_amount FROM nkd.commission_level WHERE from_level = ? AND to_level = ?', ['L2', 'L1'], (err, result) => {
+                                if (err) {
+                                    console.error('Error fetching commission adjustment for L2 to L1:', err);
+                                    res.status(500).json({ error: 'Internal server error' });
+                                    return;
+                                }
+
+                                const l2ToL1Adjustment = result.length ? result[0].commission_amount : 0;
+
+                                totalCommission = (individualCommission + adjustment + l3ToL2Adjustment + l2ToL1Adjustment) * shopCount;
+                                res.json({ totalCommission });
+                            });
+                        });
+                    } else {
+                        // For L1, no additional adjustments
+                        totalCommission = (individualCommission + adjustment) * shopCount;
+                        res.json({ totalCommission });
+                    }
                 });
             });
         });
     });
 });
+
+
+
+
+
+
+
 
 
 
