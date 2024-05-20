@@ -1252,8 +1252,13 @@ app.get('/commission/:level', (req, res) => {
 
 // Function to update commission amount for an existing entry
 async function updateCommissionAmount(mobileNumber, commissionType, commissionAmount) {
+    console.log('Updating commission for:', mobileNumber, commissionType, commissionAmount);
+
+    if (!mobileNumber) {
+        throw new Error('mobileNumber is null or undefined');
+    }
+
     try {
-        // Get the current commission amount for the specified mobile number and commission type
         const currentCommission = await new Promise((resolve, reject) => {
             db.query(
                 'SELECT amount FROM tbl_commission WHERE mobileNumber = ? AND commissionType = ?',
@@ -1264,15 +1269,14 @@ async function updateCommissionAmount(mobileNumber, commissionType, commissionAm
                         reject(err);
                         return;
                     }
+                    console.log('Current commission:', result);
                     resolve(result && result.length > 0 ? result[0].amount : 0);
                 }
             );
         });
 
-        // Calculate the new commission amount by adding the current commission amount and the new commission amount
         const newCommissionAmount = currentCommission + commissionAmount;
 
-        // Update the commission amount in the database
         await new Promise((resolve, reject) => {
             db.query(
                 'UPDATE tbl_commission SET amount = ? WHERE mobileNumber = ? AND commissionType = ?',
@@ -1293,10 +1297,14 @@ async function updateCommissionAmount(mobileNumber, commissionType, commissionAm
     }
 }
 
-
 async function assignCommission(mobileNumber, commissionType, commissionAmount) {
+    console.log('Assigning commission for:', mobileNumber, commissionType, commissionAmount);
+
+    if (!mobileNumber) {
+        throw new Error('mobileNumber is null or undefined');
+    }
+
     try {
-        // Check if the commission entry already exists
         const existingCommission = await new Promise((resolve, reject) => {
             db.query(
                 'SELECT * FROM tbl_commission WHERE mobileNumber = ? AND commissionType = ?',
@@ -1307,16 +1315,15 @@ async function assignCommission(mobileNumber, commissionType, commissionAmount) 
                         reject(err);
                         return;
                     }
+                    console.log('Existing commission:', result);
                     resolve(result);
                 }
             );
         });
 
-        // If the commission entry already exists, update the amount
         if (existingCommission && existingCommission.length > 0) {
             await updateCommissionAmount(mobileNumber, commissionType, commissionAmount);
         } else {
-            // Insert commission details into the database
             await new Promise((resolve, reject) => {
                 db.query(
                     'INSERT INTO tbl_commission (mobileNumber, commissionType, amount) VALUES (?, ?, ?)',
@@ -1338,35 +1345,16 @@ async function assignCommission(mobileNumber, commissionType, commissionAmount) 
     }
 }
 
-
-// Function to insert commission into the database
-async function insertCommission(mobileNumber, commissionType, commissionAmount) {
-    try {
-        // Insert commission details into the database
-        await new Promise((resolve, reject) => {
-            db.query(
-                'INSERT INTO tbl_commission (mobileNumber, commissionType, amount) VALUES (?, ?, ?)',
-                [mobileNumber, commissionType, commissionAmount],
-                (err, result) => {
-                    if (err) {
-                        console.error('Error inserting commission:', err);
-                        reject(err);
-                        return;
-                    }
-                    resolve(result);
-                }
-            );
-        });
-    } catch (error) {
-        throw new Error('Error inserting commission');
-    }
-}
-
 async function checkAndAssignCommission(salesAssociateNumber) {
+    console.log('Checking and assigning commission for sales associate:', salesAssociateNumber);
+
+    if (!salesAssociateNumber) {
+        throw new Error('salesAssociateNumber is null or undefined');
+    }
+
     try {
         let addedBy = null;
 
-        // Check if the sales associate was added by someone
         const addedByQuery = await new Promise((resolve, reject) => {
             db.query('SELECT addedBy FROM tbl_salesexecutives WHERE mobileNo = ?', [salesAssociateNumber], (err, result) => {
                 if (err) {
@@ -1377,20 +1365,18 @@ async function checkAndAssignCommission(salesAssociateNumber) {
                 if (result && result.length > 0) {
                     addedBy = result[0].addedBy;
                 }
+                console.log('Added by:', addedBy);
                 resolve();
             });
         });
 
-        // Assign commission to the sales associate
         const commissionAmountBase = 500;
         await assignCommission(salesAssociateNumber, 'Base', commissionAmountBase);
 
-        // If the sales associate was added by someone, assign additional commission
         if (addedBy) {
             const commissionAmountL1 = 250;
             await assignCommission(addedBy, 'L1', commissionAmountL1);
 
-            // Check if the person who added the sales associate was also added by someone
             const addedByAddedByQuery = await new Promise((resolve, reject) => {
                 db.query('SELECT addedBy FROM tbl_salesexecutives WHERE mobileNo = ?', [addedBy], (err, result) => {
                     if (err) {
@@ -1404,9 +1390,17 @@ async function checkAndAssignCommission(salesAssociateNumber) {
 
             if (addedByAddedByQuery && addedByAddedByQuery.length > 0) {
                 const addedByAddedBy = addedByAddedByQuery[0].addedBy;
-                const commissionAmountL2 = 150;
-                await assignCommission(addedByAddedBy, 'L2', commissionAmountL2);
+                if (addedByAddedBy) {
+                    const commissionAmountL2 = 150;
+                    await assignCommission(addedByAddedBy, 'L2', commissionAmountL2);
+                } else {
+                    console.log('addedByAddedBy is null or undefined');
+                }
+            } else {
+                console.log('No addedByAddedBy found for:', addedBy);
             }
+        } else {
+            console.log('addedBy is null or undefined');
         }
     } catch (error) {
         console.error('Error assigning commission:', error);
@@ -1428,8 +1422,9 @@ app.post('/shopkeeperRegister', async (req, res) => {
         selectedSubCategory,
     } = req.body;
 
+    console.log('Registering shopkeeper with:', req.body);
+
     try {
-        // Insert new shopkeeper into the database
         const shopkeeperInsert = await new Promise((resolve, reject) => {
             db.query(
                 'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -1445,7 +1440,6 @@ app.post('/shopkeeperRegister', async (req, res) => {
             );
         });
 
-        // Check if the sales associate was added by someone and assign commission
         await checkAndAssignCommission(salesAssociateNumber);
 
         res.status(200).json({ message: 'Shopkeeper registered successfully' });
@@ -1455,13 +1449,12 @@ app.post('/shopkeeperRegister', async (req, res) => {
     }
 });
 
-
-// Endpoint to retrieve total commission for a specific mobile number
 app.get('/myTotalCommission', async (req, res) => {
     const { mobileNumber } = req.query;
 
+    console.log('Fetching total commission for:', mobileNumber);
+
     try {
-        // Retrieve total commission for the specified mobile number
         const totalCommission = await new Promise((resolve, reject) => {
             db.query(
                 'SELECT SUM(amount) AS totalCommission FROM tbl_commission WHERE mobileNumber = ?',
@@ -1483,18 +1476,6 @@ app.get('/myTotalCommission', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-
-  
-  
-  
-  
-
-// Assuming you're using Express
- 
- 
- 
-
 
 
 const port = 3000;
