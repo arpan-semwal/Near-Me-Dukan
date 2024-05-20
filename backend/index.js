@@ -970,7 +970,7 @@ app.get('/orders/shopkeeper/:shopkeeperPhoneNumber', (req, res) => {
 //Sales executive
 app.post('/submit-form', (req, res) => {
     const { firstName, lastName, mobileNumber, pincode } = req.body;
-    const commissionLevel = 'L1'; // Set commission level to L1 for new sales associate
+    const commissionLevel = 'L0'; // Set commission level to L1 for new sales associate
     const sql = 'INSERT INTO tbl_salesexecutives (firstName, lastName, mobileNo, pincode, level) VALUES (?, ?, ?, ?, ?)';
     db.query(sql, [firstName, lastName, mobileNumber, pincode, commissionLevel], (err, result) => {
       if (err) {
@@ -987,41 +987,21 @@ app.post('/submit-form', (req, res) => {
   
   app.post('/submit-team-member', (req, res) => {
     const { mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy } = req.body;
-    let level = 'L2'; // Set level to L2 by default
+    
+    // New team members should be assigned level L0 by default
+    const level = 'L0';
 
-    // Check if the addedBy agent is L1 or L2
-    const sql = 'SELECT level FROM tbl_salesexecutives WHERE mobileNo = ?';
-    db.query(sql, [addedBy], (err, result) => {
+    const insertSql = 'INSERT INTO tbl_salesexecutives (mobileNo, firstName, lastName, pincode, aadhar, upi, pancard, addedBy, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(insertSql, [mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy, level], (err, result) => {
         if (err) {
-            console.error('Error fetching addedBy data:', err);
+            console.error('Error saving data to database:', err);
             res.status(500).json({ error: 'Internal server error' });
             return;
         }
-
-        if (result.length > 0) {
-            const addedByLevel = result[0].level;
-            if (addedByLevel === 'L1') {
-                level = 'L2';
-            } else if (addedByLevel === 'L2') {
-                level = 'L3';
-            }
-
-            const insertSql = 'INSERT INTO tbl_salesexecutives (mobileNo, firstName, lastName, pincode, aadhar, upi, pancard, addedBy, level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            db.query(insertSql, [mobileNumber, firstName, lastName, pincode, aadhar, upi, pancard, addedBy, level], (err, result) => {
-                if (err) {
-                    console.error('Error saving data to database:', err);
-                    res.status(500).json({ error: 'Internal server error' });
-                    return;
-                }
-                console.log('Team member added successfully');
-                res.json({ success: true });
-            });
-        } else {
-            console.error('No data found for addedBy:', addedBy);
-            res.status(400).json({ error: 'Invalid addedBy' });
-        }
+        console.log('Team member added successfully');
+        res.json({ success: true });
     });
-});
+})
 
   
   
@@ -1269,9 +1249,172 @@ app.get('/commission/:level', (req, res) => {
     }
   });
 });
-  
- 
-app.post('/shopkeeperRegister', (req, res) => {
+
+// Function to update commission amount for an existing entry
+async function updateCommissionAmount(mobileNumber, commissionType, commissionAmount) {
+    try {
+        // Get the current commission amount for the specified mobile number and commission type
+        const currentCommission = await new Promise((resolve, reject) => {
+            db.query(
+                'SELECT amount FROM tbl_commission WHERE mobileNumber = ? AND commissionType = ?',
+                [mobileNumber, commissionType],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error fetching current commission amount:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result && result.length > 0 ? result[0].amount : 0);
+                }
+            );
+        });
+
+        // Calculate the new commission amount by adding the current commission amount and the new commission amount
+        const newCommissionAmount = currentCommission + commissionAmount;
+
+        // Update the commission amount in the database
+        await new Promise((resolve, reject) => {
+            db.query(
+                'UPDATE tbl_commission SET amount = ? WHERE mobileNumber = ? AND commissionType = ?',
+                [newCommissionAmount, mobileNumber, commissionType],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error updating commission amount:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result);
+                }
+            );
+        });
+    } catch (error) {
+        console.error('Error updating commission amount:', error);
+        throw new Error('Error updating commission amount');
+    }
+}
+
+
+async function assignCommission(mobileNumber, commissionType, commissionAmount) {
+    try {
+        // Check if the commission entry already exists
+        const existingCommission = await new Promise((resolve, reject) => {
+            db.query(
+                'SELECT * FROM tbl_commission WHERE mobileNumber = ? AND commissionType = ?',
+                [mobileNumber, commissionType],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error checking existing commission:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result);
+                }
+            );
+        });
+
+        // If the commission entry already exists, update the amount
+        if (existingCommission && existingCommission.length > 0) {
+            await updateCommissionAmount(mobileNumber, commissionType, commissionAmount);
+        } else {
+            // Insert commission details into the database
+            await new Promise((resolve, reject) => {
+                db.query(
+                    'INSERT INTO tbl_commission (mobileNumber, commissionType, amount) VALUES (?, ?, ?)',
+                    [mobileNumber, commissionType, commissionAmount],
+                    (err, result) => {
+                        if (err) {
+                            console.error('Error assigning commission:', err);
+                            reject(err);
+                            return;
+                        }
+                        resolve(result);
+                    }
+                );
+            });
+        }
+    } catch (error) {
+        console.error('Error assigning commission:', error);
+        throw new Error('Error assigning commission');
+    }
+}
+
+
+// Function to insert commission into the database
+async function insertCommission(mobileNumber, commissionType, commissionAmount) {
+    try {
+        // Insert commission details into the database
+        await new Promise((resolve, reject) => {
+            db.query(
+                'INSERT INTO tbl_commission (mobileNumber, commissionType, amount) VALUES (?, ?, ?)',
+                [mobileNumber, commissionType, commissionAmount],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error inserting commission:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result);
+                }
+            );
+        });
+    } catch (error) {
+        throw new Error('Error inserting commission');
+    }
+}
+
+async function checkAndAssignCommission(salesAssociateNumber) {
+    try {
+        let addedBy = null;
+
+        // Check if the sales associate was added by someone
+        const addedByQuery = await new Promise((resolve, reject) => {
+            db.query('SELECT addedBy FROM tbl_salesexecutives WHERE mobileNo = ?', [salesAssociateNumber], (err, result) => {
+                if (err) {
+                    console.error('Error fetching addedBy data:', err);
+                    reject(err);
+                    return;
+                }
+                if (result && result.length > 0) {
+                    addedBy = result[0].addedBy;
+                }
+                resolve();
+            });
+        });
+
+        // Assign commission to the sales associate
+        const commissionAmountBase = 500;
+        await assignCommission(salesAssociateNumber, 'Base', commissionAmountBase);
+
+        // If the sales associate was added by someone, assign additional commission
+        if (addedBy) {
+            const commissionAmountL1 = 250;
+            await assignCommission(addedBy, 'L1', commissionAmountL1);
+
+            // Check if the person who added the sales associate was also added by someone
+            const addedByAddedByQuery = await new Promise((resolve, reject) => {
+                db.query('SELECT addedBy FROM tbl_salesexecutives WHERE mobileNo = ?', [addedBy], (err, result) => {
+                    if (err) {
+                        console.error('Error fetching addedByAddedBy data:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result);
+                });
+            });
+
+            if (addedByAddedByQuery && addedByAddedByQuery.length > 0) {
+                const addedByAddedBy = addedByAddedByQuery[0].addedBy;
+                const commissionAmountL2 = 150;
+                await assignCommission(addedByAddedBy, 'L2', commissionAmountL2);
+            }
+        }
+    } catch (error) {
+        console.error('Error assigning commission:', error);
+        throw new Error('Error assigning commission');
+    }
+}
+
+app.post('/shopkeeperRegister', async (req, res) => {
     const {
         phoneNumber,
         shopkeeperName,
@@ -1285,21 +1428,61 @@ app.post('/shopkeeperRegister', (req, res) => {
         selectedSubCategory,
     } = req.body;
 
-    // Insert new shopkeeper into the database
-    db.query(
-        'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
-        (err, result) => {
-            if (err) {
-                console.error('Error registering shopkeeper:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-            res.status(200).json({ message: 'Shopkeeper registered successfully' });
-        }
-    );
+    try {
+        // Insert new shopkeeper into the database
+        const shopkeeperInsert = await new Promise((resolve, reject) => {
+            db.query(
+                'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error registering shopkeeper:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result);
+                }
+            );
+        });
+
+        // Check if the sales associate was added by someone and assign commission
+        await checkAndAssignCommission(salesAssociateNumber);
+
+        res.status(200).json({ message: 'Shopkeeper registered successfully' });
+    } catch (error) {
+        console.error('Error registering shopkeeper:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
-  
+
+// Endpoint to retrieve total commission for a specific mobile number
+app.get('/myTotalCommission', async (req, res) => {
+    const { mobileNumber } = req.query;
+
+    try {
+        // Retrieve total commission for the specified mobile number
+        const totalCommission = await new Promise((resolve, reject) => {
+            db.query(
+                'SELECT SUM(amount) AS totalCommission FROM tbl_commission WHERE mobileNumber = ?',
+                [mobileNumber],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error fetching total commission:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result[0].totalCommission || 0);
+                }
+            );
+        });
+
+        res.status(200).json({ totalCommission });
+    } catch (error) {
+        console.error('Error retrieving total commission:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 
   
