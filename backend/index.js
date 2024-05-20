@@ -1250,6 +1250,26 @@ app.get('/commission/:level', (req, res) => {
   });
 });
 
+async function fetchCommissionRates() {
+    try {
+        const commissionRates = await new Promise((resolve, reject) => {
+            db.query('SELECT * FROM commission_rates', (err, result) => {
+                if (err) {
+                    console.error('Error fetching commission rates:', err);
+                    reject(err);
+                    return;
+                }
+                resolve(result.reduce((acc, cur) => ({ ...acc, [cur.commissionType]: cur.amount }), {}));
+            });
+        });
+        return commissionRates;
+    } catch (error) {
+        console.error('Error fetching commission rates:', error);
+        throw new Error('Error fetching commission rates');
+    }
+}
+
+
 // Function to update commission amount for an existing entry
 async function updateCommissionAmount(mobileNumber, commissionType, commissionAmount) {
     console.log('Updating commission for:', mobileNumber, commissionType, commissionAmount);
@@ -1379,13 +1399,16 @@ async function checkAndAssignCommission(salesAssociateNumber) {
             addedBy = addedByResult[0].addedBy;
         }
 
+        // Fetch commission rates from the database
+        const commissionRates = await fetchCommissionRates();
+
         // Assign commission to the sales associate
-        const commissionAmountBase = 500;
+        const commissionAmountBase = commissionRates['Base'];
         await assignCommission(salesAssociateNumber, 'Base', commissionAmountBase);
 
         // If the sales associate was added by someone, assign additional commission
         if (addedBy) {
-            const commissionAmountL1 = 250;
+            const commissionAmountL1 = commissionRates['L1'];
             await assignCommission(addedBy, 'L1', commissionAmountL1);
 
             // Check if the person who added the sales associate was also added by someone
@@ -1403,7 +1426,7 @@ async function checkAndAssignCommission(salesAssociateNumber) {
             if (addedByAddedByResult && addedByAddedByResult.length > 0) {
                 const addedByAddedBy = addedByAddedByResult[0].addedBy;
                 if (addedByAddedBy) {
-                    const commissionAmountL2 = 150;
+                    const commissionAmountL2 = commissionRates['L2'];
                     await assignCommission(addedByAddedBy, 'L2', commissionAmountL2);
                 } else {
                     console.warn(`No further addedBy found for ${addedBy}, skipping L2 commission assignment.`);
