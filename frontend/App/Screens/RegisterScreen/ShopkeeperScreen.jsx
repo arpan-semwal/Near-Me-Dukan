@@ -88,39 +88,29 @@ export default function ShopkeeperScreen({ route }) {
     }, [selectedCategoryId]);
 
     const handleSubmit = async () => {
-        setSubmitted(true);
+        // Check for required fields and validate data
     
-        if (!shopkeeperName.trim() || !shopID.trim() || !pincode.trim() || !shopState.trim() || !city.trim() || !address.trim() || !shopBanner || !profilePicture || !salesAssociateNumber || !selectedCategory) {
-            Alert.alert("Missing Fields", "Please fill in all required fields and upload both shop banner and profile picture.");
-            return;
-        }
+        // Prepare data
+        const data = {
+            phoneNumber,
+            shopkeeperName,
+            shopID,
+            pincode,
+            shopState,
+            city,
+            address,
+            salesAssociateNumber,
+            selectedCategory,
+            selectedSubCategory,
+        };
     
         try {
-            const formData = new FormData();
-            formData.append('phoneNumber', phoneNumber);
-            formData.append('shopkeeperName', shopkeeperName);
-            formData.append('shopID', shopID);
-            formData.append('pincode', pincode);
-            formData.append('shopState', shopState);
-            formData.append('city', city);
-            formData.append('address', address);
-            formData.append('salesAssociateNumber', salesAssociateNumber);
-            formData.append('selectedCategory', selectedCategory);
-            formData.append('selectedSubCategory', selectedSubCategory);
-            formData.append('shopBanner', {
-                uri: shopBanner.uri,
-                name: 'shopBanner.jpg',
-                type: 'image/jpeg',
-            });
-            formData.append('profilePicture', {
-                uri: profilePicture.uri,
-                name: 'profilePicture.jpg',
-                type: 'image/jpeg',
-            });
-    
             const response = await fetch('http://192.168.29.67:3000/shopkeeperRegister', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
     
             if (!response.ok) {
@@ -128,11 +118,10 @@ export default function ShopkeeperScreen({ route }) {
             }
     
             const responseData = await response.json();
-            alert("Shopkeeper registered")
+            alert("Shopkeeper registered");
             console.log(responseData.message);
     
             navigation.navigate('Subscription', {
-                userType: userType,
                 phoneNumber: phoneNumber,
                 selectedSubCategory: selectedSubCategory,
                 selectedSubCategoryId: selectedSubCategoryId,
@@ -361,26 +350,12 @@ export default function ShopkeeperScreen({ route }) {
         </Picker>
     </View>
 )}
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Upload Shop Banner*</Text>
-                    <Button
-                        title="Upload Shop Banner"
-                        onPress={handleShopBannerUpload}
-                    />
-                    {shopBanner && <Image source={{ uri: shopBanner.uri }} style={styles.uploadedImage} />}
-                </View>
-                <View style={styles.inputContainer}>
-                    <Text style={styles.label}>Upload Profile Picture*</Text>
-                    <Button
-                        title="Upload Profile Picture"
-                        onPress={handleProfilePictureUpload}
-                    />
-                    {profilePicture && <Image source={{ uri: profilePicture.uri }} style={styles.uploadedImage} />}
-                </View>
+                
+                
                 <Button
                     title="Submit"
                     onPress={handleSubmit}
-                    disabled={!Object.values(requiredFields).every(field => field) || !shopBanner || !profilePicture || !selectedCategory}
+                 
                     style={styles.submitButton}
                 />
             </View>

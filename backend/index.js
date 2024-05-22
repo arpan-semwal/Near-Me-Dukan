@@ -1442,7 +1442,7 @@ async function checkAndAssignCommission(salesAssociateNumber) {
 }
 
 // Register a shopkeeper and assign commission
-app.post('/shopkeeperRegister', async (req, res) => {
+app.post('/shopkeeperRegister', upload.none(), async (req, res) => {
     const {
         phoneNumber,
         shopkeeperName,

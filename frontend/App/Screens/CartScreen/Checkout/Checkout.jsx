@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useCart, useCustomer } from '../../../Context/ContextApi';
@@ -13,25 +13,67 @@ const saveOrder = async (custName, custPhoneNumber, cartItems, totalPrice, selec
       cartItems: cartItems,
       totalPrice: totalPrice,
       selectedDate: selectedDate, 
-      selectedTime: selectedTime ,
+      selectedTime: selectedTime,
       shopID: shopID, // Pass shopID parameter
       shopkeeperName: shopkeeperName,
       phoneNumber: phoneNumber
     });
     console.log(response.data.message);
     // Redirect to success page or show a success message
+    return true;
   } catch (error) {
     console.error('Error saving order:', error);
     // Handle error
+    return false;
   }
 };
 
-
 const Checkout = ({ route }) => {
-   
-  const { cartItems, totalPrice, shopkeeperName, phoneNumber, shopID, custName, custPhoneNumber , selectedDate  , selectedTime } = route.params; 
+  const { cartItems, totalPrice, shopkeeperName, phoneNumber, shopID, custName, custPhoneNumber, selectedDate, selectedTime } = route.params;
   const { storeName } = useCart();
   const navigation = useNavigation();
+
+  // State to track if the notification is sent
+  const [notificationSent, setNotificationSent] = useState(false);
+
+  // Function to handle notification
+  const handleNotification = async () => {
+    const shopResponse = await sendShopNotification(); // Send notification to shopkeeper
+    if (shopResponse) {
+      const customerResponse = await sendCustomerNotification(); // Send notification to customer
+      if (customerResponse) {
+        Alert.alert('Success', 'Your appointment has been confirmed.');
+      } else {
+        Alert.alert('Error', 'Failed to send confirmation notification to the customer.');
+      }
+    } else {
+      Alert.alert('Error', 'Failed to send appointment notification to the shopkeeper.');
+    }
+  };
+
+  // Function to send notification to shopkeeper
+  const sendShopNotification = async () => {
+    // Code to send notification to the shopkeeper
+    // Return true if notification is sent successfully, false otherwise
+    return true; // Placeholder response, replace with actual implementation
+  };
+
+  // Function to send notification to customer
+  const sendCustomerNotification = async () => {
+    // Code to send notification to the customer
+    // Return true if notification is sent successfully, false otherwise
+    return true; // Placeholder response, replace with actual implementation
+  };
+
+  // Function to handle payment and notification
+  const handlePayment = async () => {
+    const orderSaved = await saveOrder(custName, custPhoneNumber, cartItems, totalPrice, selectedDate || null, selectedTime || null, shopID, shopkeeperName, phoneNumber);
+    if (orderSaved) {
+      handleNotification();
+    } else {
+      Alert.alert('Error', 'Failed to save the order. Please try again later.');
+    }
+  };
 
   return (
     <ScrollView>
@@ -73,14 +115,10 @@ const Checkout = ({ route }) => {
 
         <Text style={styles.paymentMethod}>Select Payment Method</Text>
         <TouchableOpacity
-            style={styles.paymentButton}
-            onPress={() => {
-              navigation.navigate('Pay', { custName, custPhoneNumber, cartItems, totalPrice, shopID, shopkeeperName, phoneNumber, selectedDate, selectedTime });
-              saveOrder(custName, custPhoneNumber, cartItems, totalPrice, selectedDate || null, selectedTime || null, shopID, shopkeeperName, phoneNumber); // Pass selectedDate and selectedTime with null check
-            }}
->
-  <Text style={styles.paymentButtonText}>Pay At Shop</Text>
-</TouchableOpacity>
+          style={styles.paymentButton}
+          onPress={handlePayment}>
+          <Text style={styles.paymentButtonText}>Pay At Shop</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
