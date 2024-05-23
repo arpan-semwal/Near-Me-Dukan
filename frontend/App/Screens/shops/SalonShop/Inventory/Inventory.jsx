@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator , StyleSheet , TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Inventory = ({ route }) => {
-    const { phoneNumber ,  shopkeeperName, } = route.params;
+    const { phoneNumber, shopkeeperName, selectedSubCategory } = route.params;
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { selectedSubCategory } = route.params;
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -34,11 +33,10 @@ const Inventory = ({ route }) => {
             style={styles.serviceContainer}
             onPress={() => navigation.navigate('SubSalonService', 
             { 
-                mainServiceId: item.id , 
-                phoneNumber:phoneNumber ,
-                shopkeeperName:shopkeeperName 
-            }
-        )}
+                mainServiceId: item.id, 
+                phoneNumber, 
+                shopkeeperName 
+            })}
         >
             <Text style={styles.serviceName}>{item.name}</Text>
         </TouchableOpacity>
@@ -46,7 +44,7 @@ const Inventory = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Inventory:{phoneNumber}</Text>
+            <Text style={styles.title}>Inventory: {phoneNumber}</Text>
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
@@ -59,8 +57,6 @@ const Inventory = ({ route }) => {
         </View>
     );
 };
-
-export default Inventory;
 
 const styles = StyleSheet.create({
     container: {
@@ -84,3 +80,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 });
+
+export default Inventory;

@@ -10,6 +10,7 @@ export default function SalonShop({ route }) {
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
+    const {phoneNumber} = route.params
     
     useEffect(() => {
         fetchShopkeeperDetails();
@@ -17,7 +18,7 @@ export default function SalonShop({ route }) {
 
     const fetchShopkeeperDetails = async () => {
         try {
-            const response = await fetch(`http://192.168.29.67:3000/shopkeeperDetails/${route.params.phoneNumber}`);
+            const response = await fetch(`http://192.168.29.67:3000/shopkeeperDetails/${phoneNumber}`);
             if (response.ok) {
                 const data = await response.json();
                 setShopkeeperName(data.shopkeeperName);
@@ -112,7 +113,7 @@ export default function SalonShop({ route }) {
                     <View style={styles.headerContainer}>
                         <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
                         <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
+                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{phoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>
