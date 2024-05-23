@@ -33,6 +33,7 @@ export default function ShopkeeperScreen({ route }) {
     const [categories, setCategories] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
+    const [selectedCategoryType, setSelectedCategoryType] = useState('');
 
    
     
@@ -102,6 +103,7 @@ export default function ShopkeeperScreen({ route }) {
             salesAssociateNumber,
             selectedCategory,
             selectedSubCategory,
+            selectedCategoryType // Include the selected category type in the data
         };
     
         try {
@@ -125,6 +127,7 @@ export default function ShopkeeperScreen({ route }) {
                 phoneNumber: phoneNumber,
                 selectedSubCategory: selectedSubCategory,
                 selectedSubCategoryId: selectedSubCategoryId,
+                selectedCategoryType: selectedCategoryType // Pass the category type to the next screen
             });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);
@@ -311,19 +314,20 @@ export default function ShopkeeperScreen({ route }) {
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>
                     <Picker
-                        selectedValue={selectedCategory}
-                        onValueChange={(itemValue, itemIndex) => {
-                            setSelectedCategory(itemValue);
-                            // Find the ID of the selected category
-                            const category = categories.find(cat => cat.name === itemValue);
-                            setSelectedCategoryId(category ? category.id : ''); // Update the selected category ID state
-                        }}
-                     style={styles.picker}
-                      >
-                {categories.map((category, index) => (
-                    <Picker.Item key={index} label={category.name} value={category.name} />
-                ))}
-            </Picker>
+    selectedValue={selectedCategory}
+    onValueChange={(itemValue, itemIndex) => {
+        setSelectedCategory(itemValue);
+        // Find the ID and type of the selected category
+        const category = categories.find(cat => cat.name === itemValue);
+        setSelectedCategoryId(category ? category.id : '');
+        setSelectedCategoryType(category ? category.type : ''); // Update the selected category type state
+    }}
+    style={styles.picker}
+>
+    {categories.map((category, index) => (
+        <Picker.Item key={index} label={category.name} value={category.name} />
+    ))}
+</Picker>
         </View>
         
         {selectedCategory === 'Salon Shop' && (

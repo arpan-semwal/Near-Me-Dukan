@@ -71,6 +71,9 @@ import RegisterShop from './App/Screens/SalesExecutive/Cards/RegisterShop.jsx';
 import IncomeCalculator from './App/Screens/SalesExecutive/Cards/IncomeCalculator.jsx';
 import TotalShopAndIncome from './App/Screens/SalesExecutive/Cards/TotalShopAndIncome.jsx';
 import MobileSales from './App/Screens/SalesExecutive/RegisterSalesAssociate/MobileSales.jsx';
+import ShopkeeperProductHome from './App/Screens/RegisterScreen/ShopkeeperProductHome/ShopkeeperProductHome.jsx';
+import ProductInventory from './App/Screens/RegisterScreen/ShopkeeperProductHome/ProductInventory/ProductInventory.jsx';
+import ShopkeeperMyProducts from './App/Screens/RegisterScreen/ShopkeeperProductHome/ShopkeeperMyProducts.jsx/ShopkeeperMyProducts.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -141,6 +144,9 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="IncomeCalculator" component={IncomeCalculator}options={{ headerShown: false }} />
       <Stack.Screen name="TotalShopAndIncome" component={TotalShopAndIncome}options={{ headerShown: false }} />
       <Stack.Screen name="MobileSales" component={MobileSales}options={{ headerShown: false }} />
+      <Stack.Screen name="ShopkeeperProductHome" component={ShopkeeperProductHome}options={{ headerShown: false }} />
+      <Stack.Screen name="ProductInventory" component={ProductInventory}options={{ headerShown: false }} />
+      <Stack.Screen name="ShopkeeperMyProducts" component={ShopkeeperMyProducts}options={{ headerShown: false }} />
       
      
     

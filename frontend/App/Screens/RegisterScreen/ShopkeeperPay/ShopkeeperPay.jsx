@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 const ShopkeeperPay = ({route}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-  const { phoneNumber , selectedSubCategory , selectedSubCategoryId , userType } = route.params;
+  const { phoneNumber , selectedSubCategory , selectedSubCategoryId , userType , selectedCategoryType } = route.params;
   
   
   
@@ -30,12 +30,30 @@ const ShopkeeperPay = ({route}) => {
 
 const handleNavigation = () => {
   // Navigate to the ShopkeeperHome screen and pass phoneNumber and selectedSubCategory as route parameters
+  
+  if(selectedCategoryType === "service"){
   navigation.navigate('ShopkeeperHome', {
     userType:userType,
       phoneNumber: phoneNumber,
       selectedSubCategory: selectedSubCategory,
-      selectedSubCategoryId:selectedSubCategoryId
+      selectedSubCategoryId:selectedSubCategoryId,
+      selectedCategoryType:selectedCategoryType
   });
+}
+  if(selectedCategoryType === "product"){
+  navigation.navigate('ShopkeeperProductHome', {
+    userType:userType,
+      phoneNumber: phoneNumber,
+      selectedSubCategory: selectedSubCategory,
+      selectedSubCategoryId:selectedSubCategoryId,
+      selectedCategoryType:selectedCategoryType
+  });
+}
+
+
+
+
+
 };
 
   return (

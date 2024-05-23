@@ -5,9 +5,9 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 export default function Subscription({route}) {
 	const navigation = useNavigation(); 
 	const handleNavigation = () => {
-		navigation.navigate("ShopkeeperPay" , {phoneNumber:phoneNumber , selectedSubCategory:selectedSubCategory , selectedSubCategoryId:selectedSubCategoryId , userType:userType});
+		navigation.navigate("ShopkeeperPay" , {phoneNumber:phoneNumber , selectedSubCategory:selectedSubCategory , selectedSubCategoryId:selectedSubCategoryId , userType:userType , selectedCategoryType:selectedCategoryType});
 	}
-    const { phoneNumber , selectedSubCategory  ,selectedSubCategoryId , userType} = route.params;
+    const { phoneNumber , selectedSubCategory  ,selectedSubCategoryId , userType,selectedCategoryType} = route.params;
 	
 	
     return (

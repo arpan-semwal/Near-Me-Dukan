@@ -1514,6 +1514,75 @@ app.get('/myTotalCommission', async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
+// Backend route to fetch all products from product_master
+app.get('/products', (req, res) => {
+    const query = 'SELECT * FROM nkd.product_master';
+    db.query(query, (error, results) => {
+        if (error) {
+            console.error('Error executing query:', error);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        res.json(results);
+    });
+});
+
+app.post('/selectedProducts', (req, res) => {
+    const { phoneNumber, productId } = req.body;
+    const query = 'INSERT INTO tbl_my_products (phoneNumber, productId) VALUES (?, ?)';
+    db.query(query, [phoneNumber, productId], (error, results) => {
+        if (error) {
+            console.error('Error executing query:', error);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        res.json({ message: 'Product selected successfully' });
+    });
+});
+
+
+app.get('/myProducts/:phoneNumber', (req, res) => {
+    const { phoneNumber } = req.params;
+    const query = `
+        SELECT pm.*
+        FROM tbl_my_products mp
+        JOIN nkd.product_master pm ON mp.productId = pm.id
+        WHERE mp.phoneNumber = ?
+    `;
+    
+    // Execute the SQL query
+    db.query(query, [phoneNumber], (err, results) => {
+        if (err) {
+            console.error('Error fetching selected products:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// Backend route to delete a selected product
+app.delete('/deleteProduct', (req, res) => {
+    const { phoneNumber, productId } = req.body;
+    const query = 'DELETE FROM tbl_my_products WHERE phoneNumber = ? AND productId = ?';
+    db.query(query, [phoneNumber, productId], (error, results) => {
+        if (error) {
+            console.error('Error executing query:', error);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        res.json({ message: 'Product deleted successfully' });
+    });
+});
+
+
+
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
