@@ -1483,6 +1483,52 @@ app.post('/shopkeeperRegister', upload.none(), async (req, res) => {
     }
 });
 
+app.put('/updateProfile/:phoneNumber', (req, res) => {
+    const { phoneNumber } = req.params;
+    const {
+        shopkeeperName,
+        pincode,
+        shopState,
+        city,
+        address,
+        salesAssociateNumber,
+        selectedCategory
+    } = req.body;
+
+    const query = `
+        UPDATE nkd.shopkeepers
+        SET 
+            shopkeeperName = ?,
+            pincode = ?,
+            shopState = ?,
+            city = ?,
+            address = ?,
+            salesAssociateNumber = ?,
+            selectedCategory = ?
+        WHERE phoneNumber = ?
+    `;
+
+    db.query(
+        query,
+        [
+            shopkeeperName,
+            pincode,
+            shopState,
+            city,
+            address,
+            salesAssociateNumber,
+            selectedCategory,
+            phoneNumber
+        ],
+        (error, results) => {
+            if (error) {
+                console.error('Error executing query:', error);
+                return res.status(500).json({ error: 'Database query error' });
+            }
+            res.json({ message: 'Shopkeeper profile updated successfully' });
+        }
+    );
+});
 // Endpoint to retrieve total commission for a specific mobile number
 app.get('/myTotalCommission', async (req, res) => {
     const { mobileNumber } = req.query;

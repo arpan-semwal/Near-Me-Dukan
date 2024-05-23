@@ -40,7 +40,7 @@ export default function ShopkeeperProductHome({ route }) {
         { id: 3, title: 'My Customers', screen: 'ShopkeeperCustomer' },
         { id: 4, title: 'Discount Codes', screen: 'ShopkeeperDiscountCode' },
         { id: 5, title: 'My Payments', screen: 'ShopkeeperPayments' },
-        { id: 7, title: 'My Profile', screen: 'SalonProfile' },
+        { id: 7, title: 'My Profile', screen: 'ShopkeeperProfileScreen' },
         { id: 10, title: 'ProductInventory', screen: 'ProductInventory' },
     ];
 
@@ -59,6 +59,14 @@ export default function ShopkeeperProductHome({ route }) {
 		
 		
 		else if (screenName === 'ShopkeeperMyProducts') {
+            // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
+            navigation.navigate(screenName, { 
+				selectedSubCategory: selectedSubCategory,  
+				phoneNumber: phoneNumber,  
+				shopkeeperName: shopkeeperName,
+			})
+		}
+		else if (screenName === 'ShopkeeperProfileScreen') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
             navigation.navigate(screenName, { 
 				selectedSubCategory: selectedSubCategory,  
