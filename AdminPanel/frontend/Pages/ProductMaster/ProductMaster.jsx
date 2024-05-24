@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Product.css'; // Import CSS file for styling
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -21,23 +22,24 @@ function ProductList() {
   });
 
   return (
-    <div className="product-list">
-      <h1>Product List</h1>
+    <div className="product-list-container">
+      <h1 className="product-list-heading">Product List</h1>
       <input
         type="text"
         placeholder="Search products..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-input"
       />
-      <div className="products">
+      <div className="products-container">
         {filteredProducts.map(product => (
-          <div key={product.id} className="product">
-            <img src={product.image_url} alt={product.name} />
+          <div key={product.id} className="product-card">
+            <img src={product.image_url} alt={product.name} className="product-image" />
             <div className="product-details">
-              <h2>{product.name}</h2>
-              <p>{product.description}</p>
-              <p>MRP: {product.mrp}</p>
-              <p>Brand: {product.brand}</p>
+              <h2 className="product-name">{product.name}</h2>
+              <p className="product-description">{product.description}</p>
+              <p className="product-mrp">MRP: {product.mrp}</p>
+              <p className="product-brand">Brand: {product.brand}</p>
             </div>
           </div>
         ))}

@@ -16,20 +16,15 @@ const icons = [
   <SettingsIcon fontSize="large" />,
   <ExitToAppIcon fontSize="large" />,
 ];
-
 const cardNames = [
   'Shopkeepers',
   'Admin',
-  <Link to="/add_sales_assosiate">Add Sales Associates</Link>, 
+ 
   <Link to="/view_sales_associate">View Sales Associate</Link>,
   <Link to="/sales_associate_team">Sales Associates Team</Link>,
   <Link to="/commission_setting">Commission Setting</Link>,
-  'Sales Asssociates-Income Stream',
-   
-  
-   
+  <Link to="/product_master">Products Master</Link>, // Added the link for Products Master
   'Users',
-  <Link to="/product_master">Products Master</Link>,
 ];
 
 export default function Panel() {
