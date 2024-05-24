@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const cors = require('cors');
 const app = express();
 const port = 3001;
-
+ 
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -165,6 +165,133 @@ app.post('/sales-executives', (req, res) => {
     });
   });
 
+  
+  
+  
+  
+  // Route to get all products
+app.get('/products', (req, res) => {
+  const sql = 'SELECT * FROM nkd.product_master';
+  db.query(sql, (err, result) => {
+      if (err) {
+          console.error('Error executing query:', err);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+      }
+      console.log('Products:', result); // Log the result
+      res.json(result);
+  });
+});
+
+
+// Route to get all sales executives with hierarchy information
+app.get('/sales_executives_team', (req, res) => {
+  const sql = `
+      SELECT 
+          se.id, 
+          se.mobileNo, 
+          se.firstName, 
+          se.lastName, 
+          se.pincode, 
+          se.upi, 
+          se.pancard, 
+          se.aadhar, 
+          se.addedBy, 
+          se.commission, 
+          se.level,
+          se.teamLeaderId,
+          se.addedById,
+          t.teamLeaderName,
+          a.addedByName
+      FROM nkd.tbl_salesexecutives se
+      LEFT JOIN (
+          SELECT id, CONCAT(firstName, ' ', lastName) AS teamLeaderName FROM tbl_salesexecutives
+      ) t ON se.teamLeaderId = t.id
+      LEFT JOIN (
+          SELECT id, CONCAT(firstName, ' ', lastName) AS addedByName FROM tbl_salesexecutives
+      ) a ON se.addedById = a.id
+  `;
+  db.query(sql, (err, result) => {
+      if (err) {
+          console.error('Error executing query:', err);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+      }
+      console.log('Sales Executives:', result); // Log the result
+      res.json(result);
+  });
+});
+
+app.put('/commission_rates', (req, res) => {
+  const commissionRates = req.body;
+  
+  // Begin transaction
+  db.beginTransaction(err => {
+    if (err) {
+      console.error('Error beginning transaction:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    // Update commission rates in database
+    const updatePromises = commissionRates.map(rate => {
+      return new Promise((resolve, reject) => {
+        const sql = 'UPDATE tbl_commission_rate SET amount = ? WHERE commissionType = ?';
+        db.query(sql, [rate.amount, rate.commissionType], (err, result) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(result);
+        });
+      });
+    });
+
+    Promise.all(updatePromises)
+      .then(() => {
+        // Commit transaction if all updates succeed
+        db.commit(err => {
+          if (err) {
+            console.error('Error committing transaction:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+          }
+          console.log('Commission rates updated successfully');
+          res.json({ message: 'Commission rates updated successfully' });
+        });
+      })
+      .catch(error => {
+        // Rollback transaction if any update fails
+        db.rollback(() => {
+          console.error('Error updating commission rates:', error);
+          res.status(500).json({ error: 'Internal server error' });
+        });
+      });
+  });
+});
+
+
+
+
+app.get('/admin/phone-number', (req, res) => {
+  // Query to fetch admin phone number
+  const sql = 'SELECT adminPhoneNumber FROM admins LIMIT 1';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    if (result.length === 1) {
+      // Admin phone number found, send it
+      res.json({ phoneNumber: result[0].adminPhoneNumber });
+    } else {
+      // Admin phone number not found
+      res.status(404).json({ error: 'Admin phone number not found' });
+    }
+  });
+});
 
 
 // Start the server

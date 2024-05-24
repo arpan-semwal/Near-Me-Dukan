@@ -15,15 +15,6 @@ const icons = [
   <AccountCircleIcon fontSize="large" />,
   <SettingsIcon fontSize="large" />,
   <ExitToAppIcon fontSize="large" />,
-  <DashboardIcon fontSize="large" />,
-  <StoreIcon fontSize="large" />,
-  <CategoryIcon fontSize="large" />,
-  <AccountCircleIcon fontSize="large" />,
-  <SettingsIcon fontSize="large" />,
-  <ExitToAppIcon fontSize="large" />,
-  <DashboardIcon fontSize="large" />,
-  <StoreIcon fontSize="large" />,
-  <CategoryIcon fontSize="large" />,
 ];
 
 const cardNames = [
@@ -31,23 +22,19 @@ const cardNames = [
   'Admin',
   <Link to="/add_sales_assosiate">Add Sales Associates</Link>, 
   <Link to="/view_sales_associate">View Sales Associate</Link>,
-  'Sales Associates Team',
+  <Link to="/sales_associate_team">Sales Associates Team</Link>,
+  <Link to="/commission_setting">Commission Setting</Link>,
   'Sales Asssociates-Income Stream',
-  'Commission Setting',
+   
+  
+   
   'Users',
-  'Products Master',
-  'Product in Store',
-  'Categorys',
-  'Service Provider',
-  'Add Service Type',
-  'Add Service Category',
-  'Add Service Sub Category',
+  <Link to="/product_master">Products Master</Link>,
 ];
 
 export default function Panel() {
   const cardHeight = 100; // Decreased card height
  
-
   return (
     <Container maxWidth="lg" sx={{ paddingX: 4 }}>
       <Typography variant="h4" gutterBottom sx={{ marginTop: '20px', marginBottom: '20px' }}>
