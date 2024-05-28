@@ -188,7 +188,7 @@ function MyDrawer() {
   return (
     <Drawer.Navigator initialRouteName="NKD" drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name="NKD" component={TabNavigator} />
-      <Drawer.Screen name="AboutUs" component={MoreScreen} />
+      <Drawer.Screen name="AboutUs" component={AnotherScreen} />
       <Drawer.Screen name="Register as an Associate" component={MobileSales} />
       <Drawer.Screen name="Privacy Policy" component={MoreScreen} />
       <Drawer.Screen name="Terms & Conditions" component={MoreScreen} />
