@@ -9,7 +9,7 @@ function AdminLogin() {
 
   useEffect(() => {
     // Fetch admin's phone number from the backend
-    axios.get('http://localhost:3001/admin/phone-number')
+    axios.get('http://nearkidukan.in/phone-number')
       .then(response => {
         setAdminPhoneNumber(response.data.phoneNumber);
       })

@@ -18,7 +18,7 @@ const cors = require('cors');
 const db = mysql.createConnection({
     host: 'localhost', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
     user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
-    password: 'Noodle@123#123',    // Replace 'your_mysql_password' with your MySQL password
+    password: 'cd',    // Replace 'your_mysql_password' with your MySQL password
     database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
   });
   

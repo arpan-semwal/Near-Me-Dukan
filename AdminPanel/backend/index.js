@@ -6,12 +6,21 @@ const cors = require('cors');
 const app = express();
 const port = 3001;
  
+//const db = mysql.createConnection({
+//  host: 'localhost',
+//  user: 'root',
+//  password: 'Noodle@123',
+//  database: 'nkd'
+//});
+
+
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Noodle@123',
-  database: 'nkd'
+  host: 'localhost', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
+  user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
+  password: 'Noodle@123#123',    // Replace 'your_mysql_password' with your MySQL password
+  database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
 });
+
 
 // Connect to MySQL
 db.connect(err => {
@@ -25,6 +34,30 @@ db.connect(err => {
 app.use(cors());
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
+
+
+
+app.get('/phone-number', (req, res) => {
+  // Query to fetch admin phone number
+  const sql = 'SELECT adminPhoneNumber FROM admins LIMIT 1';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    if (result.length === 1) {
+      // Admin phone number found, send it
+      res.json({ phoneNumber: result[0].adminPhoneNumber });
+    } else {
+      // Admin phone number not found
+      res.status(404).json({ error: 'Admin phone number not found' });
+    }
+  });
+});
+
+
 
 // Route to get all shopkeepers
 app.get('/shopkeepers', (req, res) => {
@@ -273,25 +306,6 @@ app.put('/commission_rates', (req, res) => {
 
 
 
-app.get('/admin/phone-number', (req, res) => {
-  // Query to fetch admin phone number
-  const sql = 'SELECT adminPhoneNumber FROM admins LIMIT 1';
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error('Error executing query:', err);
-      res.status(500).json({ error: 'Internal server error' });
-      return;
-    }
-
-    if (result.length === 1) {
-      // Admin phone number found, send it
-      res.json({ phoneNumber: result[0].adminPhoneNumber });
-    } else {
-      // Admin phone number not found
-      res.status(404).json({ error: 'Admin phone number not found' });
-    }
-  });
-});
 
 
 // Start the server
