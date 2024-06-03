@@ -125,6 +125,7 @@ export default function ShopkeeperScreen({ route }) {
     
             navigation.navigate('Subscription', {
                 phoneNumber: phoneNumber,
+                selectedCategory:selectedCategory,
                 selectedSubCategory: selectedSubCategory,
                 selectedSubCategoryId: selectedSubCategoryId,
                 selectedCategoryType: selectedCategoryType // Pass the category type to the next screen
@@ -169,67 +170,7 @@ export default function ShopkeeperScreen({ route }) {
                 break;
         }
     };
-
-    const handleShopBannerUpload = async () => {
-        try {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission Required', 'Sorry, we need camera permissions to make this work!');
-                return;
-            }
-    
-            const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
-            });
-    
-            if (!result.cancelled) {
-                // Resize image
-                const resizedImage = await ImageManipulator.manipulateAsync(
-                    result.uri,
-                    [{ resize: { width: 200, height: 200 } }],
-                    { compress: 1, format: 'png' }
-                );
-                setShopBanner({ uri: resizedImage.uri });
-            }
-        } catch (error) {
-            console.error("Error while capturing shop banner:", error);
-        }
-    };
-    
-    const handleProfilePictureUpload = async () => {
-        try {
-            const { status } = await Camera.requestCameraPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permission Required', 'Sorry, we need camera permissions to make this work!');
-                return;
-            }
-    
-            const result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 1,
-            });
-    
-            if (!result.cancelled) {
-                // Resize image
-                const resizedImage = await ImageManipulator.manipulateAsync(
-                    result.uri,
-                    [{ resize: { width: 200, height: 200 } }],
-                    { compress: 1, format: 'png' }
-                );
-                setProfilePicture({ uri: resizedImage.uri });
-            }
-        } catch (error) {
-            console.error("Error while capturing profile picture:", error);
-        }
-    };
-    
-    
-
+ 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
             <View style={styles.container}>

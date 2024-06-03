@@ -7,27 +7,27 @@ const multer = require('multer');
 const cors = require('cors');
 
 
-//const db = mysql.createConnection({
-//  host: 'localhost',
-//  user: 'root',
-//  password: 'Noodle@123',
-//  database: 'nkd'
-//});
-
-
 const db = mysql.createConnection({
-    host: 'localhost', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
-    user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
-    password: 'cd',    // Replace 'your_mysql_password' with your MySQL password
-    database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
-  });
+  host: 'localhost',
+  user: 'root',
+  password: 'Noodle@123',
+  database: 'nkd'
+});
+
+
+
+//  const db = mysql.createConnection({
+//    host: 'localhost', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
+//    user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
+//    password: 'cd',    // Replace 'your_mysql_password' with your MySQL password
+//    database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
+//  });
   
-  
-  app.use(cors({
-    origin: 'https://nearkidukan.in', // Allow requests from this domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
-  }));
+//  app.use(cors({
+//    origin: 'https://nearkidukan.in', // Allow requests from this domain
+//    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//    credentials: true
+//  }));
 
 
 
@@ -1573,19 +1573,11 @@ app.get('/myTotalCommission', async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
 // Backend route to fetch all products from product_master
-app.get('/products', (req, res) => {
-    const query = 'SELECT * FROM nkd.product_master';
-    db.query(query, (error, results) => {
+app.get('/products/:category', (req, res) => {
+    const { category } = req.params;
+    const query = 'SELECT * FROM tbl_product_master WHERE type = ?';
+    db.query(query, [category], (error, results) => {
         if (error) {
             console.error('Error executing query:', error);
             return res.status(500).json({ error: 'Database query error' });
@@ -1593,6 +1585,7 @@ app.get('/products', (req, res) => {
         res.json(results);
     });
 });
+
 
 app.post('/selectedProducts', (req, res) => {
     const { phoneNumber, productId } = req.body;
@@ -1638,6 +1631,19 @@ app.delete('/deleteProduct', (req, res) => {
         }
         res.json({ message: 'Product deleted successfully' });
     });
+});
+
+// Assume you have a route to fetch products based on category
+app.get('/products/:category', async (req, res) => {
+    try {
+        const { category } = req.params;
+        // Query the database to fetch products based on the category
+        const products = await db.query('SELECT * FROM tbl_product_master WHERE main_category = ?', [category]);
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ error: 'Failed to fetch products' });
+    }
 });
 
 

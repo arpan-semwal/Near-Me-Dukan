@@ -10,7 +10,7 @@ export default function SalonShop({ route }) {
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
-    const {phoneNumber} = route.params
+    const {phoneNumber,selectedCategory} = route.params
     
     useEffect(() => {
         fetchShopkeeperDetails();
@@ -50,12 +50,20 @@ export default function SalonShop({ route }) {
     const handleButtonPress = (screenName) => {
         if (screenName === 'Inventory') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate(screenName, { selectedSubCategory: selectedSubCategory,  phoneNumber: shopkeeperPhoneNumber  ,  shopkeeperName: shopkeeperName, });
+            navigation.navigate(screenName, {
+                 selectedSubCategory: selectedSubCategory,  
+                 phoneNumber: shopkeeperPhoneNumber  ,  
+                 shopkeeperName: shopkeeperName, 
+                 selectedCategory:selectedCategory
+                
+                });
+                
         } else if (screenName === 'MyServices') {
             // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
             navigation.navigate('MyServices', { 
                 phoneNumber: shopkeeperPhoneNumber, 
                 shopkeeperName: shopkeeperName,
+                selectedCategory:selectedCategory,
                 storeImage: require('../../../../assets/logo.png') // Pass the image source
             });
         }else if (screenName === 'ShopkeeperOrders') {
@@ -64,6 +72,7 @@ export default function SalonShop({ route }) {
                 shopkeeperPhoneNumber: shopkeeperPhoneNumber, 
                 shopkeeperName: shopkeeperName,
                 selectedSubCategory: selectedSubCategory,
+                selectedCategory:selectedCategory
                 
             })
         } 
@@ -115,7 +124,7 @@ export default function SalonShop({ route }) {
                         <View style={styles.headerText}>
                             <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{phoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
-                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024 {selectedCategory}</Text>
                         </View>
                     </View>
 

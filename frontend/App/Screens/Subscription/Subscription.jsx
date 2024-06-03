@@ -5,21 +5,21 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 export default function Subscription({route}) {
 	const navigation = useNavigation(); 
 	const handleNavigation = () => {
-		navigation.navigate("ShopkeeperPay" , {phoneNumber:phoneNumber , selectedSubCategory:selectedSubCategory , selectedSubCategoryId:selectedSubCategoryId , userType:userType , selectedCategoryType:selectedCategoryType});
+		navigation.navigate("ShopkeeperPay" , {phoneNumber:phoneNumber , selectedSubCategory:selectedSubCategory , selectedSubCategoryId:selectedSubCategoryId , userType:userType , selectedCategoryType:selectedCategoryType , selectedCategory:selectedCategory    });
 	}
-    const { phoneNumber , selectedSubCategory  ,selectedSubCategoryId , userType,selectedCategoryType} = route.params;
+    const { phoneNumber , selectedSubCategory  ,selectedSubCategoryId , userType,selectedCategoryType , selectedCategory} = route.params;
 	
 	
     return (
         <View style={styles.container}>
             <Image source={require('../../../assets/logo.png')} style={styles.logo} />
             <Text style={styles.heading}>Subscription Plan</Text>
-            <Text style={styles.price}>₹3650</Text>
+            <Text style={styles.price}>₹3650 </Text>
           
            
 
             <View style={styles.bulletPoints}>
-                <Text style={styles.details}> 12 Months + 2 Months FREE</Text>
+                <Text style={styles.details}> 12 Months + 2 Months FREE{selectedCategory}</Text>
                 <Text style={styles.bullet}>• Per Day Cost Less Than a Cup of Tea</Text>
                 <Text style={styles.bullet}>• Get your OWN Online Shop.</Text>
                 <Text style={styles.bullet}>• Manage Your Inventory.</Text>

@@ -10,7 +10,7 @@ export default function ShopkeeperProductHome({ route }) {
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
-    const {phoneNumber} = route.params
+    const {phoneNumber , selectedCategory} = route.params
     
     useEffect(() => {
         fetchShopkeeperDetails();
@@ -54,6 +54,7 @@ export default function ShopkeeperProductHome({ route }) {
 				selectedSubCategory: selectedSubCategory,  
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
+                selectedCategory:selectedCategory
 			})
 		}
 		
@@ -64,6 +65,8 @@ export default function ShopkeeperProductHome({ route }) {
 				selectedSubCategory: selectedSubCategory,  
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
+                selectedCategory:selectedCategory
+                
 			})
 		}
 		else if (screenName === 'ShopkeeperProfileScreen') {
@@ -72,6 +75,7 @@ export default function ShopkeeperProductHome({ route }) {
 				selectedSubCategory: selectedSubCategory,  
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
+                selectedCategory:selectedCategory
 			})
 		}
 		 
@@ -120,9 +124,8 @@ export default function ShopkeeperProductHome({ route }) {
             renderItem={() => (
                 <View>
                     <View style={styles.headerContainer}>
-                        <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
                         <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
+                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{selectedCategory}</Text>
                             <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>

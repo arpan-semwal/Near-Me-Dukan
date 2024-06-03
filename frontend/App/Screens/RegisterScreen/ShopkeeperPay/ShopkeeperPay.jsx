@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 const ShopkeeperPay = ({route}) => {
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-  const { phoneNumber , selectedSubCategory , selectedSubCategoryId , userType , selectedCategoryType } = route.params;
+  const { phoneNumber , selectedSubCategory , selectedSubCategoryId , userType , selectedCategoryType , selectedCategory } = route.params;
   
   
   
@@ -35,6 +35,7 @@ const handleNavigation = () => {
   navigation.navigate('ShopkeeperHome', {
     userType:userType,
       phoneNumber: phoneNumber,
+      selectedCategory:selectedCategory,
       selectedSubCategory: selectedSubCategory,
       selectedSubCategoryId:selectedSubCategoryId,
       selectedCategoryType:selectedCategoryType
@@ -46,7 +47,8 @@ const handleNavigation = () => {
       phoneNumber: phoneNumber,
       selectedSubCategory: selectedSubCategory,
       selectedSubCategoryId:selectedSubCategoryId,
-      selectedCategoryType:selectedCategoryType
+      selectedCategoryType:selectedCategoryType,
+      selectedCategory:selectedCategory
   });
 }
 
@@ -74,7 +76,7 @@ const handleNavigation = () => {
 
       {/* Button */}
       <TouchableOpacity style={styles.button} onPress={handleNavigation}  >
-        <Text style={styles.buttonText}>Customize</Text>
+        <Text style={styles.buttonText}>Customize{selectedCategory}</Text>
       </TouchableOpacity>
     </View>
   );
