@@ -1600,16 +1600,33 @@ app.post('/selectedProducts', (req, res) => {
 });
 
 
-app.get('/myProducts/:phoneNumber', (req, res) => {
-    const { phoneNumber } = req.params;
+app.post('/addProduct', (req, res) => {
+    const { phoneNumber, productId } = req.body;
     const query = `
-        SELECT pm.*
-        FROM tbl_my_products mp
-        JOIN nkd.product_master pm ON mp.productId = pm.id
-        WHERE mp.phoneNumber = ?
+        INSERT INTO shopkeeper_products (phoneNumber, productId)
+        VALUES (?, ?)
     `;
     
     // Execute the SQL query
+    db.query(query, [phoneNumber, productId], (err, results) => {
+        if (err) {
+            console.error('Error adding product:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
+        }
+        res.status(200).json({ message: 'Product added successfully' });
+    });
+});
+
+app.get('/myProducts/:phoneNumber', (req, res) => {
+    const { phoneNumber } = req.params;
+    const query = `
+        SELECT pm.id, pm.main_category, pm.product_name, pm.brand_name, pm.price, pm.weight
+        FROM shopkeeper_products up
+        JOIN tbl_product_master pm ON up.productId = pm.id
+        WHERE up.phoneNumber = ?
+    `;
+    
     db.query(query, [phoneNumber], (err, results) => {
         if (err) {
             console.error('Error fetching selected products:', err);
@@ -1623,13 +1640,18 @@ app.get('/myProducts/:phoneNumber', (req, res) => {
 // Backend route to delete a selected product
 app.delete('/deleteProduct', (req, res) => {
     const { phoneNumber, productId } = req.body;
-    const query = 'DELETE FROM tbl_my_products WHERE phoneNumber = ? AND productId = ?';
-    db.query(query, [phoneNumber, productId], (error, results) => {
-        if (error) {
-            console.error('Error executing query:', error);
-            return res.status(500).json({ error: 'Database query error' });
+    const query = `
+        DELETE FROM shopkeeper_products
+        WHERE phoneNumber = ? AND productId = ?
+    `;
+    
+    db.query(query, [phoneNumber, productId], (err, results) => {
+        if (err) {
+            console.error('Error deleting product:', err);
+            res.status(500).json({ error: 'Internal server error' });
+            return;
         }
-        res.json({ message: 'Product deleted successfully' });
+        res.status(200).json({ message: 'Product deleted successfully' });
     });
 });
 
@@ -1645,6 +1667,8 @@ app.get('/products/:category', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch products' });
     }
 });
+
+
 
 
 

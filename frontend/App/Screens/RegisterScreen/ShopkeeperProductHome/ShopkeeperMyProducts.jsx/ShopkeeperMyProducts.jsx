@@ -36,7 +36,6 @@ const ShopkeeperMyProducts = ({ route }) => {
                 }),
             });
             if (response.ok) {
-                // Remove the deleted product from the UI
                 setSelectedProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
                 console.log('Product deleted successfully');
             } else {
@@ -49,13 +48,14 @@ const ShopkeeperMyProducts = ({ route }) => {
 
     const renderSelectedProduct = ({ item }) => (
         <View style={styles.productContainer}>
-            <Text>Name: {item.name}</Text>
+            <Text>Main Category: {item.main_category}</Text>
+            <Text>Product Name: {item.product_name}</Text>
             <Text>ID: {item.id}</Text>
-            <Text>Brand: {item.brand}</Text>
+            <Text>Brand: {item.brand_name}</Text>
             <Text>Price: ${item.price}</Text>
-            <Text>Description: {item.description}</Text>
+            <Text>Weight: {item.weight}</Text>
             <TouchableOpacity onPress={() => deleteProduct(item.id)} style={styles.deleteButton}>
-                <Text>Delete</Text>
+                <Text style={styles.deleteButtonText}>Delete</Text>
             </TouchableOpacity>
         </View>
     );
@@ -92,6 +92,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 5,
         alignItems: 'center',
+    },
+    deleteButtonText: {
+        color: '#fff',
     },
 });
 
