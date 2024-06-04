@@ -7,7 +7,7 @@ function ProductList() {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3001/products')
+    axios.get('http://nearkidukan.in/products')
       .then(response => {
         setProducts(response.data);
       })

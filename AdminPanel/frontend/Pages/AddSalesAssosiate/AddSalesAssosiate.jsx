@@ -22,7 +22,7 @@ export default function AddSalesAssociate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/sales-executives', formData);
+      const response = await axios.post('http://nearkidukan.in/sales-executives', formData);
       console.log('Sales executive added successfully:', response.data);
       // Optionally, you can clear the form data after successful submission
       setFormData({

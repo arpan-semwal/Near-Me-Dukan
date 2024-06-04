@@ -10,7 +10,7 @@ export default function AddMainCategory() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post('http://localhost:3001/categories', { name: categoryName, type: categoryType });
+      await axios.post('https://nearkidukan.in:3001/categories', { name: categoryName, type: categoryType });
       alert('Category added successfully');
       setCategoryName('');
       setCategoryType('service');

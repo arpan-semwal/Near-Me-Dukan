@@ -16,7 +16,7 @@ function CommissionSetting() {
   };
 
   const handleUpdateRates = () => {
-    axios.put('http://localhost:3001/commission_rates', commissionRates)
+    axios.put('http://nearkidukan.in/commission_rates', commissionRates)
       .then(response => {
         console.log(response.data);
       })

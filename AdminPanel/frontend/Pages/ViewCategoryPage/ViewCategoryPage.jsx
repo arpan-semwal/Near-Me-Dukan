@@ -10,7 +10,7 @@ export default function ViewCategoryPage() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const response = await axios.get('http://localhost:3001/categories');
+        const response = await axios.get('http://nearkidukan.in/categories');
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
