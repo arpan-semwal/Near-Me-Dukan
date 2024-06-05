@@ -75,6 +75,7 @@ import ShopkeeperProductHome from './App/Screens/RegisterScreen/ShopkeeperProduc
 import ProductInventory from './App/Screens/RegisterScreen/ShopkeeperProductHome/ProductInventory/ProductInventory.jsx';
 import ShopkeeperMyProducts from './App/Screens/RegisterScreen/ShopkeeperProductHome/ShopkeeperMyProducts.jsx/ShopkeeperMyProducts.jsx';
 import ShopkeeperProfileScreen from './App/Screens/RegisterScreen/ShopkeeperProfileScreen/ShopkeeperProfileScreen.jsx';
+import CategoryDetails from './App/Screens/RegisterScreen/ShopkeeperProductHome/ShopkeeperMyProducts.jsx/CategoryDetails.jsx';
  
  
 const Stack = createNativeStackNavigator();
@@ -149,6 +150,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="ProductInventory" component={ProductInventory}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperMyProducts" component={ShopkeeperMyProducts}options={{ headerShown: false }} />
       <Stack.Screen name="ShopkeeperProfileScreen" component={ShopkeeperProfileScreen}options={{ headerShown: false }} />
+      <Stack.Screen name="CategoryDetails" component={CategoryDetails}options={{ headerShown: false }} />
       
      
     
