@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
 const CategoryDetails = ({ route }) => {
-    const { category, phoneNumber } = route.params;
+    const { category, phoneNumber, userType } = route.params;
     const [products, setProducts] = useState(category.products);
 
     const deleteProduct = async (productId) => {
@@ -29,6 +29,11 @@ const CategoryDetails = ({ route }) => {
         }
     };
 
+    const addToCart = (productId) => {
+        // Implement your addToCart logic here
+        Alert.alert('Add to Cart', `Product ${productId} added to cart`);
+    };
+
     const renderProduct = ({ item }) => (
         <View style={styles.productContainer}>
             <Text>Main Category: {item.main_category}</Text>
@@ -37,9 +42,15 @@ const CategoryDetails = ({ route }) => {
             <Text>Brand: {item.brand_name}</Text>
             <Text>Price: ${item.price}</Text>
             <Text>Weight: {item.weight}</Text>
-            <TouchableOpacity onPress={() => deleteProduct(item.id)} style={styles.deleteButton}>
-                <Text style={styles.deleteButtonText}>Delete</Text>
-            </TouchableOpacity>
+            {userType === 'shopkeeper' ? (
+                <TouchableOpacity onPress={() => deleteProduct(item.id)} style={styles.deleteButton}>
+                    <Text style={styles.deleteButtonText}>Delete</Text>
+                </TouchableOpacity>
+            ) : (
+                <TouchableOpacity onPress={() => addToCart(item.id)} style={styles.addToCartButton}>
+                    <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 
@@ -77,6 +88,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     deleteButtonText: {
+        color: '#fff',
+    },
+    addToCartButton: {
+        marginTop: 8,
+        backgroundColor: 'green',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    addToCartButtonText: {
         color: '#fff',
     },
 });

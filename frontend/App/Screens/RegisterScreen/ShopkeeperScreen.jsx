@@ -128,7 +128,8 @@ export default function ShopkeeperScreen({ route }) {
                 selectedCategory:selectedCategory,
                 selectedSubCategory: selectedSubCategory,
                 selectedSubCategoryId: selectedSubCategoryId,
-                selectedCategoryType: selectedCategoryType // Pass the category type to the next screen
+                selectedCategoryType: selectedCategoryType,// Pass the category type to the next screen
+                userType:userType
             });
         } catch (error) {
             console.error('Error registering shopkeeper:', error);

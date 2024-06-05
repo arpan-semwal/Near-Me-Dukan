@@ -39,6 +39,10 @@ const ProductInventory = ({ route }) => {
                 const data = await response.json();
                 const productsWithAddedStatus = data.map(product => ({ ...product, added: false }));
                 await updateProductsAddedStatus(productsWithAddedStatus);
+                // Set products directly after fetching
+                setProducts(productsWithAddedStatus);
+                // Filter products
+                filterProducts();
             } else {
                 console.error('Failed to fetch products:', response.statusText);
             }
@@ -138,7 +142,7 @@ const ProductInventory = ({ route }) => {
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList
-                data={filteredProducts}
+                data={loading ? [] : products} // Render products directly if loading is false
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
             />

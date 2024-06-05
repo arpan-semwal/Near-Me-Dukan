@@ -7,7 +7,7 @@ export default function Subscription({route}) {
 	const handleNavigation = () => {
 		navigation.navigate("ShopkeeperPay" , {phoneNumber:phoneNumber , selectedSubCategory:selectedSubCategory , selectedSubCategoryId:selectedSubCategoryId , userType:userType , selectedCategoryType:selectedCategoryType , selectedCategory:selectedCategory    });
 	}
-    const { phoneNumber , selectedSubCategory  ,selectedSubCategoryId , userType,selectedCategoryType , selectedCategory} = route.params;
+    const { phoneNumber , selectedSubCategory  ,selectedSubCategoryId , userType,selectedCategoryType , selectedCategory } = route.params;
 	
 	
     return (

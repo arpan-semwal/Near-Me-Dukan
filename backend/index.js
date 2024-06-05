@@ -285,6 +285,34 @@ app.get('/subcategories/:categoryId', (req, res) => {
     });
 });
 
+app.put('/updatePincode', (req, res) => {
+    const { phoneNumber, newPincode } = req.body;
+
+    // Update pincode in the database
+    const sql = `UPDATE newcustomers SET pincode = ? WHERE phoneNumber = ?`;
+    db.query(sql, [newPincode, phoneNumber], (err, result) => {
+        if (err) {
+            console.error('Error updating pincode:', err);
+            return res.status(500).json({ error: 'Error updating pincode' });
+        }
+        res.status(200).json({ message: 'Pincode updated successfully' });
+    });
+});
+
+// Route to fetch shops in a specific pincode
+app.get('/shopsInPincode/:pincode', (req, res) => {
+    const { pincode } = req.params;
+
+    // Fetch shops from the database based on pincode
+    const sql = `SELECT * FROM shops WHERE pincode = ?`;
+    db.query(sql, [pincode], (err, results) => {
+        if (err) {
+            console.error('Error fetching shops in pincode:', err);
+            return res.status(500).json({ error: 'Error fetching shops in pincode' });
+        }
+        res.status(200).json(results);
+    });
+});
 
 
 app.get('/shopkeeperDetails/:phoneNumber', (req, res) => {

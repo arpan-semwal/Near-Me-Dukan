@@ -46,7 +46,7 @@ export default function CustomerHomePage({ route }) {
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome, {customerDetails ? customerDetails.name :''}</Text>
+        <Text style={styles.welcomeText}>Welcome,{pincode} {customerDetails ? customerDetails.name :''}</Text>
 
         <View style={styles.cardRow}>
           <View style={styles.card}>

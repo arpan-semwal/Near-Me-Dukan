@@ -5,11 +5,11 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
 
 export default function SearchShops({ route }) {
-    const { custPhoneNumber , userType , firstcustomerName } = route.params || {};
+    const { custPhoneNumber , userType , firstcustomerName , pincode } = route.params || {};
     const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
-    const [pincode, setPincode] = useState('');
+   
     const [customerName, setCustomerName] = useState('');
     const [filteredShops, setFilteredShops] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -21,15 +21,37 @@ export default function SearchShops({ route }) {
         setShowChangePincode(true);
     }
 
-    const handlePincodeChange = () => {
+    const handlePincodeChange = async () => {
         if (newPincode.trim() === '') {
             Alert.alert('Invalid Pincode', 'Please enter a valid pincode.');
             return;
         }
-
-        setPincode(newPincode);
-        setShowChangePincode(false);
-    }
+    
+        try {
+            const response = await fetch('http://192.168.29.67:3000/updatePincode', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phoneNumber: custPhoneNumber,
+                    newPincode: newPincode,
+                }),
+            });
+            if (response.ok) {
+                // Pincode updated successfully, fetch shops in the new pincode area
+                fetchShopsInArea(newPincode);
+                setShowChangePincode(false);
+                Alert.alert('Success', 'Pincode changed successfully');
+            } else {
+                console.error('Failed to update pincode:', response.statusText);
+                Alert.alert('Error', 'Failed to change pincode');
+            }
+        } catch (error) {
+            console.error('Error updating pincode:', error);
+            Alert.alert('Error', 'Failed to change pincode');
+        }
+    };
 
     useEffect(() => {
         fetchCustomerDetails();
@@ -46,7 +68,7 @@ export default function SearchShops({ route }) {
             const response = await fetch(`http://192.168.29.67:3000/customerDetails/${custPhoneNumber}`);
             const data = await response.json();
             setCustomerName(data.name);
-            setPincode(data.pincode);
+            setNewPincode(data.pincode);
             setShopID(data.shopID);
             
     
@@ -118,7 +140,7 @@ export default function SearchShops({ route }) {
                     <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
                 </View>
                 <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {firstcustomerName}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {pincode}</Text>
                     <Text style={styles.welcomeText}>Welcome, {custPhoneNumber}</Text>
                     <Text style={styles.pincodeText}>Shops at Pincode: </Text>
                     <TouchableOpacity onPress={handleSubmit}>

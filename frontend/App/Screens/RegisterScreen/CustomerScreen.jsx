@@ -86,7 +86,7 @@ export default function CustomerScreen({ route }) {
             setCustPhoneNumber(phoneNumber);
             alert('User registered successfully');
             
-            navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType, name: name, shopID: shopID });
+            navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType, name: name, shopID: shopID , pincode:pincode });
           
               
             

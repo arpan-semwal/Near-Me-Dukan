@@ -10,7 +10,7 @@ export default function ShopkeeperProductHome({ route }) {
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
-    const {phoneNumber , selectedCategory} = route.params
+    const {phoneNumber , selectedCategory , userType} = route.params
     
     useEffect(() => {
         fetchShopkeeperDetails();
@@ -55,7 +55,8 @@ export default function ShopkeeperProductHome({ route }) {
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
                 selectedCategory:selectedCategory,
-                shopkeeperPhoneNumber:shopkeeperPhoneNumber
+                shopkeeperPhoneNumber:shopkeeperPhoneNumber,
+                userType:userType
 			})
 		}
 		
@@ -67,7 +68,8 @@ export default function ShopkeeperProductHome({ route }) {
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
                 selectedCategory:selectedCategory,
-                shopkeeperPhoneNumber:shopkeeperPhoneNumber
+                shopkeeperPhoneNumber:shopkeeperPhoneNumber,
+                userType:userType
                 
 			})
 		}
@@ -78,7 +80,8 @@ export default function ShopkeeperProductHome({ route }) {
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
                 selectedCategory:selectedCategory,
-                shopkeeperPhoneNumber:shopkeeperPhoneNumber
+                shopkeeperPhoneNumber:shopkeeperPhoneNumber,
+                userType:userType
 			})
 		}
 		 
@@ -128,7 +131,7 @@ export default function ShopkeeperProductHome({ route }) {
                 <View>
                     <View style={styles.headerContainer}>
                         <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{selectedCategory}</Text>
+                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{userType}</Text>
                             <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>
