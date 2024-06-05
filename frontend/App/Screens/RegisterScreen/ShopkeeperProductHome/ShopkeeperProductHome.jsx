@@ -54,7 +54,8 @@ export default function ShopkeeperProductHome({ route }) {
 				selectedSubCategory: selectedSubCategory,  
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
-                selectedCategory:selectedCategory
+                selectedCategory:selectedCategory,
+                shopkeeperPhoneNumber:shopkeeperPhoneNumber
 			})
 		}
 		
@@ -65,7 +66,8 @@ export default function ShopkeeperProductHome({ route }) {
 				selectedSubCategory: selectedSubCategory,  
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
-                selectedCategory:selectedCategory
+                selectedCategory:selectedCategory,
+                shopkeeperPhoneNumber:shopkeeperPhoneNumber
                 
 			})
 		}
@@ -75,7 +77,8 @@ export default function ShopkeeperProductHome({ route }) {
 				selectedSubCategory: selectedSubCategory,  
 				phoneNumber: phoneNumber,  
 				shopkeeperName: shopkeeperName,
-                selectedCategory:selectedCategory
+                selectedCategory:selectedCategory,
+                shopkeeperPhoneNumber:shopkeeperPhoneNumber
 			})
 		}
 		 

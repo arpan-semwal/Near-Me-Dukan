@@ -1,18 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image , TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductInventory = ({ route }) => {
-    const { selectedCategory, phoneNumber } = route.params;
+    const { selectedCategory, phoneNumber , shopkeeperPhoneNumber , shopkeeperName } = route.params;
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchText, setSearchText] = useState('');
 
     useEffect(() => {
         // Reset products and loading state when phone number changes
         setProducts([]);
+        setFilteredProducts([]);
         setLoading(true);
         fetchProducts();
     }, [phoneNumber]);
+    
+    useEffect(() => {
+        // Filter products when search text changes
+        filterProducts();
+    }, [searchText]);
+    
+    
+    
+    const filterProducts = () => {
+        const filtered = products.filter(product =>
+            product.product_name.toLowerCase().startsWith(searchText.toLowerCase()) ||
+            product.brand_name.toLowerCase().startsWith(searchText.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+    };
 
     const fetchProducts = async () => {
         try {
@@ -100,14 +118,30 @@ const ProductInventory = ({ route }) => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.headerContainer}>
+                <View style={styles.leftContainer}>
+                    <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
+                </View>
+                <View style={styles.rightContainer}>
+                    <Text style={styles.welcomeText}>Welcome, {shopkeeperName}</Text>
+                    <Text style={styles.pincodeText}>Shop ID: {shopkeeperPhoneNumber}</Text>
+                    <Text style={styles.pincodeText}>Subscription valid till 10 oct</Text>
+                </View>
+            </View>
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Search products..."
+                value={searchText}
+                onChangeText={setSearchText}
+            />
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList
-                    data={products}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
-                />
+                data={filteredProducts}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+            />
             )}
         </View>
     );
@@ -116,7 +150,30 @@ const ProductInventory = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        padding: 20,
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    leftContainer: {
+        marginRight: 10, // Adjust marginRight to reduce the distance
+    },
+    rightContainer: {
+        marginLeft: 10, // Adjust marginLeft to reduce the distance
+    },
+    welcomeImage: {
+        width: 100,
+        height: 100,
+    },
+    welcomeText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    pincodeText: {
+        fontSize: 16,
+        color: '#888',
     },
     productContainer: {
         width: '100%',
@@ -157,6 +214,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 5,
         alignItems: 'center',
+    },
+    
+    searchInput: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        marginBottom: 10,
     },
 });
 
