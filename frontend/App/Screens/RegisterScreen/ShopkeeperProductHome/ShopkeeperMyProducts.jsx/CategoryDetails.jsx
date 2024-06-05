@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
 const CategoryDetails = ({ route }) => {
     const { category, phoneNumber } = route.params;
+    const [products, setProducts] = useState(category.products);
 
     const deleteProduct = async (productId) => {
         try {
@@ -17,8 +18,9 @@ const CategoryDetails = ({ route }) => {
                 }),
             });
             if (response.ok) {
-                // Implement deletion logic here, e.g., refreshing the list or showing a success message
-                console.log('Product deleted successfully');
+                // Remove the deleted product from the products state
+                setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
+                Alert.alert('Success', 'Product deleted successfully');
             } else {
                 console.error('Failed to delete product:', response.statusText);
             }
@@ -44,7 +46,7 @@ const CategoryDetails = ({ route }) => {
     return (
         <View style={styles.container}>
             <FlatList
-                data={category.products}
+                data={products}
                 renderItem={renderProduct}
                 keyExtractor={(item) => item.id.toString()}
             />

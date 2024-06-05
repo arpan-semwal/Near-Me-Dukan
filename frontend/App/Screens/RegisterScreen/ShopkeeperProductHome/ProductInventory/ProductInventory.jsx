@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductInventory = ({ route }) => {
     const { selectedCategory, phoneNumber } = route.params;
@@ -7,17 +8,19 @@ const ProductInventory = ({ route }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Reset products and loading state when phone number changes
+        setProducts([]);
+        setLoading(true);
         fetchProducts();
-    }, []);
+    }, [phoneNumber]);
 
     const fetchProducts = async () => {
         try {
             const response = await fetch(`http://192.168.29.67:3000/products/${selectedCategory}`);
             if (response.ok) {
                 const data = await response.json();
-                // Add a property 'added' to each product
                 const productsWithAddedStatus = data.map(product => ({ ...product, added: false }));
-                setProducts(productsWithAddedStatus);
+                await updateProductsAddedStatus(productsWithAddedStatus);
             } else {
                 console.error('Failed to fetch products:', response.statusText);
             }
@@ -25,6 +28,20 @@ const ProductInventory = ({ route }) => {
             console.error('Error fetching products:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const updateProductsAddedStatus = async (products) => {
+        try {
+            const addedProducts = await AsyncStorage.getItem(`addedProducts_${phoneNumber}`);
+            const addedProductsArray = addedProducts ? JSON.parse(addedProducts) : [];
+            const updatedProducts = products.map(product => ({
+                ...product,
+                added: addedProductsArray.includes(product.id)
+            }));
+            setProducts(updatedProducts);
+        } catch (error) {
+            console.error('Error updating product added status:', error);
         }
     };
 
@@ -39,18 +56,29 @@ const ProductInventory = ({ route }) => {
             });
 
             if (response.ok) {
-                // Update the 'added' property of the added product
-                setProducts(prevProducts => {
-                    const updatedProducts = [...prevProducts];
-                    updatedProducts[index].added = true;
-                    return updatedProducts;
-                });
+                const updatedProducts = [...products];
+                updatedProducts[index].added = true;
+                setProducts(updatedProducts);
+                await saveAddedProduct(productId);
                 Alert.alert('Success', 'Product added successfully');
             } else {
                 console.error('Failed to add product:', response.statusText);
             }
         } catch (error) {
             console.error('Error adding product:', error);
+        }
+    };
+
+    const saveAddedProduct = async (productId) => {
+        try {
+            const addedProducts = await AsyncStorage.getItem(`addedProducts_${phoneNumber}`);
+            const addedProductsArray = addedProducts ? JSON.parse(addedProducts) : [];
+            if (!addedProductsArray.includes(productId)) {
+                addedProductsArray.push(productId);
+                await AsyncStorage.setItem(`addedProducts_${phoneNumber}`, JSON.stringify(addedProductsArray));
+            }
+        } catch (error) {
+            console.error('Error saving added product:', error);
         }
     };
 

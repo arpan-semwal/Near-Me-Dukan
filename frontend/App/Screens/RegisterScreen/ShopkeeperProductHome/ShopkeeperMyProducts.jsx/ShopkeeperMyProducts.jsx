@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const ShopkeeperMyProducts = ({ route }) => {
@@ -40,9 +40,9 @@ const ShopkeeperMyProducts = ({ route }) => {
         }));
     };
 
-    const renderCategory = ({ item }) => (
+    const renderCategory = ({ item, index }) => (
         <TouchableOpacity
-            style={styles.categoryContainer}
+            style={[styles.categoryContainer, index % 2 === 1 ? styles.rightMargin : null]}
             onPress={() => navigation.navigate('CategoryDetails', { category: item, phoneNumber })}>
             <Text style={styles.categoryName}>{item.main_category}</Text>
         </TouchableOpacity>
@@ -54,29 +54,44 @@ const ShopkeeperMyProducts = ({ route }) => {
                 data={categories}
                 renderItem={renderCategory}
                 keyExtractor={(item) => item.main_category}
+                numColumns={2} // Set number of columns to 2
+                contentContainerStyle={styles.contentContainer} // Apply contentContainerStyle
             />
         </View>
     );
 };
 
+const { width } = Dimensions.get('window');
+const itemWidth = (width - 32) / 2; // Calculate item width for two items per row
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 8,
         backgroundColor: '#fff',
+    },
+    contentContainer: {
+        alignItems: 'center',
     },
     categoryContainer: {
         marginBottom: 16,
-        padding: 16,
+        padding: 20,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
         backgroundColor: '#f9f9f9',
         alignItems: 'center',
+        width: itemWidth,
+        marginHorizontal: 4,
+        marginVertical: 8,
     },
     categoryName: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    rightMargin: {
+        marginRight: 0, // No need for right margin in this layout
     },
 });
 
