@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, TextInput, Modal, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal , StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
 
+ 
+
 export default function SearchShops({ route }) {
-    const { custPhoneNumber , userType , firstcustomerName , pincode } = route.params || {};
+    const { custPhoneNumber, userType, firstcustomerName, pincode } = route.params || {};
     const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
-   
     const [customerName, setCustomerName] = useState('');
     const [filteredShops, setFilteredShops] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [shopID , setShopID] = useState('');
     const [selectedShop, setSelectedShop] = useState(null);
-    const [shopkeeperPhonenumber , setShopkeeperPhonenumber] = useState();
+
     const handleSubmit = () => {
         setShowChangePincode(true);
     }
@@ -26,7 +26,7 @@ export default function SearchShops({ route }) {
             Alert.alert('Invalid Pincode', 'Please enter a valid pincode.');
             return;
         }
-    
+
         try {
             const response = await fetch('http://192.168.29.67:3000/updatePincode', {
                 method: 'PUT',
@@ -39,7 +39,6 @@ export default function SearchShops({ route }) {
                 }),
             });
             if (response.ok) {
-                // Pincode updated successfully, fetch shops in the new pincode area
                 fetchShopsInArea(newPincode);
                 setShowChangePincode(false);
                 Alert.alert('Success', 'Pincode changed successfully');
@@ -69,42 +68,11 @@ export default function SearchShops({ route }) {
             const data = await response.json();
             setCustomerName(data.name);
             setNewPincode(data.pincode);
-            setShopID(data.shopID);
-            
-    
-            if (data.shopID) {
-                prioritizeShop(data.shopID);
-            }
         } catch (error) {
             console.error('Error fetching customer details:', error);
             setError('Error fetching customer details');
         }
     };
-
-    const prioritizeShop = async (shopID) => {
-        try {
-            const response = await fetch(`http://192.168.29.67:3000/shopDetails/${shopID}`);
-            const data = await response.json();
-
-            const shopExists = await checkShopExists(shopID);
-            if (shopExists) {
-                setFilteredShops([data, ...filteredShops.filter(shop => shop.shopID !== shopID)]);
-            }
-        } catch (error) {
-            console.error('Error prioritizing shop:', error);
-        }
-    }
-
-    const checkShopExists = async (shopID) => {
-        try {
-            const response = await fetch(`http://192.168.29.67:3000/shopkeepers/${shopID}`);
-            const data = await response.json();
-            return data.length > 0;
-        } catch (error) {
-            console.error('Error checking shop existence:', error);
-            return false;
-        }
-    }
 
     const fetchShopsInArea = async (pincode) => {
         setLoading(true);
@@ -112,7 +80,6 @@ export default function SearchShops({ route }) {
             const response = await fetch(`http://192.168.29.67:3000/shopsInArea/${pincode}`);
             const data = await response.json();
             setFilteredShops(data);
-            setShopkeeperPhonenumber(data.phoneNumber)
             setError('');
         } catch (error) {
             console.error('Error fetching shops in area:', error);
@@ -121,8 +88,15 @@ export default function SearchShops({ route }) {
             setLoading(false);
         }
     }
-    const handleShopPress = (phoneNumber, storeImage, shopkeeperName ) => {
-        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName,   userType:userType , shopID: selectedShop , firstcustomerName:firstcustomerName , custPhoneNumber:custPhoneNumber });
+
+    const handleShopPress = (shop) => {
+        const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
+
+        if (shopType === 'product') {
+            navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: selectedShop, firstcustomerName, custPhoneNumber });
+        } else if (shopType === 'service') {
+            navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: selectedShop, firstcustomerName, custPhoneNumber });
+        }
     }
 
     const toggleShopSelection = (shopID) => {
@@ -157,13 +131,13 @@ export default function SearchShops({ route }) {
                 <FlatList
                     data={filteredShops}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleShopPress(item.phoneNumber, item.storeImage, item.shopkeeperName)}>
+                        <TouchableOpacity onPress={() => handleShopPress(item)}>
                             <View style={styles.itemContainer}>
                                 <View style={styles.shopDetails}>
                                     <Text>{item.shopkeeperName}</Text>
                                     <Text>Pincode: {item.pincode}</Text>
                                     <Text>Shop: {item.selectedCategory}</Text>
-                                    <Text>Shop: {item.phoneNumber}</Text>
+                                    <Text>Phone: {item.phoneNumber}</Text>
                                 </View>
                                 <TouchableOpacity onPress={() => toggleShopSelection(item.shopID)}>
                                     <View style={styles.heartIcon}>
@@ -207,6 +181,7 @@ export default function SearchShops({ route }) {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
