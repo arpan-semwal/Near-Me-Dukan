@@ -1717,7 +1717,7 @@ const SALT_KEY = "	099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
 
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`);
 }); 
