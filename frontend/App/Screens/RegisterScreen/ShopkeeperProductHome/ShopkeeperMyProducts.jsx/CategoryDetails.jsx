@@ -7,7 +7,7 @@ const CategoryDetails = ({ route }) => {
 
     const deleteProduct = async (productId) => {
         try {
-            const response = await fetch('http://192.168.29.67:3000/deleteProduct', {
+            const response = await fetch('http://172.16.16.41:3000/deleteProduct', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

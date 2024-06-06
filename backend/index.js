@@ -582,58 +582,7 @@ app.get('/orders/shop/:shopkeeperPhoneNumber', (req, res) => {
     );
 });
 
-app.post('/preferredShops/add', (req, res) => {
-    const { phoneNumber, shopID } = req.body;
-  
-    // Add the shopID to the preferred shops list for the given phoneNumber
-    db.query(
-      'INSERT INTO preferredShops (phoneNumber, shopID) VALUES (?, ?)',
-      [phoneNumber, shopID],
-      (err, result) => {
-        if (err) {
-          console.error('Error adding preferred shop:', err);
-          return res.status(500).json({ message: 'Internal server error' });
-        }
-        console.log('Preferred shop added successfully');
-        res.status(200).json({ message: 'Preferred shop added successfully' });
-      }
-    );
-  });
-  
-  
-  
-  app.get('/preferredShops/:phoneNumber', (req, res) => {
-    const phoneNumber = req.params.phoneNumber;
-
-    // Query the database to fetch preferred shops based on phoneNumber
-    db.query(
-        'SELECT * FROM preferredShops WHERE phoneNumber = ?',
-        [phoneNumber],
-        async (err, results) => {
-            if (err) {
-                console.error('Error fetching preferred shops:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-
-            // Fetch shop details for each preferred shop
-            try {
-                const shopsWithDetails = await Promise.all(results.map(async (shop) => {
-                    const shopDetails = await fetchShopDetails(shop.shopID);
-                    return {
-                        ...shop,
-                        shopDetails
-                    };
-                }));
-
-                res.status(200).json(shopsWithDetails);
-            } catch (error) {
-                console.error('Error fetching shop details for preferred shops:', error);
-                res.status(500).json({ message: 'Error fetching shop details for preferred shops' });
-            }
-        }
-    );
-});
-
+ 
  
 
 
@@ -1733,6 +1682,23 @@ app.get('/products/:category', async (req, res) => {
         console.error('Error fetching products:', error);
         res.status(500).json({ error: 'Failed to fetch products' });
     }
+});
+
+
+/************************************************************************************************************************************************************
+ *************************************************Preffered Shops*********************************************************************************************
+*/
+app.post('/addPreferredShop', (req, res) => {
+    const { customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode } = req.body;
+
+    const sql = 'INSERT INTO preferred_shops (customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode], (err, result) => {
+        if (err) {
+            console.error('Error adding preferred shop:', err);
+            return res.status(500).json({ message: 'Failed to add preferred shop' });
+        }
+        res.status(200).json({ message: 'Preferred shop added successfully' });
+    });
 });
 
 

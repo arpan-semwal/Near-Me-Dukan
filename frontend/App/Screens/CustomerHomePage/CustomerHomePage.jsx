@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {useEffect, useState} from 'react';
 
 export default function CustomerHomePage({ route }) {
-  const {  pincode , custPhoneNumber,userType } = route.params || {};
+  const {  pincode , custPhoneNumber,userType , phoneNumber } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
   const [firstcustomerName, setFirstCustomerName] = useState('');
    
@@ -21,7 +21,7 @@ export default function CustomerHomePage({ route }) {
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://192.168.29.67:3000/customerDetails/${custPhoneNumber}`);
+        const response = await fetch(`http://172.16.16.41:3000/customerDetails/${custPhoneNumber}`);
         const data = await response.json();
         setCustomerDetails(data);
         setFirstCustomerName(data.name); // Set the customer's name
@@ -66,7 +66,7 @@ export default function CustomerHomePage({ route }) {
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Orders</Text>
+                <Text style={styles.cardText}>My Orders{phoneNumber}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -97,7 +97,7 @@ export default function CustomerHomePage({ route }) {
         </View>
 
         <View>
-          <Text style={styles.headingText}>Types of shops</Text>
+          <Text style={styles.headingText}>Types of shops{custPhoneNumber}</Text>
         </View>
 
         <View style={styles.container1}>

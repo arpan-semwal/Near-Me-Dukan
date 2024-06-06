@@ -3,9 +3,7 @@ import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal 
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
-
  
-
 export default function SearchShops({ route }) {
     const { custPhoneNumber, userType, firstcustomerName, pincode } = route.params || {};
     const navigation = useNavigation();
@@ -28,7 +26,7 @@ export default function SearchShops({ route }) {
         }
 
         try {
-            const response = await fetch('http://192.168.29.67:3000/updatePincode', {
+            const response = await fetch('http://172.16.16.41:3000/updatePincode', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +62,7 @@ export default function SearchShops({ route }) {
 
     const fetchCustomerDetails = async () => {
         try {
-            const response = await fetch(`http://192.168.29.67:3000/customerDetails/${custPhoneNumber}`);
+            const response = await fetch(`http://172.16.16.41:3000/customerDetails/${custPhoneNumber}`);
             const data = await response.json();
             setCustomerName(data.name);
             setNewPincode(data.pincode);
@@ -77,7 +75,7 @@ export default function SearchShops({ route }) {
     const fetchShopsInArea = async (pincode) => {
         setLoading(true);
         try {
-            const response = await fetch(`http://192.168.29.67:3000/shopsInArea/${pincode}`);
+            const response = await fetch(`http://172.16.16.41:3000/shopsInArea/${pincode}`);
             const data = await response.json();
             setFilteredShops(data);
             setError('');
@@ -93,11 +91,41 @@ export default function SearchShops({ route }) {
         const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
         if (shopType === 'product') {
-            navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: selectedShop, firstcustomerName, custPhoneNumber });
+            navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
         } else if (shopType === 'service') {
-            navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: selectedShop, firstcustomerName, custPhoneNumber });
+            navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
         }
     }
+
+    const handleAddPreferredShop = async (shop) => {
+        try {
+            const response = await fetch('http://172.16.16.41:3000/addPreferredShop', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customerPhoneNumber: custPhoneNumber,
+                    shopID: shop.id,
+                    shopkeeperName: shop.shopkeeperName,
+                    phoneNumber: shop.phoneNumber,
+                    selectedCategory: shop.selectedCategory,
+                    shopType: shop.shopType,
+                    pincode: shop.pincode,
+                }),
+            });
+
+            if (response.ok) {
+                Alert.alert('Success', 'Shop added to your preferred list');
+            } else {
+                console.error('Failed to add preferred shop:', response.statusText);
+                Alert.alert('Error', 'Failed to add preferred shop');
+            }
+        } catch (error) {
+            console.error('Error adding preferred shop:', error);
+            Alert.alert('Error', 'Failed to add preferred shop');
+        }
+    };
 
     const toggleShopSelection = (shopID) => {
         setSelectedShop(shopID === selectedShop ? null : shopID);
@@ -131,26 +159,22 @@ export default function SearchShops({ route }) {
                 <FlatList
                     data={filteredShops}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleShopPress(item)}>
-                            <View style={styles.itemContainer}>
-                                <View style={styles.shopDetails}>
-                                    <Text>{item.shopkeeperName}</Text>
-                                    <Text>Pincode: {item.pincode}</Text>
-                                    <Text>Shop: {item.selectedCategory}</Text>
-                                    <Text>Phone: {item.phoneNumber}</Text>
-                                </View>
-                                <TouchableOpacity onPress={() => toggleShopSelection(item.shopID)}>
-                                    <View style={styles.heartIcon}>
-                                        <AntDesign
-                                            name={selectedShop === item.shopID ? "heart" : "hearto"}
-                                            size={24}
-                                            color={selectedShop === item.shopID ? "red" : "black"}
-                                        />
+                        <View>
+                            <TouchableOpacity onPress={() => handleShopPress(item)}>
+                                <View style={styles.itemContainer}>
+                                    <View style={styles.shopDetails}>
+                                        <Text>{item.shopkeeperName}</Text>
+                                        <Text>Pincode: {item.pincode}</Text>
+                                        <Text>Shop: {item.selectedCategory}</Text>
+                                        <Text>Phone: {item.phoneNumber}</Text>
                                     </View>
-                                </TouchableOpacity>
-                            </View>
-                            {renderSeparator()}
-                        </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
+                                        <AntDesign name={selectedShop === item.id ? "heart" : "hearto"} size={24} color={selectedShop === item.id ? "red" : "black"} />
+                                    </TouchableOpacity>
+                                </View>
+                                {renderSeparator()}
+                            </TouchableOpacity>
+                        </View>
                     )}
                     keyExtractor={(item) => item.id.toString()}
                     ListEmptyComponent={<Text>No shops found</Text>}
@@ -181,7 +205,6 @@ export default function SearchShops({ route }) {
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {

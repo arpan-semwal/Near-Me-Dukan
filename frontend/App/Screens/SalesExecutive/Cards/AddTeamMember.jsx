@@ -13,7 +13,7 @@ export default function AddTeamMember({ route, navigation }) {
   const [pancard, setPancard] = useState('');
 
   const handleSubmit = () => {
-    axios.post('http://192.168.29.67:3000/submit-team-member', {
+    axios.post('http://172.16.16.41:3000/submit-team-member', {
       mobileNumber: newMobileNumber,
       firstName,
       lastName,

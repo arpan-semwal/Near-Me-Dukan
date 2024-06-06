@@ -7,7 +7,7 @@ export default function MyTeam({ route }) {
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://192.168.29.67:3000/my-team/${mobileNumber}`)
+    axios.get(`http://172.16.16.41:3000/my-team/${mobileNumber}`)
       .then(response => {
         setTeamMembers(response.data);
       })

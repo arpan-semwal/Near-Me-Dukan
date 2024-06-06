@@ -13,7 +13,7 @@ const ShopkeeperMyProducts = ({ route }) => {
 
     const fetchSelectedProducts = async () => {
         try {
-            const response = await fetch(`http://192.168.29.67:3000/myProducts/${phoneNumber}`);
+            const response = await fetch(`http://172.16.16.41:3000/myProducts/${phoneNumber}`);
             if (response.ok) {
                 const data = await response.json();
                 const groupedCategories = groupProductsByCategory(data);

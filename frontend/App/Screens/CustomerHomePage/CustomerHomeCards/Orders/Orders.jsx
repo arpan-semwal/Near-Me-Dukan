@@ -16,7 +16,7 @@ export default function Orders({ route }) {
     }, []);
 
     const fetchShops = () => {
-        fetch(`http://192.168.29.67:3000/orders/shops?customerPhoneNumber=${custPhoneNumber}`)
+        fetch(`http://172.16.16.41:3000/orders/shops?customerPhoneNumber=${custPhoneNumber}`)
             .then(response => response.json())
             .then(data => {
                 const uniqueShops = {};
