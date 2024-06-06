@@ -5,6 +5,7 @@ const app = express();
 const crypto = require('crypto');
 const multer = require('multer');
 const cors = require('cors');
+require('dotenv').config();
 
 
 const db = mysql.createConnection({
@@ -1703,10 +1704,20 @@ app.post('/addPreferredShop', (req, res) => {
 
 
 
+/*************************************************************************************************************************************************************************
+ ***********************************************************Phone Pay Integration**************************************************************************************************************
+ */
+
+ const PHONE_PAY_HOST_URL =  'https://api-preprod.phonepe.com/apis/pg-sandbox';
+const MERCHANT_ID = "PGTESTPAYUAT";
+const SALT_INDEX = "1";
+const SALT_KEY = "	099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
 
 
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
 }); 

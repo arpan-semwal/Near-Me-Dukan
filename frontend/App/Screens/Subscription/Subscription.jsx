@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Button, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
+
+
+ 
 export default function Subscription({route}) {
 	const navigation = useNavigation(); 
 	const handleNavigation = () => {
