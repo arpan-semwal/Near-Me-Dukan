@@ -21,7 +21,7 @@ export default function CustomerHomePage({ route }) {
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://172.16.16.41:3000/customerDetails/${custPhoneNumber}`);
+        const response = await fetch(`http://172.16.16.41:3000/customerDetails/${phoneNumber}`);
         const data = await response.json();
         setCustomerDetails(data);
         setFirstCustomerName(data.name); // Set the customer's name
@@ -50,7 +50,7 @@ export default function CustomerHomePage({ route }) {
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber  , phoneNumber:phoneNumber})}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
@@ -85,7 +85,7 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType , phoneNumber:phoneNumber })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />

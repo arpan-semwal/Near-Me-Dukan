@@ -1,154 +1,82 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useCustomer } from '../../../../Context/ContextApi';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
 
-export default function BarberSearchShops({ route }) {
-  const { customerName } = useCustomer();
-  const { shopID , phoneNumber , userType } = route.params || {};
-  const [preferredShops, setPreferredShops] = useState([]);
-  console.log('User Type:', userType);
+export default function PreferredShops({ route }) {
+  const [shops, setShops] = useState([]);
+  const { phoneNumber } = route.params || {};
   const navigation = useNavigation();
 
-  const [shops, setShops] = useState([]);
   useEffect(() => {
-    const fetchSalonShops = async () => {
+    const fetchPreferredShops = async () => {
       try {
-        const response = await fetch(`http://172.16.16.41:3000/salons?shopID=${shopID}`);
-        const data = await response.json();
-        console.log('Fetched shops:', data); // Check the fetched data
-        if (data) {
-          setShops(data);
-        }
+        const response = await axios.get(`http://172.16.16.41:3000/api/preferred_shops/${phoneNumber}`);
+        setShops(response.data);
       } catch (error) {
-        console.error('Error fetching salon shops:', error);
-        // Handle error if unable to fetch shop details
+        console.error('Error fetching preferred shops:', error);
       }
     };
 
-    fetchSalonShops();
-  }, []);
-  console.log('Shop ID:', shopID); // Check the shopID passed from the route
+    fetchPreferredShops();
+  }, [phoneNumber]);
+  const handleShopPress = (shop) => {
+    const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
-  const fetchShopDetails = async (phoneNumber) => {
-    try {
-      const response = await fetch(`http://172.16.16.41:3000/preferredShops/${phoneNumber}`);
-      const data = await response.json();
-      console.log('Fetched shop details:', data); // Log fetched shop details
-      return data;
-    } catch (error) {
-      console.error('Error fetching shop details:', error);
-      throw error;
+    if (shopType === 'product') {
+        navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName });
+    } else if (shopType === 'service') {
+        navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName });
     }
-  };
+};
 
-  const renderShopItem = () => {
-    if (shops.length === 0) {
-      return <Text>No salon shops found</Text>;
-    }
+  const renderShop = ({ item }) => (
+    <TouchableOpacity onPress={() => handleShopPress(item)}>
+      <View style={styles.shopContainer}>
+        <Text style={styles.shopName}>{item.shopkeeperName}</Text>
+        <Text>Shop ID: {item.shopID}</Text>
+        <Text>Category: {item.selectedCategory}</Text>
+        <Text>Type: {item.shopType}</Text>
+        <Text>Phone: {item.phoneNumber}</Text>
+        <Text>Pincode: {item.pincode}</Text>
+        <Text>Created At: {item.createdAt}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-    return shops.map((shop, index) => (
-      <TouchableOpacity key={index} onPress={() => navigateToSalon(shop)}>
-        <View style={styles.shopItem}>
-          <View style={styles.shopDetails}>
-            <Text style={styles.shopName}>{shop.shopkeeperName}</Text>
-            <Text style={styles.categoryLabel}>Location: {shop.city}, {shop.shopState}</Text>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryLabel}>Category:</Text>
-              <Text style={styles.shopCategory}>{shop.selectedCategory}</Text>
-            </View>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryLabel}>Subcategory:</Text>
-              <Text style={styles.shopCategory}>{shop.selectedSubCategory}</Text>
-            </View>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryLabel}>ShopName:</Text>
-            </View>
-          </View>
-          <TouchableOpacity onPress={() => toggleFavorite(shop)}>
-            <AntDesign name={shop.favorite ? "heart" : "hearto"} size={24} color={shop.favorite ? "red" : "black"} />
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-    ));
-  };
-  
-  const navigateToSalon = (shop) => {
-    navigation.navigate('MyServices', { phoneNumber: shop.phoneNumber , userType:userType });
-  };
-
-  const toggleFavorite = async (shop) => {
-    try {
-      const updatedShops = shops.map((s) => {
-        if (s.shopID === shop.shopID) {
-          return { ...s, favorite: !s.favorite };
-        }
-        return s;
-      });
-      setShops(updatedShops);
-
-      const response = await fetch('http://172.16.16.41:3000/preferredShops/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phoneNumber: phoneNumber, shopID: shop.shopID }),
-      });
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-    }
-  };
-  
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.leftContainer}>
-          <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
-        </View>
-        <View style={styles.rightContainer}>
-          <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
-          <Text style={styles.pincodeText}>Shop ID: {shopID}</Text>
-        </View>
-      </View>
-      <View style={styles.locationContainer}>
-        <Text style={styles.locationHeading}>Types of Shops</Text>
-        <View style={styles.separator} />
-      </View>
-      <ScrollView style={styles.scrollView}>
-        {renderShopItem()}
-      </ScrollView>
+      <Text style={styles.title}>Preferred Shops</Text>
+      <FlatList
+        data={shops}
+        renderItem={renderShop}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-    phoneNumberText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    noShopsText: {
-        fontSize: 16,
-        textAlign: 'center',
-    },
-    shopItem: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-    },
-    shopName: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    shopPhoneNumber: {
-        fontSize: 16,
-    },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  shopContainer: {
+    marginBottom: 15,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+  },
+  shopName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
 });

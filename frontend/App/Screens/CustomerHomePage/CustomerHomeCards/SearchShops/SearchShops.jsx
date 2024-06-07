@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal , StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
- 
+
 export default function SearchShops({ route }) {
-    const { custPhoneNumber, userType, firstcustomerName, pincode } = route.params || {};
+    const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber } = route.params || {};
     const navigation = useNavigation();
     const [showChangePincode, setShowChangePincode] = useState(false);
     const [newPincode, setNewPincode] = useState('');
@@ -13,11 +13,11 @@ export default function SearchShops({ route }) {
     const [filteredShops, setFilteredShops] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [selectedShop, setSelectedShop] = useState(null);
+    const [selectedShops, setSelectedShops] = useState([]);
 
     const handleSubmit = () => {
         setShowChangePincode(true);
-    }
+    };
 
     const handlePincodeChange = async () => {
         if (newPincode.trim() === '') {
@@ -32,7 +32,7 @@ export default function SearchShops({ route }) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    phoneNumber: custPhoneNumber,
+                    phoneNumber: phoneNumber,
                     newPincode: newPincode,
                 }),
             });
@@ -62,7 +62,7 @@ export default function SearchShops({ route }) {
 
     const fetchCustomerDetails = async () => {
         try {
-            const response = await fetch(`http://172.16.16.41:3000/customerDetails/${custPhoneNumber}`);
+            const response = await fetch(`http://172.16.16.41:3000/customerDetails/${phoneNumber}`);
             const data = await response.json();
             setCustomerName(data.name);
             setNewPincode(data.pincode);
@@ -85,7 +85,7 @@ export default function SearchShops({ route }) {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const handleShopPress = (shop) => {
         const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
@@ -95,9 +95,24 @@ export default function SearchShops({ route }) {
         } else if (shopType === 'service') {
             navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
         }
-    }
+    };
 
     const handleAddPreferredShop = async (shop) => {
+        const isShopSelected = selectedShops.includes(shop.id);
+        let updatedShops;
+
+        if (isShopSelected) {
+            updatedShops = selectedShops.filter(id => id !== shop.id); // Deselect shop
+            await removePreferredShop(shop.id); // Remove from database
+        } else {
+            updatedShops = [...selectedShops, shop.id]; // Select shop
+            await addPreferredShop(shop); // Add to database
+        }
+
+        setSelectedShops(updatedShops);
+    };
+
+    const addPreferredShop = async (shop) => {
         try {
             const response = await fetch('http://172.16.16.41:3000/addPreferredShop', {
                 method: 'POST',
@@ -105,7 +120,7 @@ export default function SearchShops({ route }) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    customerPhoneNumber: custPhoneNumber,
+                    customerPhoneNumber: phoneNumber,
                     shopID: shop.id,
                     shopkeeperName: shop.shopkeeperName,
                     phoneNumber: shop.phoneNumber,
@@ -115,9 +130,7 @@ export default function SearchShops({ route }) {
                 }),
             });
 
-            if (response.ok) {
-                Alert.alert('Success', 'Shop added to your preferred list');
-            } else {
+            if (!response.ok) {
                 console.error('Failed to add preferred shop:', response.statusText);
                 Alert.alert('Error', 'Failed to add preferred shop');
             }
@@ -127,8 +140,27 @@ export default function SearchShops({ route }) {
         }
     };
 
-    const toggleShopSelection = (shopID) => {
-        setSelectedShop(shopID === selectedShop ? null : shopID);
+    const removePreferredShop = async (shopID) => {
+        try {
+            const response = await fetch('http://172.16.16.41:3000/removePreferredShop', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customerPhoneNumber: phoneNumber,
+                    shopID: shopID,
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('Failed to remove preferred shop:', response.statusText);
+                Alert.alert('Error', 'Failed to remove preferred shop');
+            }
+        } catch (error) {
+            console.error('Error removing preferred shop:', error);
+            Alert.alert('Error', 'Failed to remove preferred shop');
+        }
     };
 
     const renderSeparator = () => (
@@ -143,7 +175,7 @@ export default function SearchShops({ route }) {
                 </View>
                 <View style={styles.rightContainer}>
                     <Text style={styles.welcomeText}>Welcome, {pincode}</Text>
-                    <Text style={styles.welcomeText}>Welcome, {custPhoneNumber}</Text>
+                    <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
                     <Text style={styles.pincodeText}>Shops at Pincode: </Text>
                     <TouchableOpacity onPress={handleSubmit}>
                         <Text style={styles.changePincodeText}>Change Pincode</Text>
@@ -169,7 +201,11 @@ export default function SearchShops({ route }) {
                                         <Text>Phone: {item.phoneNumber}</Text>
                                     </View>
                                     <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
-                                        <AntDesign name={selectedShop === item.id ? "heart" : "hearto"} size={24} color={selectedShop === item.id ? "red" : "black"} />
+                                        <AntDesign
+                                            name={selectedShops.includes(item.id) ? "heart" : "hearto"}
+                                            size={24}
+                                            color={selectedShops.includes(item.id) ? "red" : "black"}
+                                        />
                                     </TouchableOpacity>
                                 </View>
                                 {renderSeparator()}
@@ -219,7 +255,7 @@ const styles = StyleSheet.create({
     },
     leftContainer: {
         marginRight: 40,
-        marginLeft: 20
+        marginLeft: 20,
     },
     rightContainer: {
         flex: 1,

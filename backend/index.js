@@ -1704,6 +1704,35 @@ app.post('/addPreferredShop', (req, res) => {
 
 
 
+app.delete('/removePreferredShop', (req, res) => {
+    const { customerPhoneNumber, shopID } = req.body;
+  
+    const sql = 'DELETE FROM preferred_shops WHERE customerPhoneNumber = ? AND shopID = ?';
+    db.query(sql, [customerPhoneNumber, shopID], (err, result) => {
+      if (err) {
+        console.error('Error removing preferred shop:', err);
+        return res.status(500).json({ message: 'Failed to remove preferred shop' });
+      }
+      res.status(200).json({ message: 'Preferred shop removed successfully' });
+    });
+  });
+
+
+app.get('/api/preferred_shops/:phoneNumber', (req, res) => {
+    const { phoneNumber } = req.params;
+    const sql = 'SELECT * FROM preferred_shops WHERE customerPhoneNumber = ?';
+    db.query(sql, [phoneNumber], (err, results) => {
+      if (err) {
+        console.error('Error fetching preferred shops:', err);
+        res.status(500).json({ error: 'Error fetching preferred shops' });
+        return;
+      }
+      res.json(results);
+    });
+  });
+
+
+
 /*************************************************************************************************************************************************************************
  ***********************************************************Phone Pay Integration**************************************************************************************************************
  */
