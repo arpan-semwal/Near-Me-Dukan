@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function PreferredShops({ route }) {
   const [shops, setShops] = useState([]);
@@ -20,6 +21,7 @@ export default function PreferredShops({ route }) {
 
     fetchPreferredShops();
   }, [phoneNumber]);
+
   const handleShopPress = (shop) => {
     const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
@@ -28,18 +30,42 @@ export default function PreferredShops({ route }) {
     } else if (shopType === 'service') {
         navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName });
     }
-};
+  };
+
+  const handleDeleteShop = async (shopID) => {
+    try {
+      const response = await axios.delete('http://172.16.16.41:3000/removePreferredShop', {
+        data: { customerPhoneNumber: phoneNumber, shopID: shopID }
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'Shop removed from your preferred list');
+        setShops(prevShops => prevShops.filter(shop => shop.shopID !== shopID));
+      } else {
+        console.error('Failed to remove shop:', response.statusText);
+        Alert.alert('Error', 'Failed to remove shop');
+      }
+    } catch (error) {
+      console.error('Error removing shop:', error);
+      Alert.alert('Error', 'Failed to remove shop');
+    }
+  };
 
   const renderShop = ({ item }) => (
     <TouchableOpacity onPress={() => handleShopPress(item)}>
       <View style={styles.shopContainer}>
-        <Text style={styles.shopName}>{item.shopkeeperName}</Text>
-        <Text>Shop ID: {item.shopID}</Text>
-        <Text>Category: {item.selectedCategory}</Text>
-        <Text>Type: {item.shopType}</Text>
-        <Text>Phone: {item.phoneNumber}</Text>
-        <Text>Pincode: {item.pincode}</Text>
-        <Text>Created At: {item.createdAt}</Text>
+        <View style={styles.shopInfo}>
+          <Text style={styles.shopName}>{item.shopkeeperName}</Text>
+          <Text>Shop ID: {item.shopID}</Text>
+          <Text>Category: {item.selectedCategory}</Text>
+          <Text>Type: {item.shopType}</Text>
+          <Text>Phone: {item.phoneNumber}</Text>
+          <Text>Pincode: {item.pincode}</Text>
+          <Text>Created At: {item.createdAt}</Text>
+        </View>
+        <TouchableOpacity onPress={() => handleDeleteShop(item.shopID)}>
+          <AntDesign name="delete" size={24} color="red" />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -73,6 +99,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  shopInfo: {
+    flex: 1,
   },
   shopName: {
     fontSize: 18,

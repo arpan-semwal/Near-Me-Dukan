@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal, StyleSheet  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function SearchShops({ route }) {
     const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber } = route.params || {};
@@ -14,6 +16,22 @@ export default function SearchShops({ route }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [selectedShops, setSelectedShops] = useState([]);
+    
+    
+    useEffect(() => {
+        // Load liked shop IDs from AsyncStorage
+        const loadLikedShops = async () => {
+            try {
+                const likedShops = await AsyncStorage.getItem('likedShops');
+                if (likedShops !== null) {
+                    setSelectedShops(JSON.parse(likedShops));
+                }
+            } catch (error) {
+                console.error('Error loading liked shops:', error);
+            }
+        };
+        loadLikedShops();
+    }, []);
 
     const handleSubmit = () => {
         setShowChangePincode(true);
@@ -97,6 +115,8 @@ export default function SearchShops({ route }) {
         }
     };
 
+    
+    
     const handleAddPreferredShop = async (shop) => {
         const isShopSelected = selectedShops.includes(shop.id);
         let updatedShops;
@@ -110,6 +130,13 @@ export default function SearchShops({ route }) {
         }
 
         setSelectedShops(updatedShops);
+
+        // Update AsyncStorage with updated liked shop IDs
+        try {
+            await AsyncStorage.setItem('likedShops', JSON.stringify(updatedShops));
+        } catch (error) {
+            console.error('Error saving liked shops:', error);
+        }
     };
 
     const addPreferredShop = async (shop) => {
