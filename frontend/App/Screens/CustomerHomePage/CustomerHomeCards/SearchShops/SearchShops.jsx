@@ -7,7 +7,7 @@ import Colors from '../../../../utils/Colors';
 
 
 export default function SearchShops({ route }) {
-  const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber, selectedCategory } = route.params || {};
+  const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber, selectedCategory  , shopID} = route.params || {};
   const navigation = useNavigation();
   const [showChangePincode, setShowChangePincode] = useState(false);
   const [newPincode, setNewPincode] = useState('');
@@ -30,6 +30,8 @@ export default function SearchShops({ route }) {
     };
     loadLikedShops();
   }, []);
+  
+  
 
   const handleSubmit = () => {
     setShowChangePincode(true);
@@ -88,25 +90,35 @@ export default function SearchShops({ route }) {
     }
   };
 
-  const fetchShopsInArea = async (pincode) => {
-    setLoading(true);
-    try {
-      const response = await fetch(`http://172.16.16.41:3000/shopsInArea/${pincode}`);
-      const data = await response.json();
-      if (selectedCategory) {
-        const filteredData = data.filter(shop => shop.selectedCategory === selectedCategory);
-        setFilteredShops(filteredData);
-      } else {
-        setFilteredShops(data);
-      }
-      setError('');
-    } catch (error) {
-      console.error('Error fetching shops in area:', error);
-      setError('Error fetching shops in area');
-    } finally {
-      setLoading(false);
+ const fetchShopsInArea = async (pincode) => {
+  setLoading(true);
+  try {
+    const response = await fetch(`http://172.16.16.41:3000/shopsInArea/${pincode}`);
+    const data = await response.json();
+
+    let filteredData = data;
+
+    if (selectedCategory) {
+      filteredData = filteredData.filter(shop => shop.selectedCategory === selectedCategory);
     }
-  };
+
+    if (shopID) {
+      const shopWithID = filteredData.find(shop => shop.phoneNumber === shopID);
+      setFilteredShops(shopWithID ? [shopWithID] : []);
+    } else {
+      setFilteredShops(filteredData);
+    }
+
+    setError('');
+  } catch (error) {
+    console.error('Error fetching shops in area:', error);
+    setError('Error fetching shops in area');
+  } finally {
+    setLoading(false);
+  }
+};
+
+  
 
   const handleShopPress = (shop) => {
     const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
@@ -201,7 +213,7 @@ export default function SearchShops({ route }) {
           <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
         </View>
         <View style={styles.rightContainer}>
-          <Text style={styles.welcomeText}>Welcome, {pincode}</Text>
+          <Text style={styles.welcomeText}>Welcome, {shopID}</Text>
           <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
           <Text style={styles.pincodeText}>Shops at Pincode: </Text>
           <TouchableOpacity onPress={handleSubmit}>
@@ -213,11 +225,15 @@ export default function SearchShops({ route }) {
         <Text style={styles.locationText}>Shops in Your Location</Text>
       </View>
       {error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        <FlatList
-          data={filteredShops}
-          renderItem={({ item }) => (
+  <Text style={styles.errorText}>{error}</Text>
+) : (
+  <FlatList
+    data={filteredShops}
+    renderItem={({ item }) => {
+      if (shopID) {
+        // Render only the shop with the specified shopID
+        if (item.phoneNumber === shopID) {
+          return (
             <View>
               <TouchableOpacity onPress={() => handleShopPress(item)}>
                 <View style={styles.itemContainer}>
@@ -235,14 +251,45 @@ export default function SearchShops({ route }) {
                     />
                   </TouchableOpacity>
                 </View>
-                {renderSeparator()}
               </TouchableOpacity>
+              {renderSeparator()}
             </View>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          ListEmptyComponent={<Text>No shops found</Text>}
-        />
-      )}
+          );
+        } else {
+          // Return an empty view if the item's phoneNumber doesn't match shopID
+          return <View />;
+        }
+      } else {
+        // Render all shops if shopID is null
+        return (
+          <View>
+            <TouchableOpacity onPress={() => handleShopPress(item)}>
+              <View style={styles.itemContainer}>
+                <View style={styles.shopDetails}>
+                  <Text>{item.shopkeeperName}</Text>
+                  <Text>Pincode: {item.pincode}</Text>
+                  <Text>Shop: {item.selectedCategory}</Text>
+                  <Text>Phone: {item.phoneNumber}</Text>
+                </View>
+                <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
+                  <AntDesign
+                    name={selectedShops.includes(item.id) ? "heart" : "hearto"}
+                    size={24}
+                    color={selectedShops.includes(item.id) ? "red" : "black"}
+                  />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+            {renderSeparator()}
+          </View>
+        );
+      }
+    }}
+    keyExtractor={(item) => item.id.toString()}
+    ListEmptyComponent={<Text>No shops found</Text>}
+  />
+)}
+
       <Modal
         visible={showChangePincode}
         transparent={true}

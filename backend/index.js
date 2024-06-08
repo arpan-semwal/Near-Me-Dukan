@@ -188,7 +188,8 @@ module.exports = { app, authenticateSession };
 
 
  
-// API endpoint for user registration
+/*************************************************************************************************************************************************************************************
+ * ******************************************************Shopkeeper and Customer Register Endpoint************************************************************************************************************** */ 
 app.post('/register', (req, res) => {
     const { phoneNumber, name, pincode, state, city, address, shopID } = req.body;
 
@@ -199,44 +200,36 @@ app.post('/register', (req, res) => {
             return res.status(500).json({ message: 'Internal server error' });
         }
         if (results.length > 0) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ message: 'Shop id does not exist' });
         }
 
-        // If shopID is provided, check if it matches any shopkeeper's phone number
+        // If shopID is provided
         if (shopID) {
+            // Check if shopID exists in shopkeepers database
             db.query('SELECT * FROM shopkeepers WHERE phoneNumber = ?', [shopID], (err, shopkeeperResults) => {
                 if (err) {
                     console.error('Error checking shopkeeper existence:', err);
                     return res.status(500).json({ message: 'Internal server error' });
                 }
-            
+                
                 if (shopkeeperResults.length > 0) {
-                    // Shopkeeper exists with the provided shopID, determine the type of shop
+                    // Shopkeeper exists with the provided shopID
                     const shopkeeper = shopkeeperResults[0];
                     const selectedCategory = shopkeeper.selectedCategory;
-            
-                    // Check the category to determine the type of shop
-                    if (selectedCategory === 'Salon Shop') {
-                        console.log('Salon Shop found');
-                        // Add the user to newcustomers database with shopID
-                        db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id) VALUES (?, ?, ?, ?, ?, ?, ?)', 
-                        [phoneNumber, name, pincode, state, city, address, shopID], 
-                        (err, result) => {
-                            if (err) {
-                                console.error('Error registering user:', err);
-                                return res.status(500).json({ message: 'Internal server error' });
-                            }
-                            console.log('User registered successfully');
-                            return res.status(200).json({ message: 'User registered successfully', shopType: selectedCategory });
-                        });
-                    }  
-                    else {
-                        console.log('Unknown shop type');
-                        // Navigate to a default homepage or handle other shop types
-                        return res.status(200).json({ message: 'Unknown shop type', shopkeeper });
-                    }
+                    
+                    // Add the user to newcustomers database with shopID
+                    db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+                    [phoneNumber, name, pincode, state, city, address, shopID], 
+                    (err, result) => {
+                        if (err) {
+                            console.error('Error registering user:', err);
+                            return res.status(500).json({ message: 'Internal server error' });
+                        }
+                        console.log('User registered successfully');
+                        return res.status(200).json({ message: 'User registered successfully', shopType: selectedCategory });
+                    });
                 } else {
-                    // No shopkeeper found with the provided shopID, return error
+                    // Shopkeeper not found with the provided shopID
                     console.log('Shopkeeper not found');
                     return res.status(404).json({ message: 'Shopkeeper not found' });
                 }
@@ -258,8 +251,11 @@ app.post('/register', (req, res) => {
 });
 
  
-// API endpoint for shopkeeper registration
 
+
+
+/***************************************************************Endpoint For Category*******************************************************************************************************
+ **********************************************************************************************************************************************************************/ 
 
 app.get('/categories', (req, res) => {
     db.query('SELECT * FROM nkd.category', (err, results) => {
@@ -503,7 +499,7 @@ app.get('/customerDetails/:phoneNumber', (req, res) => {
 
     // Query the database to fetch customer details based on phone number
     db.query(
-        'SELECT name, pincode, shop_id as shopID FROM newcustomers WHERE phoneNumber = ?',
+        'SELECT name, pincode, shop_id  FROM newcustomers WHERE phoneNumber = ?',
         [phoneNumber],
         (err, result) => {
             if (err) {

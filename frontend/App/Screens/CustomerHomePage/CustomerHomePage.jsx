@@ -6,13 +6,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {useEffect, useState} from 'react';
 
 export default function CustomerHomePage({ route }) {
-  const {  pincode , custPhoneNumber,userType , phoneNumber } = route.params || {};
+  const {  pincode , custPhoneNumber,userType , phoneNumber , name   } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
   const [firstcustomerName, setFirstCustomerName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
-  
-  
-   
   const [shopID, setShopID] = useState('');
  
   const navigation = useNavigation();
@@ -42,10 +39,10 @@ export default function CustomerHomePage({ route }) {
       }
     };
 
-    if (custPhoneNumber) {
+    if (phoneNumber) {
       fetchCustomerDetails();
     }
-  }, [custPhoneNumber]);
+  }, [phoneNumber]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -56,7 +53,7 @@ export default function CustomerHomePage({ route }) {
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome,{pincode} {customerDetails ? customerDetails.name :''}</Text>
+        <Text style={styles.welcomeText}>Welcome,{name}</Text>
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
@@ -100,14 +97,14 @@ export default function CustomerHomePage({ route }) {
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>Search Shops </Text>
+                <Text style={styles.cardText}>Search Shops {firstcustomerName}</Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
 
         <View>
-          <Text style={styles.headingText}>Types of shops{custPhoneNumber}</Text>
+          <Text style={styles.headingText}>Types of shops{shopID}</Text>
         </View>
 
         <View style={styles.container1}>
