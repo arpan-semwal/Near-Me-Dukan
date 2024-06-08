@@ -1,273 +1,275 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, Alert, TextInput, Modal, StyleSheet  } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, FlatList, Alert, Modal, TextInput , StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign } from '@expo/vector-icons';
 import Colors from '../../../../utils/Colors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function SearchShops({ route }) {
-    const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber } = route.params || {};
-    const navigation = useNavigation();
-    const [showChangePincode, setShowChangePincode] = useState(false);
-    const [newPincode, setNewPincode] = useState('');
-    const [customerName, setCustomerName] = useState('');
-    const [filteredShops, setFilteredShops] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [selectedShops, setSelectedShops] = useState([]);
-    
-    
-    useEffect(() => {
-        // Load liked shop IDs from AsyncStorage
-        const loadLikedShops = async () => {
-            try {
-                const likedShops = await AsyncStorage.getItem('likedShops');
-                if (likedShops !== null) {
-                    setSelectedShops(JSON.parse(likedShops));
-                }
-            } catch (error) {
-                console.error('Error loading liked shops:', error);
-            }
-        };
-        loadLikedShops();
-    }, []);
+  const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber, selectedCategory } = route.params || {};
+  const navigation = useNavigation();
+  const [showChangePincode, setShowChangePincode] = useState(false);
+  const [newPincode, setNewPincode] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [filteredShops, setFilteredShops] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [selectedShops, setSelectedShops] = useState([]);
 
-    const handleSubmit = () => {
-        setShowChangePincode(true);
+  useEffect(() => {
+    const loadLikedShops = async () => {
+      try {
+        const likedShops = await AsyncStorage.getItem('likedShops');
+        if (likedShops !== null) {
+          setSelectedShops(JSON.parse(likedShops));
+        }
+      } catch (error) {
+        console.error('Error loading liked shops:', error);
+      }
     };
+    loadLikedShops();
+  }, []);
 
-    const handlePincodeChange = async () => {
-        if (newPincode.trim() === '') {
-            Alert.alert('Invalid Pincode', 'Please enter a valid pincode.');
-            return;
-        }
+  const handleSubmit = () => {
+    setShowChangePincode(true);
+  };
 
-        try {
-            const response = await fetch('http://172.16.16.41:3000/updatePincode', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    phoneNumber: phoneNumber,
-                    newPincode: newPincode,
-                }),
-            });
-            if (response.ok) {
-                fetchShopsInArea(newPincode);
-                setShowChangePincode(false);
-                Alert.alert('Success', 'Pincode changed successfully');
-            } else {
-                console.error('Failed to update pincode:', response.statusText);
-                Alert.alert('Error', 'Failed to change pincode');
-            }
-        } catch (error) {
-            console.error('Error updating pincode:', error);
-            Alert.alert('Error', 'Failed to change pincode');
-        }
-    };
+  const handlePincodeChange = async () => {
+    if (newPincode.trim() === '') {
+      Alert.alert('Invalid Pincode', 'Please enter a valid pincode.');
+      return;
+    }
 
-    useEffect(() => {
-        fetchCustomerDetails();
-    }, []);
+    try {
+      const response = await fetch('http://172.16.16.41:3000/updatePincode', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: phoneNumber,
+          newPincode: newPincode,
+        }),
+      });
+      if (response.ok) {
+        fetchShopsInArea(newPincode);
+        setShowChangePincode(false);
+        Alert.alert('Success', 'Pincode changed successfully');
+      } else {
+        console.error('Failed to update pincode:', response.statusText);
+        Alert.alert('Error', 'Failed to change pincode');
+      }
+    } catch (error) {
+      console.error('Error updating pincode:', error);
+      Alert.alert('Error', 'Failed to change pincode');
+    }
+  };
 
-    useEffect(() => {
-        if (pincode) {
-            fetchShopsInArea(pincode);
-        }
-    }, [pincode]);
+  useEffect(() => {
+    fetchCustomerDetails();
+  }, []);
 
-    const fetchCustomerDetails = async () => {
-        try {
-            const response = await fetch(`http://172.16.16.41:3000/customerDetails/${phoneNumber}`);
-            const data = await response.json();
-            setCustomerName(data.name);
-            setNewPincode(data.pincode);
-        } catch (error) {
-            console.error('Error fetching customer details:', error);
-            setError('Error fetching customer details');
-        }
-    };
+  useEffect(() => {
+    if (pincode) {
+      fetchShopsInArea(pincode);
+    }
+  }, [pincode, selectedCategory]);
 
-    const fetchShopsInArea = async (pincode) => {
-        setLoading(true);
-        try {
-            const response = await fetch(`http://172.16.16.41:3000/shopsInArea/${pincode}`);
-            const data = await response.json();
-            setFilteredShops(data);
-            setError('');
-        } catch (error) {
-            console.error('Error fetching shops in area:', error);
-            setError('Error fetching shops in area');
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchCustomerDetails = async () => {
+    try {
+      const response = await fetch(`http://172.16.16.41:3000/customerDetails/${phoneNumber}`);
+      const data = await response.json();
+      setCustomerName(data.name);
+      setNewPincode(data.pincode);
+    } catch (error) {
+      console.error('Error fetching customer details:', error);
+      setError('Error fetching customer details');
+    }
+  };
 
-    const handleShopPress = (shop) => {
-        const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
+  const fetchShopsInArea = async (pincode) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://172.16.16.41:3000/shopsInArea/${pincode}`);
+      const data = await response.json();
+      if (selectedCategory) {
+        const filteredData = data.filter(shop => shop.selectedCategory === selectedCategory);
+        setFilteredShops(filteredData);
+      } else {
+        setFilteredShops(data);
+      }
+      setError('');
+    } catch (error) {
+      console.error('Error fetching shops in area:', error);
+      setError('Error fetching shops in area');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (shopType === 'product') {
-            navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
-        } else if (shopType === 'service') {
-            navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
-        }
-    };
+  const handleShopPress = (shop) => {
+    const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
-    
-    
-    const handleAddPreferredShop = async (shop) => {
-        const isShopSelected = selectedShops.includes(shop.id);
-        let updatedShops;
+    if (shopType === 'product') {
+      navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
+    } else if (shopType === 'service') {
+      navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
+    }
+  };
 
-        if (isShopSelected) {
-            updatedShops = selectedShops.filter(id => id !== shop.id); // Deselect shop
-            await removePreferredShop(shop.id); // Remove from database
-        } else {
-            updatedShops = [...selectedShops, shop.id]; // Select shop
-            await addPreferredShop(shop); // Add to database
-        }
+  const handleAddPreferredShop = async (shop) => {
+    const isShopSelected = selectedShops.includes(shop.id);
+    let updatedShops;
 
-        setSelectedShops(updatedShops);
+    if (isShopSelected) {
+      updatedShops = selectedShops.filter(id => id !== shop.id);
+      await removePreferredShop(shop.id);
+    } else {
+      updatedShops = [...selectedShops, shop.id];
+      await addPreferredShop(shop);
+    }
 
-        // Update AsyncStorage with updated liked shop IDs
-        try {
-            await AsyncStorage.setItem('likedShops', JSON.stringify(updatedShops));
-        } catch (error) {
-            console.error('Error saving liked shops:', error);
-        }
-    };
+    setSelectedShops(updatedShops);
 
-    const addPreferredShop = async (shop) => {
-        try {
-            const response = await fetch('http://172.16.16.41:3000/addPreferredShop', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    customerPhoneNumber: phoneNumber,
-                    shopID: shop.id,
-                    shopkeeperName: shop.shopkeeperName,
-                    phoneNumber: shop.phoneNumber,
-                    selectedCategory: shop.selectedCategory,
-                    shopType: shop.shopType,
-                    pincode: shop.pincode,
-                }),
-            });
+    try {
+      await AsyncStorage.setItem('likedShops', JSON.stringify(updatedShops));
+    } catch (error) {
+      console.error('Error saving liked shops:', error);
+    }
+  };
 
-            if (!response.ok) {
-                console.error('Failed to add preferred shop:', response.statusText);
-                Alert.alert('Error', 'Failed to add preferred shop');
-            }
-        } catch (error) {
-            console.error('Error adding preferred shop:', error);
-            Alert.alert('Error', 'Failed to add preferred shop');
-        }
-    };
+  const addPreferredShop = async (shop) => {
+    try {
+      const response = await fetch('http://172.16.16.41:3000/addPreferredShop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerPhoneNumber: phoneNumber,
+          shopID: shop.id,
+          shopkeeperName: shop.shopkeeperName,
+          phoneNumber: shop.phoneNumber,
+          selectedCategory: shop.selectedCategory,
+          shopType: shop.shopType,
+          pincode: shop.pincode,
+        }),
+      });
 
-    const removePreferredShop = async (shopID) => {
-        try {
-            const response = await fetch('http://172.16.16.41:3000/removePreferredShop', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    customerPhoneNumber: phoneNumber,
-                    shopID: shopID,
-                }),
-            });
+      if (!response.ok) {
+        console.error('Failed to add preferred shop:', response.statusText);
+        Alert.alert('Error', 'Failed to add preferred shop');
+      }
+    } catch (error) {
+      console.error('Error adding preferred shop:', error);
+      Alert.alert('Error', 'Failed to add preferred shop');
+    }
+  };
 
-            if (!response.ok) {
-                console.error('Failed to remove preferred shop:', response.statusText);
-                Alert.alert('Error', 'Failed to remove preferred shop');
-            }
-        } catch (error) {
-            console.error('Error removing preferred shop:', error);
-            Alert.alert('Error', 'Failed to remove preferred shop');
-        }
-    };
+  const removePreferredShop = async (shopID) => {
+    try {
+      const response = await fetch('http://172.16.16.41:3000/removePreferredShop', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerPhoneNumber: phoneNumber,
+          shopID: shopID,
+        }),
+      });
 
-    const renderSeparator = () => (
-        <View style={styles.separator} />
-    );
+      if (!response.ok) {
+        console.error('Failed to remove preferred shop:', response.statusText);
+        Alert.alert('Error', 'Failed to remove preferred shop');
+      }
+    } catch (error) {
+      console.error('Error removing preferred shop:', error);
+      Alert.alert('Error', 'Failed to remove preferred shop');
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.headerContainer}>
-                <View style={styles.leftContainer}>
-                    <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
-                </View>
-                <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {pincode}</Text>
-                    <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
-                    <Text style={styles.pincodeText}>Shops at Pincode: </Text>
-                    <TouchableOpacity onPress={handleSubmit}>
-                        <Text style={styles.changePincodeText}>Change Pincode</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={styles.locationTextContainer}>
-                <Text style={styles.locationText}>Shops in Your Location</Text>
-            </View>
-            {error ? (
-                <Text style={styles.errorText}>{error}</Text>
-            ) : (
-                <FlatList
-                    data={filteredShops}
-                    renderItem={({ item }) => (
-                        <View>
-                            <TouchableOpacity onPress={() => handleShopPress(item)}>
-                                <View style={styles.itemContainer}>
-                                    <View style={styles.shopDetails}>
-                                        <Text>{item.shopkeeperName}</Text>
-                                        <Text>Pincode: {item.pincode}</Text>
-                                        <Text>Shop: {item.selectedCategory}</Text>
-                                        <Text>Phone: {item.phoneNumber}</Text>
-                                    </View>
-                                    <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
-                                        <AntDesign
-                                            name={selectedShops.includes(item.id) ? "heart" : "hearto"}
-                                            size={24}
-                                            color={selectedShops.includes(item.id) ? "red" : "black"}
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-                                {renderSeparator()}
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                    keyExtractor={(item) => item.id.toString()}
-                    ListEmptyComponent={<Text>No shops found</Text>}
-                />
-            )}
-            <Modal
-                visible={showChangePincode}
-                transparent={true}
-                animationType="slide"
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter New Pincode"
-                            value={newPincode}
-                            onChangeText={setNewPincode}
-                        />
-                        <TouchableOpacity onPress={handlePincodeChange}>
-                            <Text style={styles.closeButton}>Change</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setShowChangePincode(false)}>
-                            <Text style={styles.closeButton}>Close</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+  const renderSeparator = () => (
+    <View style={styles.separator} />
+  );
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <View style={styles.leftContainer}>
+          <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
         </View>
-    );
+        <View style={styles.rightContainer}>
+          <Text style={styles.welcomeText}>Welcome, {pincode}</Text>
+          <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
+          <Text style={styles.pincodeText}>Shops at Pincode: </Text>
+          <TouchableOpacity onPress={handleSubmit}>
+            <Text style={styles.changePincodeText}>Change Pincode</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={styles.locationTextContainer}>
+        <Text style={styles.locationText}>Shops in Your Location</Text>
+      </View>
+      {error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <FlatList
+          data={filteredShops}
+          renderItem={({ item }) => (
+            <View>
+              <TouchableOpacity onPress={() => handleShopPress(item)}>
+                <View style={styles.itemContainer}>
+                  <View style={styles.shopDetails}>
+                    <Text>{item.shopkeeperName}</Text>
+                    <Text>Pincode: {item.pincode}</Text>
+                    <Text>Shop: {item.selectedCategory}</Text>
+                    <Text>Phone: {item.phoneNumber}</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
+                    <AntDesign
+                      name={selectedShops.includes(item.id) ? "heart" : "hearto"}
+                      size={24}
+                      color={selectedShops.includes(item.id) ? "red" : "black"}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {renderSeparator()}
+              </TouchableOpacity>
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          ListEmptyComponent={<Text>No shops found</Text>}
+        />
+      )}
+      <Modal
+        visible={showChangePincode}
+        transparent={true}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter New Pincode"
+              value={newPincode}
+              onChangeText={setNewPincode}
+            />
+            <TouchableOpacity onPress={handlePincodeChange}>
+              <Text style={styles.closeButton}>Change</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowChangePincode(false)}>
+              <Text style={styles.closeButton}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 }
+
+
 
 const styles = StyleSheet.create({
     container: {

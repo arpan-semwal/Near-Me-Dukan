@@ -9,15 +9,25 @@ export default function CustomerHomePage({ route }) {
   const {  pincode , custPhoneNumber,userType , phoneNumber } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
   const [firstcustomerName, setFirstCustomerName] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  
+  
    
   const [shopID, setShopID] = useState('');
  
   const navigation = useNavigation();
 
   const navigateToScreen = (screenName, params) => {
-    navigation.navigate(screenName, params);
+    navigation.navigate(screenName, params , selectedCategory);
   };
-
+  
+  
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+   
+  };
+  
+  
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
@@ -85,7 +95,7 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType , phoneNumber:phoneNumber })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType , phoneNumber:phoneNumber , selectedCategory:selectedCategory })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
@@ -101,25 +111,25 @@ export default function CustomerHomePage({ route }) {
         </View>
 
         <View style={styles.container1}>
-          <TouchableOpacity onPress={() => navigateToScreen('Sweets')}>
+          <TouchableOpacity onPress={() => handleCategorySelect('Vegetable Shop')}>
             <View style={styles.iconContainer}>
               <Icon name="home" size={30} style={styles.icon1} />
-              <Text style={styles.iconHeading}>Sweets</Text>
+              <Text style={styles.iconHeading}>Vegetable</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigateToScreen('Snacks')}>
+          <TouchableOpacity onPress={() => handleCategorySelect('Stationary')}>
             <View style={styles.iconContainer}>
               <Icon name="search" size={30} style={styles.icon1} />
-              <Text style={styles.iconHeading}>Snacks</Text>
+              <Text style={styles.iconHeading}>Stationary</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigateToScreen('Vegetables')}>
+          <TouchableOpacity onPress={() => handleCategorySelect('Grocery Shop')}>
             <View style={styles.iconContainer}>
               <Icon name="user" size={30} style={styles.icon1} />
-              <Text style={styles.iconHeading}>Vegetables</Text>
+              <Text style={styles.iconHeading}>Grocery</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigateToScreen('Barber')}>
+          <TouchableOpacity onPress={() => handleCategorySelect('Salon Shop')}>
             <View style={styles.iconContainer}>
               <Icon name="bell" size={30} style={styles.icon1} />
               <Text style={styles.iconHeading}>Salon</Text>

@@ -1,37 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import {useCart} from '../../../../Context/ContextApi';
+ 
 
 const CategoryDetails = ({ route }) => {
     const { category, phoneNumber, userType } = route.params;
     const [products, setProducts] = useState(category.products);
+    const { addToCart } = useCart(); // Using addToCart function from CartContext
 
-    const deleteProduct = async (productId) => {
-        try {
-            const response = await fetch('http://172.16.16.41:3000/deleteProduct', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    phoneNumber: phoneNumber,
-                    productId: productId,
-                }),
-            });
-            if (response.ok) {
-                // Remove the deleted product from the products state
-                setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
-                Alert.alert('Success', 'Product deleted successfully');
-            } else {
-                console.error('Failed to delete product:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error deleting product:', error);
-        }
-    };
-
-    const addToCart = (productId) => {
-        // Implement your addToCart logic here
-        Alert.alert('Add to Cart', `Product ${productId} added to cart`);
+    // Function to add a product to the cart
+    const addProductToCart = (product) => {
+        addToCart(product); // Call the addToCart function from the context
+        Alert.alert('Product added to cart successfully!');
     };
 
     const renderProduct = ({ item }) => (
@@ -42,15 +22,10 @@ const CategoryDetails = ({ route }) => {
             <Text>Brand: {item.brand_name}</Text>
             <Text>Price: ${item.price}</Text>
             <Text>Weight: {item.weight}</Text>
-            {userType === 'shopkeeper' ? (
-                <TouchableOpacity onPress={() => deleteProduct(item.id)} style={styles.deleteButton}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-            ) : (
-                <TouchableOpacity onPress={() => addToCart(item.id)} style={styles.addToCartButton}>
-                    <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-                </TouchableOpacity>
-            )}
+            {/* Render button to add product to cart */}
+            <TouchableOpacity onPress={() => addProductToCart(item)} style={styles.addToCartButton}>
+                <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
         </View>
     );
 
@@ -78,17 +53,6 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 8,
         backgroundColor: '#f9f9f9',
-    },
-    deleteButton: {
-        marginTop: 8,
-        backgroundColor: 'red',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    deleteButtonText: {
-        color: '#fff',
     },
     addToCartButton: {
         marginTop: 8,
