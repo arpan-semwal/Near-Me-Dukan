@@ -6,20 +6,20 @@ const cors = require('cors');
 const app = express();
 const port = 3001;
  
-//const db = mysql.createConnection({
-//  host: 'localhost',
-//  user: 'root',
-//  password: 'Noodle@123',
-//  database: 'nkd'
-//});
-
-
 const db = mysql.createConnection({
-  host: 'localhost', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
-  user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
-  password: 'Noodle@123#123',    // Replace 'your_mysql_password' with your MySQL password
-  database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
+  host: '192.168.29.67',
+  user: 'root',
+  password: 'Noodle@123',
+  database: 'nkd'
 });
+
+
+//const db = mysql.createConnection({
+//  host: '192.168.29.67', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
+//  user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
+//  password: 'Noodle@123#123',    // Replace 'your_mysql_password' with your MySQL password
+//  database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
+//});
 
 
 // Connect to MySQL
@@ -310,5 +310,5 @@ app.put('/commission_rates', (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+  console.log(`Server running at http://192.168.29.67:${port}/`);
 });

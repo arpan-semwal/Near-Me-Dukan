@@ -18,7 +18,7 @@ const db = mysql.createConnection({
 
 
 //  const db = mysql.createConnection({
-//    host: 'localhost', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
+//    host: '192.168.29.67', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
 //    user: 'u365766400_arpan',        // Replace 'your_mysql_username' with your MySQL username
 //    password: 'cd',    // Replace 'your_mysql_password' with your MySQL password
 //    database: 'u365766400_near_ki_dukan'     // Replace 'your_mysql_database' with your MySQL database name
@@ -1744,5 +1744,5 @@ const SALT_KEY = "	099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+  console.log(`Server running at http://192.168.29.67:${PORT}/`);
 }); 

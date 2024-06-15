@@ -11,7 +11,7 @@ export default function RegisterSales({ navigation , route }) {
   const {mobileNumber} = route.params
 
   const handleSubmit = () => {
-    axios.post('http://172.16.16.41:3000/submit-form', {
+    axios.post('http://192.168.29.67:3000/submit-form', {
       firstName,
       lastName, 
       mobileNumber,
