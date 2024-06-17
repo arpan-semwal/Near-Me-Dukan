@@ -7,7 +7,7 @@ function SalesAssociateTeam() {
 
   useEffect(() => {
     // Fetch executives from backend when component mounts
-    axios.get('http://nearkidukan.in/sales_executives_team')
+    axios.get('http://localhost:3001/sales_executives_team')
       .then(response => {
         setExecutives(response.data);
       })

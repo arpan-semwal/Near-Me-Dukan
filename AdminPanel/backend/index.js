@@ -5,14 +5,21 @@ const crypto = require('crypto');
 const cors = require('cors');
 const app = express();
 const port = 3001;
+
+const multer = require('multer');
+const path = require('path');
  
 const db = mysql.createConnection({
-  host: '192.168.29.67',
+  host: 'localhost',
   user: 'root',
   password: 'Noodle@123',
   database: 'nkd'
 });
 
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from /uploads
+ 
 
 //const db = mysql.createConnection({
 //  host: '192.168.29.67', // Replace 'your_hostinger_mysql_host' with the hostname provided by Hostinger
@@ -197,25 +204,59 @@ app.post('/sales-executives', (req, res) => {
       res.status(200).json({ message: 'Sales executive updated successfully' });
     });
   });
-
   
+  
+  
+  
+  
+  
+  
+  
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, 'uploads'));
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+  });
   
   
   
   // Route to get all products
-app.get('/products', (req, res) => {
-  const sql = 'SELECT * FROM nkd.product_master';
-  db.query(sql, (err, result) => {
-      if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Internal server error' });
-          return;
-      }
-      console.log('Products:', result); // Log the result
-      res.json(result);
-  });
-});
+  const upload = multer({ storage: storage });
 
+  // GET all products
+  app.get('/products', (req, res) => {
+    const sql = 'SELECT id, main_category, product_name, brand_name, precise_brand_name, price, weight, type, picture_path FROM tbl_product_master';
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      console.log('Products:', result);
+      res.json(result);
+    });
+  });
+  
+  // POST to add a product
+  app.post('/products/add', upload.single('picture'), (req, res) => {
+    const { main_category, product_name, brand_name, precise_brand_name, price, weight, type } = req.body;
+    const picture_path = req.file ? '/uploads/' + req.file.filename : null;
+  
+    const sql = 'INSERT INTO tbl_product_master (main_category, product_name, brand_name, precise_brand_name, price, weight, type, picture_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [main_category, product_name, brand_name, precise_brand_name, price, weight, type, picture_path], (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).json({ error: 'Failed to add product' });
+      }
+      console.log('Product added successfully');
+      res.json({ message: 'Product added successfully' });
+    });
+  });
 
 // Route to get all sales executives with hierarchy information
 app.get('/sales_executives_team', (req, res) => {
@@ -310,5 +351,5 @@ app.put('/commission_rates', (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://192.168.29.67:${port}/`);
+  console.log(`Server running at http://localhost:${port}/`);
 });
