@@ -16,7 +16,7 @@ function CommissionSetting() {
   };
 
   const handleUpdateRates = () => {
-    axios.put('http:// localhost/commission_rates', commissionRates)
+    axios.put('http://localhost/commission_rates', commissionRates)
       .then(response => {
         console.log(response.data);
       })

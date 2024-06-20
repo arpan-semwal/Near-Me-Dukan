@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Navbar from "../../components/Navbar/Navbar"
+import baseURL from '../../metro';
 export default function AddSalesAssociate() {
   const [formData, setFormData] = useState({
     mobileNo: '',
@@ -22,7 +23,7 @@ export default function AddSalesAssociate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/sales-executives', formData);
+      const response = await axios.post(`${baseURL}/sales-executives`, formData);
       console.log('Sales executive added successfully:', response.data);
       // Optionally, you can clear the form data after successful submission
       setFormData({

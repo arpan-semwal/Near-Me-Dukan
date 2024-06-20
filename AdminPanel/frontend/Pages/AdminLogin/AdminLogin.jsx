@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./styles.css"; // Import CSS file for styling
+import baseURL from '../../metro';
 
 function AdminLogin() {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -9,7 +10,7 @@ function AdminLogin() {
 
   useEffect(() => {
     // Fetch admin's phone number from the backend
-    axios.get('http://localhost:3001/phone-number')
+    axios.get(`${baseURL}/phone-number`)
       .then(response => {
         setAdminPhoneNumber(response.data.phoneNumber);
       })
@@ -44,7 +45,7 @@ function AdminLogin() {
       <h2>Login</h2>
       {error && <div className="error">{error}</div>}
       <div>
-        <label>Phone Number:</label>
+        <label>Phone Number:{baseURL}</label>
         <input
           type="text"
           value={phoneNumber}
@@ -59,3 +60,6 @@ function AdminLogin() {
 }
 
 export default AdminLogin;
+
+
+ 

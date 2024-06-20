@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import Navbar from '../../components/Navbar/Navbar';
+import baseURL from '../../metro';
 
 export default function ViewSalesAssociate() {
   const [salesAssociates, setSalesAssociates] = useState([]);
@@ -14,7 +15,7 @@ export default function ViewSalesAssociate() {
   useEffect(() => {
     async function fetchSalesAssociates() {
       try {
-        const response = await axios.get('http://localhost:3001/sales-executives');
+        const response = await axios.get(`${baseURL}/sales-executives`);
         setSalesAssociates(response.data);
         setLoading(false);
       } catch (error) {

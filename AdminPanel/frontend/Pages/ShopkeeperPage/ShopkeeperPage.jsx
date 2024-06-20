@@ -2,6 +2,7 @@ import  { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import axios from 'axios';
 import './ShopkeeperPage.css'; // Import your CSS file for styling
+import baseURL from '../../metro';
 
 export default function ShopkeeperPage() {
   const [shopkeepers, setShopkeepers] = useState([]);
@@ -22,7 +23,7 @@ export default function ShopkeeperPage() {
   useEffect(() => {
     async function fetchShopkeepers() {
       try {
-        const response = await axios.get('http://localhost:3001/shopkeepers');
+        const response = await axios.get(`${baseURL}/shopkeepers`);
         console.log('Fetched Shopkeepers:', response.data); // Log the fetched data
         setShopkeepers(response.data);
       } catch (error) {
@@ -47,7 +48,7 @@ export default function ShopkeeperPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3001/shopkeepers', formData);
+      await axios.post(`${baseURL}/shopkeepers`, formData);
       alert('Shopkeeper added successfully');
       setFormData({
         shopkeeperName: '',

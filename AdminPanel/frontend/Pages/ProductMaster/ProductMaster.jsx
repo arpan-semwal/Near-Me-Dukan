@@ -1,8 +1,10 @@
-// ProductList.js
+// src/components/ProductList.js
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Product.css'; // Import CSS file for styling
+import baseURL from '../../metro';
+ // Adjust the path as necessary
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -15,6 +17,7 @@ function ProductList() {
     precise_brand_name: '',
     price: '',
     weight: '',
+    weight_type: 'g', // Default weight type
     type: '',
     picture: null // To hold the selected file
   });
@@ -25,7 +28,7 @@ function ProductList() {
 
   // Function to fetch products from backend
   const fetchProducts = () => {
-    axios.get('http://localhost:3001/products')
+    axios.get(`${baseURL}/products`)
       .then(response => {
         setProducts(response.data);
       })
@@ -46,10 +49,11 @@ function ProductList() {
       formData.append('precise_brand_name', newProduct.precise_brand_name);
       formData.append('price', newProduct.price);
       formData.append('weight', newProduct.weight);
+      formData.append('weight_type', newProduct.weight_type); // Append weight_type
       formData.append('type', newProduct.type);
       formData.append('picture', newProduct.picture);
 
-      const response = await axios.post('http://localhost:3001/products/add', formData, {
+      const response = await axios.post(`${baseURL}/products/add`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -65,6 +69,7 @@ function ProductList() {
         precise_brand_name: '',
         price: '',
         weight: '',
+        weight_type: 'g', // Reset weight_type
         type: '',
         picture: null
       });
@@ -101,13 +106,12 @@ function ProductList() {
       <div className="products-container">
         {filteredProducts.map(product => (
           <div key={product.id} className="product-card">
-            {product.picture_path && <img src={`http://localhost:3001${product.picture_path}`} alt="Product" className="product-image" />}
+            {product.picture_path && <img src={`${baseURL}${product.picture_path}`} alt="Product" className="product-image" />}
             <h2 className="product-name">{product.product_name}</h2>
             <p className="product-description">Brand: {product.brand_name}</p>
             <p className="product-price">Price: ₹{product.price}</p>
-            <p className="product-weight">Weight: {product.weight}</p>
+            <p className="product-weight">Weight: {product.weight} {product.weight_type}</p> {/* Display weight and weight type */}
             <p className="product-type">Type: {product.type}</p>
-            
           </div>
         ))}
       </div>
@@ -139,6 +143,10 @@ function ProductList() {
             <div className="form-group">
               <label>Weight:</label>
               <input type="text" value={newProduct.weight} onChange={(e) => setNewProduct({ ...newProduct, weight: e.target.value })} />
+              <select value={newProduct.weight_type} onChange={(e) => setNewProduct({ ...newProduct, weight_type: e.target.value })}>
+                <option value="g">g</option>
+                <option value="kg">kg</option>
+              </select>
             </div>
             <div className="form-group">
               <label>Type:</label>

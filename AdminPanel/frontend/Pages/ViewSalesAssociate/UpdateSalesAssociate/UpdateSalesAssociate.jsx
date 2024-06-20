@@ -2,6 +2,7 @@ import   { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navbar from '../../../components/Navbar/Navbar';
+import baseURL from '../../../metro';
 
 export default function UpdateSalesAssociate() {
   const [salesAssociate, setSalesAssociate] = useState({});
@@ -10,7 +11,7 @@ export default function UpdateSalesAssociate() {
   useEffect(() => {
     async function fetchSalesAssociate() {
       try {
-        const response = await axios.get(`http://localhost:3001/sales-executives/${mobileNo}`);
+        const response = await axios.get(`${baseURL}/sales-executives/${mobileNo}`);
         setSalesAssociate(response.data);
       } catch (error) {
         console.error('Error fetching sales associate:', error);
@@ -28,7 +29,7 @@ export default function UpdateSalesAssociate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http:// localhost/sales-executives/${mobileNo}`, salesAssociate);
+      await axios.put(`${baseURL}/sales-executives/${mobileNo}`, salesAssociate);
       console.log('Sales executive updated successfully');
       // Optionally, you can redirect or show a success message here
     } catch (error) {

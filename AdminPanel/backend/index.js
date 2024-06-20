@@ -5,18 +5,28 @@ const crypto = require('crypto');
 const cors = require('cors');
 const app = express();
 const port = 3001;
-
+require('dotenv').config();
 const multer = require('multer');
 const path = require('path');
  
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Noodle@123',
-  database: 'nkd'
+
+
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 
+//const db = mysql.createPool({
+//  host:'localhost',  // Replace with your MySQL host IP address or hostname
+//  user:'root', // Replace with your MySQL username
+//  password:'Noodle@123', // Replace with your MySQL password
+//  database:'nkd' // Replace with your MySQL database name
+//});
+
+ 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve static files from /uploads
  
@@ -30,9 +40,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve s
 
 
 // Connect to MySQL
-db.connect(err => {
+db.getConnection(err => {
 	if (err) {
-	  console.error('Error connecting to MySQL:', err);
+	  console.error('Error connecting to MySQL',err);
 	  return;
 	}
 	console.log('Connected to MySQL database');
@@ -230,7 +240,7 @@ app.post('/sales-executives', (req, res) => {
 
   // GET all products
   app.get('/products', (req, res) => {
-    const sql = 'SELECT id, main_category, product_name, brand_name, precise_brand_name, price, weight, type, picture_path FROM tbl_product_master';
+    const sql = 'SELECT id, main_category, product_name, brand_name, precise_brand_name, price, weight, weight_type, type, picture_path FROM tbl_product_master';
     db.query(sql, (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
@@ -244,11 +254,11 @@ app.post('/sales-executives', (req, res) => {
   
   // POST to add a product
   app.post('/products/add', upload.single('picture'), (req, res) => {
-    const { main_category, product_name, brand_name, precise_brand_name, price, weight, type } = req.body;
+    const { main_category, product_name, brand_name, precise_brand_name, price, weight, weight_type, type } = req.body;
     const picture_path = req.file ? '/uploads/' + req.file.filename : null;
   
-    const sql = 'INSERT INTO tbl_product_master (main_category, product_name, brand_name, precise_brand_name, price, weight, type, picture_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(sql, [main_category, product_name, brand_name, precise_brand_name, price, weight, type, picture_path], (err, result) => {
+    const sql = 'INSERT INTO tbl_product_master (main_category, product_name, brand_name, precise_brand_name, price, weight, weight_type, type, picture_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    db.query(sql, [main_category, product_name, brand_name, precise_brand_name, price, weight, weight_type, type, picture_path], (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
         return res.status(500).json({ error: 'Failed to add product' });
@@ -257,7 +267,6 @@ app.post('/sales-executives', (req, res) => {
       res.json({ message: 'Product added successfully' });
     });
   });
-
 // Route to get all sales executives with hierarchy information
 app.get('/sales_executives_team', (req, res) => {
   const sql = `

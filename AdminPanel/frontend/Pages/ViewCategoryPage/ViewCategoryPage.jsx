@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar/Navbar';
 import axios from 'axios';
+import baseURL from '../../metro';
 
 export default function ViewCategoryPage() {
   const [categories, setCategories] = useState([]);
@@ -10,7 +11,7 @@ export default function ViewCategoryPage() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const response = await axios.get('http://localhost:3001/categories');
+        const response = await axios.get(`${baseURL}/categories`);
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);

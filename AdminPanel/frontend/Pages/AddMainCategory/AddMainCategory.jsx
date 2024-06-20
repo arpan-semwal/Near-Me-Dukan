@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Navbar from '../../components/Navbar/Navbar';
+import baseURL from '../../metro';
 
 export default function AddMainCategory() {
   const [categoryName, setCategoryName] = useState('');
@@ -10,7 +11,7 @@ export default function AddMainCategory() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post('https://localhost:3001/categories', { name: categoryName, type: categoryType });
+      await axios.post(`${baseURL}/categories`, { name: categoryName, type: categoryType });
       alert('Category added successfully');
       setCategoryName('');
       setCategoryType('service');

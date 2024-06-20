@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Card, CardContent, Typography, Grid, Container } from '@mui/material';
+import baseURL from '../../metro';
 
 function SalesAssociateTeam() {
   const [executives, setExecutives] = useState([]);
 
   useEffect(() => {
     // Fetch executives from backend when component mounts
-    axios.get('http://localhost:3001/sales_executives_team')
+    axios.get(`${baseURL}/sales_executives_team`)
       .then(response => {
         setExecutives(response.data);
       })
