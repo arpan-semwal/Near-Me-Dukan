@@ -21,7 +21,7 @@ export default function ShopkeeperOrders({ route }) {
 
     const fetchShopkeeperOrders = () => {
         // Replace the URL with your backend endpoint
-        fetch(`http://192.168.29.67:3000/orders/shopkeeper/${shopkeeperPhoneNumber}`)
+        fetch(`http://172.16.16.19:3000/orders/shopkeeper/${shopkeeperPhoneNumber}`)
             .then(response => response.json())
             .then(data => {
                 setOrders(data);

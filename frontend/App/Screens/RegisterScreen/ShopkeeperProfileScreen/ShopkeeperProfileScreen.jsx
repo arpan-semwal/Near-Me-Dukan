@@ -14,7 +14,7 @@ const ShopkeeperProfileScreen = ({ route }) => {
 
     const handleUpdateProfile = async () => {
         try {
-            const response = await fetch(`http://192.168.29.67:3000/updateProfile/${phoneNumber}`, {
+            const response = await fetch(`http://172.16.16.19:3000/updateProfile/${phoneNumber}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

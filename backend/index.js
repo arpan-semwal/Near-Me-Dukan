@@ -31,13 +31,16 @@ const db = mysql.createConnection({
 //  }));
 
 
-
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads/'); // Directory where images will be stored
+    destination: function (req, file, cb) {
+        const uploadDir = path.join(__dirname, 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir);
+        }
+        cb(null, uploadDir);
     },
-    filename: function(req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname); // Unique filename
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
 
@@ -190,8 +193,13 @@ module.exports = { app, authenticateSession };
  
 /*************************************************************************************************************************************************************************************
  * ******************************************************Shopkeeper and Customer Register Endpoint************************************************************************************************************** */ 
-app.post('/register', (req, res) => {
-    const { phoneNumber, name, pincode, state, city, address, shopID } = req.body;
+app.post('/register', upload.fields([
+    { name: 'shopBanner', maxCount: 1 },
+    { name: 'profilePicture', maxCount: 1 }
+]), (req, res) => {
+    const { phoneNumber, name, pincode, state, city, address, shopID, selectedCategory, selectedSubCategory, selectedCategoryType } = req.body;
+    const shopBannerUrl = req.files.shopBanner ? `/uploads/${req.files.shopBanner[0].filename}` : null;
+    const profilePictureUrl = req.files.profilePicture ? `/uploads/${req.files.profilePicture[0].filename}` : null;
 
     // Check if user already exists
     db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
@@ -200,33 +208,32 @@ app.post('/register', (req, res) => {
             return res.status(500).json({ message: 'Internal server error' });
         }
         if (results.length > 0) {
-            return res.status(400).json({ message: 'Shop id does not exist' });
+            return res.status(400).json({ message: 'Phone number already registered' });
         }
 
         // If shopID is provided
         if (shopID) {
             // Check if shopID exists in shopkeepers database
-            db.query('SELECT * FROM shopkeepers WHERE phoneNumber = ?', [shopID], (err, shopkeeperResults) => {
+            db.query('SELECT * FROM shopkeepers WHERE shopID = ?', [shopID], (err, shopkeeperResults) => {
                 if (err) {
                     console.error('Error checking shopkeeper existence:', err);
                     return res.status(500).json({ message: 'Internal server error' });
                 }
-                
+
                 if (shopkeeperResults.length > 0) {
                     // Shopkeeper exists with the provided shopID
                     const shopkeeper = shopkeeperResults[0];
-                    const selectedCategory = shopkeeper.selectedCategory;
-                    
+
                     // Add the user to newcustomers database with shopID
-                    db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id) VALUES (?, ?, ?, ?, ?, ?, ?)', 
-                    [phoneNumber, name, pincode, state, city, address, shopID], 
+                    db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id, shopBanner, profilePicture, selectedCategory, selectedSubCategory, selectedCategoryType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                    [phoneNumber, name, pincode, state, city, address, shopID, shopBannerUrl, profilePictureUrl, selectedCategory, selectedSubCategory, selectedCategoryType], 
                     (err, result) => {
                         if (err) {
                             console.error('Error registering user:', err);
                             return res.status(500).json({ message: 'Internal server error' });
                         }
                         console.log('User registered successfully');
-                        return res.status(200).json({ message: 'User registered successfully', shopType: selectedCategory });
+                        return res.status(200).json({ message: 'User registered successfully', shopType: shopkeeper.selectedCategory });
                     });
                 } else {
                     // Shopkeeper not found with the provided shopID
@@ -236,8 +243,8 @@ app.post('/register', (req, res) => {
             });
         } else {
             // If shopID is not provided, register the user without associating it with any shop
-            db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?, ?)', 
-            [phoneNumber, name, pincode, state, city, address], 
+            db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shopBanner, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
+            [phoneNumber, name, pincode, state, city, address, shopBannerUrl, profilePictureUrl], 
             (err, result) => {
                 if (err) {
                     console.error('Error registering user:', err);
@@ -249,7 +256,6 @@ app.post('/register', (req, res) => {
         }
     });
 });
-
  
 
 

@@ -54,7 +54,7 @@ export default function ShopkeeperScreen({ route }) {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://192.168.29.67:3000/categories'); // Change to your server's endpoint
+                const response = await fetch('http://172.16.16.19:3000/categories'); // Change to your server's endpoint
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -72,7 +72,7 @@ export default function ShopkeeperScreen({ route }) {
         const fetchSubCategories = async () => {
             try {
                 if (selectedCategoryId) {
-                    const response = await fetch(`http://192.168.29.67:3000/subcategories/${selectedCategoryId}`);
+                    const response = await fetch(`http://172.16.16.19:3000/subcategories/${selectedCategoryId}`);
                     if (response.ok) {
                         const data = await response.json();
                         setSubCategories(data);
@@ -89,51 +89,53 @@ export default function ShopkeeperScreen({ route }) {
     }, [selectedCategoryId]);
 
     const handleSubmit = async () => {
-        // Check for required fields and validate data
-    
-        // Prepare data
-        const data = {
-            phoneNumber,
-            shopkeeperName,
-            shopID,
-            pincode,
-            shopState,
-            city,
-            address,
-            salesAssociateNumber,
-            selectedCategory,
-            selectedSubCategory,
-            selectedCategoryType // Include the selected category type in the data
-        };
-    
+        setSubmitted(true);
+
+        // Validate required fields
+        if (!shopkeeperName || !shopID || !pincode || !shopState || !city || !address || !selectedCategory) {
+            Alert.alert('Validation Error', 'Please fill all required fields.');
+            return;
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('phoneNumber', phoneNumber);
+        formData.append('shopkeeperName', shopkeeperName);
+        formData.append('shopID', shopID);
+        formData.append('pincode', pincode);
+        formData.append('shopState', shopState);
+        formData.append('city', city);
+        formData.append('address', address);
+        formData.append('selectedCategory', selectedCategory);
+        formData.append('selectedSubCategory', selectedSubCategory);
+        formData.append('selectedCategoryType', selectedCategoryType);
+        if (shopBanner) {
+            const filename = shopBanner.uri.split('/').pop();
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : `image`;
+            formData.append('shopBanner', { uri: shopBanner.uri, name: filename, type });
+        }
+        if (profilePicture) {
+            const filename = profilePicture.uri.split('/').pop();
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : `image`;
+            formData.append('profilePicture', { uri: profilePicture.uri, name: filename, type });
+        }
+
         try {
-            const response = await fetch('http://192.168.29.67:3000/shopkeeperRegister', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+            const response = await axios.post('http://172.16.16.19:3000/register', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
-    
-            if (!response.ok) {
-                throw new Error('Failed to register shopkeeper');
+
+            if (response.status === 200) {
+                Alert.alert('Success', 'User registered successfully.');
+                navigation.navigate('NextScreen'); // Change to your next screen
+            } else {
+                Alert.alert('Registration Failed', response.data.message);
             }
-    
-            const responseData = await response.json();
-            alert("Shopkeeper registered");
-            console.log(responseData.message);
-    
-            navigation.navigate('Subscription', {
-                phoneNumber: phoneNumber,
-                selectedCategory:selectedCategory,
-                selectedSubCategory: selectedSubCategory,
-                selectedSubCategoryId: selectedSubCategoryId,
-                selectedCategoryType: selectedCategoryType,// Pass the category type to the next screen
-                userType:userType
-            });
         } catch (error) {
-            console.error('Error registering shopkeeper:', error);
-            Alert.alert('Error', 'Failed to register shopkeeper. Please try again later.');
+            console.error('Error registering user:', error);
+            Alert.alert('Registration Failed', 'An error occurred during registration.');
         }
     };
 
@@ -169,6 +171,41 @@ export default function ShopkeeperScreen({ route }) {
                 break;
             default:
                 break;
+        }
+    };
+    
+    
+    const uploadImage = async (uri) => {
+        const apiUrl = 'http://172.16.16.19:3000/upload';
+        const formData = new FormData();
+        formData.append('image', {
+            uri,
+            name: `photo-${Date.now()}.jpg`,
+            type: 'image/jpeg'
+        });
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+
+        const data = await response.json();
+        return data.imageUrl;
+    };
+    
+    const pickImage = async (setImage) => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            setImage(result);
         }
     };
  
@@ -256,20 +293,20 @@ export default function ShopkeeperScreen({ route }) {
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>
                     <Picker
-    selectedValue={selectedCategory}
-    onValueChange={(itemValue, itemIndex) => {
-        setSelectedCategory(itemValue);
-        // Find the ID and type of the selected category
-        const category = categories.find(cat => cat.name === itemValue);
-        setSelectedCategoryId(category ? category.id : '');
-        setSelectedCategoryType(category ? category.type : ''); // Update the selected category type state
-    }}
-    style={styles.picker}
->
-    {categories.map((category, index) => (
-        <Picker.Item key={index} label={category.name} value={category.name} />
-    ))}
-</Picker>
+                    selectedValue={selectedCategory}
+                    onValueChange={(itemValue, itemIndex) => {
+                        setSelectedCategory(itemValue);
+                        // Find the ID and type of the selected category
+                        const category = categories.find(cat => cat.name === itemValue);
+                        setSelectedCategoryId(category ? category.id : '');
+                        setSelectedCategoryType(category ? category.type : ''); // Update the selected category type state
+                    }}
+                    style={styles.picker}
+                >
+                {categories.map((category, index) => (
+                    <Picker.Item key={index} label={category.name} value={category.name} />
+                ))}
+            </Picker>
         </View>
         
         {selectedCategory === 'Salon Shop' && (
@@ -296,6 +333,12 @@ export default function ShopkeeperScreen({ route }) {
         </Picker>
     </View>
 )}
+
+<Button title="Select Shop Banner" onPress={() => pickImage(setShopBanner)} />
+            {shopBanner && <Text>Banner selected: {shopBanner.uri}</Text>}
+            <Button title="Select Profile Picture" onPress={() => pickImage(setProfilePicture)} />
+            {profilePicture && <Text>Profile Picture selected: {profilePicture.uri}</Text>}
+            <Button title="Register" onPress={handleSubmit} />
                 
                 
                 <Button

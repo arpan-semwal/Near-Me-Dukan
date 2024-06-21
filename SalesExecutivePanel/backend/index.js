@@ -7,7 +7,7 @@ const app = express();
 const port = 3002;
 
 const db = mysql.createConnection({
-  host: '192.168.29.67',
+  host: '172.16.16.19',
   user: 'root',
   password: 'Noodle@123',
   database: 'nkd'
@@ -31,5 +31,5 @@ app.use(bodyParser.json());
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://192.168.29.67:${port}/`);
+  console.log(`Server running at http://172.16.16.19:${port}/`);
 });
