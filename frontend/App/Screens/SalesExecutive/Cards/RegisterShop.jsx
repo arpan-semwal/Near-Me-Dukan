@@ -30,7 +30,7 @@ export default function RegisterShop({ route }) {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://172.16.16.19:3000/categories'); // Change to your server's endpoint
+                const response = await fetch('http://172.16.16.41:3000/categories'); // Change to your server's endpoint
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -48,7 +48,7 @@ export default function RegisterShop({ route }) {
         const fetchSubCategories = async () => {
             try {
                 if (selectedCategoryId) {
-                    const response = await fetch(`http://172.16.16.19:3000/subcategories/${selectedCategoryId}`);
+                    const response = await fetch(`http://172.16.16.41:3000/subcategories/${selectedCategoryId}`);
                     if (response.ok) {
                         const data = await response.json();
                         setSubCategories(data);
@@ -71,7 +71,7 @@ export default function RegisterShop({ route }) {
         }
     
         try {
-            const response = await fetch('http://172.16.16.19:3000/shopkeeperRegister', {
+            const response = await fetch('http://172.16.16.41:3000/shopkeeperRegister', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

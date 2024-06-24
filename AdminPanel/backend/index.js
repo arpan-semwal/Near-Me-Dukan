@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const cors = require('cors');
 const app = express();
-const port = 3001;
+const PORT = 3001;
 require('dotenv').config();
 const multer = require('multer');
 const path = require('path');
@@ -359,6 +359,6 @@ app.put('/commission_rates', (req, res) => {
 
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
 });

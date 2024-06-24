@@ -13,7 +13,7 @@ export default function ViewOrders() {
     }, []);
 
     const fetchOrders = () => {
-        fetch(`http://172.16.16.19:3000/orders/shop/${shopkeeperPhoneNumber}`)
+        fetch(`http://172.16.16.41:3000/orders/shop/${shopkeeperPhoneNumber}`)
             .then(response => response.json())
             .then(data => {
                 setOrders(data);

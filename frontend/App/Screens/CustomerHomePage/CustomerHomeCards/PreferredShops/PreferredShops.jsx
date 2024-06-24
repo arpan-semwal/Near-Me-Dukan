@@ -12,7 +12,7 @@ export default function PreferredShops({ route }) {
   useEffect(() => {
     const fetchPreferredShops = async () => {
       try {
-        const response = await axios.get(`http://172.16.16.19:3000/api/preferred_shops/${phoneNumber}`);
+        const response = await axios.get(`http://172.16.16.41:3000/api/preferred_shops/${phoneNumber}`);
         setShops(response.data);
       } catch (error) {
         console.error('Error fetching preferred shops:', error);
@@ -34,7 +34,7 @@ export default function PreferredShops({ route }) {
 
   const handleDeleteShop = async (shopID) => {
     try {
-      const response = await axios.delete('http://172.16.16.19:3000/removePreferredShop', {
+      const response = await axios.delete('http://172.16.16.41:3000/removePreferredShop', {
         data: { customerPhoneNumber: phoneNumber, shopID: shopID }
       });
 

@@ -9,7 +9,7 @@ export default function MobileSales() {
 
   const handleSubmit = () => {
     if (mobileNumber.trim() !== '') {
-      axios.post('http://172.16.16.19:3000/check-user', { mobileNumber:mobileNumber })
+      axios.post('http://172.16.16.41:3000/check-user', { mobileNumber:mobileNumber })
         .then(response => {
           if (response.data.exists) {
             navigation.navigate('OtpScreen', { mobileNumber:mobileNumber });

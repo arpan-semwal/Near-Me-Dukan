@@ -28,7 +28,7 @@ export default function CustomerHomePage({ route }) {
   useEffect(() => {
     const fetchCustomerDetails = async () => {
       try {
-        const response = await fetch(`http://172.16.16.19:3000/customerDetails/${phoneNumber}`);
+        const response = await fetch(`http://172.16.16.41:3000/customerDetails/${phoneNumber}`);
         const data = await response.json();
         setCustomerDetails(data);
         setFirstCustomerName(data.name); // Set the customer's name

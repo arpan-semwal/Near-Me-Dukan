@@ -16,7 +16,7 @@ const SubServices = ({ route }) => {
 
     const fetchSubServices = async () => {
         try {
-            const response = await fetch(`http://172.16.16.19:3000/shopkeeper/selectedSubServices/${shopPhoneNumber}/${mainServiceId}`);
+            const response = await fetch(`http://172.16.16.41:3000/shopkeeper/selectedSubServices/${shopPhoneNumber}/${mainServiceId}`);
             const data = await response.json();
             setSubServices(data);
         } catch (error) {
