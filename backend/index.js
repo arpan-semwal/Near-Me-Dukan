@@ -1728,6 +1728,48 @@ app.get('/api/preferred_shops/:phoneNumber', (req, res) => {
       res.json(results);
     });
   });
+  
+  
+  app.post('/registerSales', upload.none(), async (req, res) => {
+    const {
+        phoneNumber,
+        shopkeeperName,
+        shopID,
+        pincode,
+        shopState,
+        city,
+        address,
+        salesAssociateNumber,
+        selectedCategory,
+        selectedSubCategory,
+    } = req.body;
+
+    try {
+        // Insert new shopkeeper into the database
+        await new Promise((resolve, reject) => {
+            db.query(
+                'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error registering shopkeeper:', err);
+                        reject(err);
+                        return;
+                    }
+                    resolve(result);
+                }
+            );
+        });
+
+        // Check if the sales associate was added by someone and assign commission
+        await checkAndAssignCommission(salesAssociateNumber);
+
+        res.status(200).json({ message: 'Shopkeeper registered successfully' });
+    } catch (error) {
+        console.error('Error registering shopkeeper:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 
 

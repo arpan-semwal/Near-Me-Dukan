@@ -71,7 +71,7 @@ export default function RegisterShop({ route }) {
         }
     
         try {
-            const response = await fetch('http://172.16.16.41:3000/shopkeeperRegister', {
+            const response = await fetch('http://172.16.16.41:3000/registerSales', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,14 +142,14 @@ export default function RegisterShop({ route }) {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-    <Text style={styles.label}>Sales Associate's Number (Optional)</Text>
-    <TextInput
-        style={[styles.input]}
-        placeholder="Sales Associate's Number"
-        value={mobileNumber} // Set the value to mobileNumber
-        editable={false} // Make it read-only
-        keyboardType="numeric"
-    />
+                <Text style={styles.label}>Sales Associate's Number (Optional)</Text>
+                <TextInput
+                    style={[styles.input]}
+                    placeholder="Sales Associate's Number"
+                    value={mobileNumber} // Set the value to mobileNumber
+                    editable={false} // Make it read-only
+                    keyboardType="numeric"
+                />
 </View>
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Pincode*</Text>
