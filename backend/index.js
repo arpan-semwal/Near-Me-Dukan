@@ -193,13 +193,8 @@ module.exports = { app, authenticateSession };
  
 /*************************************************************************************************************************************************************************************
  * ******************************************************Shopkeeper and Customer Register Endpoint************************************************************************************************************** */ 
-app.post('/register', upload.fields([
-    { name: 'shopBanner', maxCount: 1 },
-    { name: 'profilePicture', maxCount: 1 }
-]), (req, res) => {
+app.post('/register', (req, res) => {
     const { phoneNumber, name, pincode, state, city, address, shopID, selectedCategory, selectedSubCategory, selectedCategoryType } = req.body;
-    const shopBannerUrl = req.files.shopBanner ? `/uploads/${req.files.shopBanner[0].filename}` : null;
-    const profilePictureUrl = req.files.profilePicture ? `/uploads/${req.files.profilePicture[0].filename}` : null;
 
     // Check if user already exists
     db.query('SELECT * FROM newcustomers WHERE phoneNumber = ?', [phoneNumber], (err, results) => {
@@ -225,8 +220,8 @@ app.post('/register', upload.fields([
                     const shopkeeper = shopkeeperResults[0];
 
                     // Add the user to newcustomers database with shopID
-                    db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id, shopBanner, profilePicture, selectedCategory, selectedSubCategory, selectedCategoryType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-                    [phoneNumber, name, pincode, state, city, address, shopID, shopBannerUrl, profilePictureUrl, selectedCategory, selectedSubCategory, selectedCategoryType], 
+                    db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shop_id, selectedCategory, selectedSubCategory, selectedCategoryType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                    [phoneNumber, name, pincode, state, city, address, shopID, selectedCategory, selectedSubCategory, selectedCategoryType], 
                     (err, result) => {
                         if (err) {
                             console.error('Error registering user:', err);
@@ -243,8 +238,8 @@ app.post('/register', upload.fields([
             });
         } else {
             // If shopID is not provided, register the user without associating it with any shop
-            db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address, shopBanner, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', 
-            [phoneNumber, name, pincode, state, city, address, shopBannerUrl, profilePictureUrl], 
+            db.query('INSERT INTO newcustomers (phoneNumber, name, pincode, state, city, address) VALUES (?, ?, ?, ?, ?, ?)', 
+            [phoneNumber, name, pincode, state, city, address], 
             (err, result) => {
                 if (err) {
                     console.error('Error registering user:', err);
@@ -256,7 +251,8 @@ app.post('/register', upload.fields([
         }
     });
 });
- 
+
+
 
 
 
