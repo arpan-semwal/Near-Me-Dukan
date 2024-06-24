@@ -34,7 +34,7 @@ const ProductInventory = ({ route }) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch(`http://172.16.16.19:3000/products/${selectedCategory}`);
+            const response = await fetch(`http://172.16.16.41:3000/products/${selectedCategory}`);
             if (response.ok) {
                 const data = await response.json();
                 const productsWithAddedStatus = data.map(product => ({ ...product, added: false }));
@@ -69,10 +69,10 @@ const ProductInventory = ({ route }) => {
 
     const handleAddProduct = async (productId, index) => {
         try {
-            const response = await fetch('http://172.16.16.19:3000/addProduct', {
+            const response = await fetch('http://172.16.16.41:3000/addProduct', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', 
                 },
                 body: JSON.stringify({ phoneNumber, productId }),
             });
