@@ -111,10 +111,7 @@ const ProductInventory = ({ route }) => {
             <Text style={styles.productBrand}>{item.brand_name}</Text>
             <Text style={styles.productPrice}>Price: ${item.price}</Text>
             <Text style={styles.productWeight}>Weight: {item.weight}</Text>
-            <Image
-                source={{ uri: `${item.picture_path}` }} // Ensure your image path is correct
-                style={styles.productImage} // Define styles for the image
-            />
+           
             
             <TouchableOpacity
                 onPress={() => handleAddProduct(item.id, index)}

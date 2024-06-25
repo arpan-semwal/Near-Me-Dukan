@@ -10,7 +10,7 @@ export default function SalonShop({ route }) {
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
-    const {phoneNumber,selectedCategory} = route.params
+    const {phoneNumber,selectedCategory , userType} = route.params
     
     useEffect(() => {
         fetchShopkeeperDetails();
@@ -124,7 +124,7 @@ export default function SalonShop({ route }) {
                         <View style={styles.headerText}>
                             <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{phoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
-                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024 {selectedCategory}</Text>
+                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024 safdsafasf{selectedCategory}</Text>
                         </View>
                     </View>
 
