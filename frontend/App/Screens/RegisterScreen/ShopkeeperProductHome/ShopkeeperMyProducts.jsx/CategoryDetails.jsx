@@ -3,80 +3,79 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react
 import { useCart } from '../../../../Context/ContextApi';
 
 const CategoryDetails = ({ route }) => {
-    const { category, phoneNumber, userType } = route.params;
-    const [products, setProducts] = useState(category.products);
-    const { addToCart } = useCart(); // Using addToCart function from CartContext
+  const { category } = route.params;
+  const { addToCart, custPhoneNumber, userType } = useCart(); // Using addToCart function and custPhoneNumber from CartContext
 
-    // Function to add a product to the cart
-    const addProductToCart = (product) => {
-        addToCart(product); // Call the addToCart function from the context
-        Alert.alert('Product added to cart successfully!');
-    };
+  const [products, setProducts] = useState(category.products);
 
-    // Function to render each product item
-    const renderProduct = ({ item }) => {
-        // Check userType to conditionally render the Add to Cart button
-        const renderButton = () => {
-            if (userType === 'customer') {
-                return (
-                    <TouchableOpacity onPress={() => addProductToCart(item)} style={styles.addToCartButton}>
-                        <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-                    </TouchableOpacity>
-                );
-            }
-            return null; // If userType is shopkeeper, don't render the button
-        };
+  // Function to add a product to the cart
+  const addProductToCart = (product) => {
+    addToCart(custPhoneNumber, product); // Call the addToCart function from the context with custPhoneNumber
+    Alert.alert('Product added to cart successfully!');
+    // Optionally navigate to CartScreen after adding to cart
+    // navigation.navigate('CartScreen');
+  };
 
+  // Function to render each product item
+  const renderProduct = ({ item }) => {
+    // Check userType to conditionally render the Add to Cart button
+    const renderButton = () => {
+      if (userType === 'customer') {
         return (
-            <View style={styles.productContainer}>
-                <Text>Main Category: {item.main_category}</Text>
-                <Text>Product Name: {item.product_name}</Text>
-                <Text>ID: {item.id}</Text>
-                <Text>Brand: {item.brand_name}</Text>
-                <Text>Price: ${item.price}</Text>
-                <Text>Weight: {item.weight}</Text>
-                {/* Render button based on userType */}
-                {renderButton()}
-            </View>
+          <TouchableOpacity onPress={() => addProductToCart(item)} style={styles.addToCartButton}>
+            <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+          </TouchableOpacity>
         );
+      }
+      return null; // If userType is shopkeeper, don't render the button
     };
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={products}
-                renderItem={renderProduct}
-                keyExtractor={(item) => item.id.toString()}
-            />
-        </View>
+      <View style={styles.productContainer}>
+        <Text>Main Category: {item.main_category}</Text>
+        <Text>Product Name: {item.product_name}</Text>
+        <Text>ID: {item.id}</Text>
+        <Text>Brand: {item.brand_name}</Text>
+        <Text>Price: ${item.price}</Text>
+        <Text>Weight: {item.weight}</Text>
+        {/* Render button based on userType */}
+        {renderButton()}
+      </View>
     );
+  };
+
+  return (
+    <View style={styles.container}>
+      <FlatList data={products} renderItem={renderProduct} keyExtractor={(item) => item.id.toString()} />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-        backgroundColor: '#fff',
-    },
-    productContainer: {
-        marginBottom: 16,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        backgroundColor: '#f9f9f9',
-    },
-    addToCartButton: {
-        marginTop: 8,
-        backgroundColor: 'green',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    addToCartButtonText: {
-        color: '#fff',
-    },
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  productContainer: {
+    marginBottom: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  addToCartButton: {
+    marginTop: 8,
+    backgroundColor: 'green',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  addToCartButtonText: {
+    color: '#fff',
+  },
 });
 
 export default CategoryDetails;

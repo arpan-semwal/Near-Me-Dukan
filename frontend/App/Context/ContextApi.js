@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 
 // Create CartContext
 const CartContext = createContext();
- 
+
 // Create CustomerContext
 export const CustomerContext = createContext();
 
@@ -13,7 +13,7 @@ export const useCustomer = () => useContext(CustomerContext);
 // Create CartProvider component
 export const CartProvider = ({ children }) => {
   // State values
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState({});
   const [customerName, setCustomerName] = useState('');
   const [shopID, setShopID] = useState('');
   const [shopName, setShopName] = useState('');
@@ -26,45 +26,41 @@ export const CartProvider = ({ children }) => {
   const [custPhoneNumber, setCustPhoneNumber] = useState('');
   const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
   const [name, setName] = useState('');
-  const [firstCustomerName, setFirstCustomerName] = useState(''); 
-  const [phoneNumber, setPhoneNumber] = useState(''); 
+  const [firstCustomerName, setFirstCustomerName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [shopPhoneNumber, setShopPhoneNumber] = useState('');
 
-  // Function to add item to cart
-  const addToCart = (service) => {
-    const existingItemIndex = cartItems.findIndex(item => item.id === service.id);
+  // Function to add item to cart for a specific customer
+  const addToCart = (custPhoneNumber, product) => {
+    const updatedCartItems = { ...cartItems };
+
+    if (!updatedCartItems[custPhoneNumber]) {
+      updatedCartItems[custPhoneNumber] = [];
+    }
+
+    const existingItemIndex = updatedCartItems[custPhoneNumber].findIndex(item => item.id === product.id);
 
     if (existingItemIndex !== -1) {
-      const updatedCartItems = [...cartItems];
-      updatedCartItems[existingItemIndex].quantity++;
-      setCartItems(updatedCartItems);
+      updatedCartItems[custPhoneNumber][existingItemIndex].quantity++;
     } else {
-      setCartItems(prevItems => [
-        ...prevItems,
-        {
-          id: service.id,
-          name: service.subServiceName,
-          price: service.subServicePrice,
-          quantity: 1,
-          phoneNumber: custPhoneNumber,
-          firstcustomerName: firstCustomerName,
-        },
-      ]);
+      updatedCartItems[custPhoneNumber].push({ ...product, quantity: 1 });
     }
+
+    setCartItems(updatedCartItems);
   };
 
-  // Function to remove item from cart
-  const removeFromCart = productId => {
-    setCartItems(cartItems.filter(item => item.id !== productId));
+  // Function to remove item from cart for a specific customer
+  const removeFromCart = (custPhoneNumber, productId) => {
+    const updatedCartItems = { ...cartItems };
+    updatedCartItems[custPhoneNumber] = updatedCartItems[custPhoneNumber].filter(item => item.id !== productId);
+    setCartItems(updatedCartItems);
   };
 
-  // Function to clear cart
-  const clearCart = () => {
-    setCartItems([]);
-  };
-  
-  const setGlobalPhoneNumber = (number) => {
-    setPhoneNumber(number);
+  // Function to clear cart for a specific customer
+  const clearCart = (custPhoneNumber) => {
+    const updatedCartItems = { ...cartItems };
+    updatedCartItems[custPhoneNumber] = [];
+    setCartItems(updatedCartItems);
   };
 
   // Return the provider with context values
@@ -72,6 +68,7 @@ export const CartProvider = ({ children }) => {
     <CartContext.Provider
       value={{
         cartItems,
+        setCartItems,
         addToCart,
         removeFromCart,
         clearCart,
@@ -93,19 +90,19 @@ export const CartProvider = ({ children }) => {
         setStoreName,
         userType,
         setUserType,
-        shopkeeperPhoneNumber, 
+        shopkeeperPhoneNumber,
         name,
         setName,
-        firstCustomerName, 
-        setFirstCustomerName, 
-        phoneNumber, 
-        setPhoneNumber, 
+        firstCustomerName,
+        setFirstCustomerName,
+        phoneNumber,
+        setPhoneNumber,
         shopPhoneNumber,
         setShopPhoneNumber,
         custPhoneNumber, // Make custPhoneNumber accessible globally
         setCustPhoneNumber, // Provide setter for custPhoneNumber
-        setGlobalPhoneNumber, 
-      }}>
+      }}
+    >
       <CustomerContext.Provider
         value={{
           customerName,
@@ -129,8 +126,9 @@ export const CartProvider = ({ children }) => {
           phoneNumber,
           setPhoneNumber,
           shopPhoneNumber,
-          setShopPhoneNumber
-        }}>
+          setShopPhoneNumber,
+        }}
+      >
         {children}
       </CustomerContext.Provider>
     </CartContext.Provider>
