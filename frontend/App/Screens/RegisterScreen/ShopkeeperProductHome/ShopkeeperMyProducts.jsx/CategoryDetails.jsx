@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import {useCart} from '../../../../Context/ContextApi';
- 
+import { useCart } from '../../../../Context/ContextApi';
 
 const CategoryDetails = ({ route }) => {
     const { category, phoneNumber, userType } = route.params;
@@ -14,20 +13,33 @@ const CategoryDetails = ({ route }) => {
         Alert.alert('Product added to cart successfully!');
     };
 
-    const renderProduct = ({ item }) => (
-        <View style={styles.productContainer}>
-            <Text>Main Category: {item.main_category}</Text>
-            <Text>Product Name: {item.product_name}</Text>
-            <Text>ID: {item.id}</Text>
-            <Text>Brand: {item.brand_name}</Text>
-            <Text>Price: ${item.price}</Text>
-            <Text>Weight: {item.weight}</Text>
-            {/* Render button to add product to cart */}
-            <TouchableOpacity onPress={() => addProductToCart(item)} style={styles.addToCartButton}>
-                <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-            </TouchableOpacity>
-        </View>
-    );
+    // Function to render each product item
+    const renderProduct = ({ item }) => {
+        // Check userType to conditionally render the Add to Cart button
+        const renderButton = () => {
+            if (userType === 'customer') {
+                return (
+                    <TouchableOpacity onPress={() => addProductToCart(item)} style={styles.addToCartButton}>
+                        <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+                    </TouchableOpacity>
+                );
+            }
+            return null; // If userType is shopkeeper, don't render the button
+        };
+
+        return (
+            <View style={styles.productContainer}>
+                <Text>Main Category: {item.main_category}</Text>
+                <Text>Product Name: {item.product_name}</Text>
+                <Text>ID: {item.id}</Text>
+                <Text>Brand: {item.brand_name}</Text>
+                <Text>Price: ${item.price}</Text>
+                <Text>Weight: {item.weight}</Text>
+                {/* Render button based on userType */}
+                {renderButton()}
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>

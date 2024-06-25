@@ -108,7 +108,7 @@ export default function SalonShop({ route }) {
                 console.error('Logout failed:', response.statusText);
             }
         } catch (error) {
-            console.error('Error logging out:', error);
+            console.error('Error logging oudsadt:', error);
         }
     };
 

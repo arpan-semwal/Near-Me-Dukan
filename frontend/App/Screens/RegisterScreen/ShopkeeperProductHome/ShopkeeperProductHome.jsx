@@ -131,7 +131,7 @@ export default function ShopkeeperProductHome({ route }) {
                 <View>
                     <View style={styles.headerContainer}>
                         <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{userType}</Text>
+                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}</Text>
                             <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
                             <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>
