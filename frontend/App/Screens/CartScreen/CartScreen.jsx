@@ -3,12 +3,12 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import { useCart } from '../../Context/ContextApi';
 
 const CartScreen = () => {
-  const { cartItems, removeFromCart, clearCart, custPhoneNumber, setCartItems } = useCart(); // Using cartItems, removeFromCart, clearCart, custPhoneNumber, and setCartItems from CartContext
+  const { cartItems, removeFromCart, clearCart, custPhoneNumber, setCartItems } = useCart();
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <Text>{item.name}</Text>
-      <Text>Price: ${item.price}</Text>
+      <Text>Price: ${item.price.toFixed(2)}</Text>
       <View style={styles.quantityContainer}>
         <TouchableOpacity onPress={() => updateQuantity(item.id, -1)} style={styles.quantityButton}>
           <Text style={styles.quantityButtonText}>-</Text>
@@ -21,6 +21,7 @@ const CartScreen = () => {
       <TouchableOpacity onPress={() => removeFromCart(custPhoneNumber, item.id)} style={styles.removeButton}>
         <Text style={styles.removeButtonText}>Remove</Text>
       </TouchableOpacity>
+      
     </View>
   );
 
@@ -28,9 +29,10 @@ const CartScreen = () => {
     const updatedCartItems = { ...cartItems };
     updatedCartItems[custPhoneNumber] = updatedCartItems[custPhoneNumber].map(item => {
       if (item.id === productId) {
+        const newQuantity = Math.max(1, item.quantity + value);
         return {
           ...item,
-          quantity: Math.max(1, item.quantity + value), // Ensure quantity doesn't go below 1
+          quantity: newQuantity,
         };
       }
       return item;
@@ -38,8 +40,19 @@ const CartScreen = () => {
     setCartItems(updatedCartItems);
   };
 
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+    if (cartItems[custPhoneNumber]) {
+      cartItems[custPhoneNumber].forEach(item => {
+        totalPrice += item.price * item.quantity;
+      });
+    }
+    return totalPrice.toFixed(2);
+  };
+
   return (
     <View style={styles.container}>
+      <Text style={styles.totalPrice}>Total Price: ${calculateTotalPrice()}</Text>
       {cartItems[custPhoneNumber] && cartItems[custPhoneNumber].length === 0 ? (
         <Text>Your cart is empty!</Text>
       ) : (
@@ -63,6 +76,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',
+  },
+  totalPrice: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
   },
   itemContainer: {
     marginBottom: 12,
