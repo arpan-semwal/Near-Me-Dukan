@@ -53,7 +53,7 @@ export default function CustomerHomePage({ route }) {
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome,{name}</Text>
+        <Text style={styles.welcomeText}>Welcome,{phoneNumber}</Text>
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
@@ -81,7 +81,7 @@ export default function CustomerHomePage({ route }) {
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('MyAddress')}>
+            <TouchableOpacity onPress={() => navigateToScreen('MyAddress' , { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID,  phoneNumber:phoneNumber , userType:userType }) }>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />

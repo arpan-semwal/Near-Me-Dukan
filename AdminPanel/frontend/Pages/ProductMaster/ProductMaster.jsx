@@ -1,10 +1,7 @@
-// src/components/ProductList.js
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Product.css'; // Import CSS file for styling
-import baseURL from '../../metro';
- // Adjust the path as necessary
+import baseURL from '../../metro'; // Adjust the path as necessary
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -18,8 +15,14 @@ function ProductList() {
     price: '',
     weight: '',
     weight_type: 'g', // Default weight type
-    type: '',
+    type: '', // Updated to include type field
     picture: null // To hold the selected file
+  });
+
+  // State to store added product IDs
+  const [addedProducts, setAddedProducts] = useState(() => {
+    const storedAddedProducts = sessionStorage.getItem('addedProducts');
+    return storedAddedProducts ? JSON.parse(storedAddedProducts) : [];
   });
 
   useEffect(() => {
@@ -38,7 +41,7 @@ function ProductList() {
   };
 
   // Function to handle form submission and add a new product
-  const handleAddProduct = async (e) => {
+  const handleAddProduct = async (e, productId) => {
     e.preventDefault();
 
     try {
@@ -50,7 +53,7 @@ function ProductList() {
       formData.append('price', newProduct.price);
       formData.append('weight', newProduct.weight);
       formData.append('weight_type', newProduct.weight_type); // Append weight_type
-      formData.append('type', newProduct.type);
+      formData.append('type', newProduct.type); // Append type
       formData.append('picture', newProduct.picture);
 
       const response = await axios.post(`${baseURL}/products/add`, formData, {
@@ -60,6 +63,12 @@ function ProductList() {
       });
 
       console.log("Response:", response.data); // Log response data
+
+      // Update added products state
+      const updatedAddedProducts = [...addedProducts, productId];
+      setAddedProducts(updatedAddedProducts);
+      // Update sessionStorage with added products
+      sessionStorage.setItem('addedProducts', JSON.stringify(updatedAddedProducts));
 
       fetchProducts(); // Refresh product list after adding
       setNewProduct({
@@ -112,6 +121,12 @@ function ProductList() {
             <p className="product-price">Price: ₹{product.price}</p>
             <p className="product-weight">Weight: {product.weight} {product.weight_type}</p> {/* Display weight and weight type */}
             <p className="product-type">Type: {product.type}</p>
+            <button
+              onClick={(e) => handleAddProduct(e, product.id)}
+              className={`add-product-button ${addedProducts.includes(product.id) ? 'added' : ''}`}
+              disabled={addedProducts.includes(product.id)}>
+              {addedProducts.includes(product.id) ? 'Added' : 'Add'}
+            </button>
           </div>
         ))}
       </div>
@@ -150,7 +165,12 @@ function ProductList() {
             </div>
             <div className="form-group">
               <label>Type:</label>
-              <input type="text" value={newProduct.type} onChange={(e) => setNewProduct({ ...newProduct, type: e.target.value })} />
+              <select value={newProduct.type} onChange={(e) => setNewProduct({ ...newProduct, type: e.target.value })}>
+                <option value="">Select Type</option>
+                <option value="Grocery Shop">Grocery Shop</option>
+                <option value="Stationary Shop">Stationary Shop</option>
+                <option value="Sweet Shop">Sweets Shop</option>
+              </select>
             </div>
             <div className="form-group">
               <label>Picture:</label>

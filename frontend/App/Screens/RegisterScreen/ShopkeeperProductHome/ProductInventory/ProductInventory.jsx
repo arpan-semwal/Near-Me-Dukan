@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image , TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Image, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductInventory = ({ route }) => {
-    const { selectedCategory, phoneNumber , shopkeeperPhoneNumber , shopkeeperName } = route.params;
+    const { selectedCategory, phoneNumber, shopkeeperPhoneNumber, shopkeeperName } = route.params;
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -16,14 +16,12 @@ const ProductInventory = ({ route }) => {
         setLoading(true);
         fetchProducts();
     }, [phoneNumber]);
-    
+
     useEffect(() => {
         // Filter products when search text changes
         filterProducts();
     }, [searchText]);
-    
-    
-    
+
     const filterProducts = () => {
         const filtered = products.filter(product =>
             product.product_name.toLowerCase().startsWith(searchText.toLowerCase()) ||
@@ -72,7 +70,7 @@ const ProductInventory = ({ route }) => {
             const response = await fetch('http://172.16.16.41:3000/addProduct', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', 
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ phoneNumber, productId }),
             });
@@ -111,8 +109,7 @@ const ProductInventory = ({ route }) => {
             <Text style={styles.productBrand}>{item.brand_name}</Text>
             <Text style={styles.productPrice}>Price: ${item.price}</Text>
             <Text style={styles.productWeight}>Weight: {item.weight}</Text>
-           
-            
+            <Image source={{ uri: `'http://172.16.16.41:3000/${item.picture_path}` }} style={styles.productImage} />
             <TouchableOpacity
                 onPress={() => handleAddProduct(item.id, index)}
                 style={[styles.addButton, { backgroundColor: item.added ? 'gray' : 'green' }]}
@@ -125,14 +122,7 @@ const ProductInventory = ({ route }) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <View style={styles.leftContainer}>
-                    <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
-                </View>
-                <View style={styles.rightContainer}>
-                    <Text style={styles.welcomeText}>Welcome, {shopkeeperName}</Text>
-                    <Text style={styles.pincodeText}>Shop ID: {shopkeeperPhoneNumber}</Text>
-                    <Text style={styles.pincodeText}>Subscription valid till 10 oct</Text>
-                </View>
+                {/* Your header content */}
             </View>
             <TextInput
                 style={styles.searchInput}
@@ -144,10 +134,10 @@ const ProductInventory = ({ route }) => {
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
                 <FlatList
-                data={loading ? [] : products} // Render products directly if loading is false
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-            />
+                    data={filteredProducts.length > 0 ? filteredProducts : products}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()}
+                />
             )}
         </View>
     );
@@ -156,79 +146,60 @@ const ProductInventory = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 16,
+        backgroundColor: '#fff',
     },
     headerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 16,
     },
-    leftContainer: {
-        marginRight: 10, // Adjust marginRight to reduce the distance
-    },
-    rightContainer: {
-        marginLeft: 10, // Adjust marginLeft to reduce the distance
-    },
-    welcomeImage: {
-        width: 100,
-        height: 100,
-    },
-    welcomeText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    pincodeText: {
-        fontSize: 16,
-        color: '#888',
+    searchInput: {
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        marginBottom: 16,
     },
     productContainer: {
-        width: '100%',
-        paddingHorizontal: 10,
-        paddingVertical: 15,
-        backgroundColor: '#fff',
+        marginBottom: 16,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: '#ccc',
         borderRadius: 8,
-        marginBottom: 10,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
+        backgroundColor: '#f9f9f9',
     },
     productName: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 4,
     },
     productBrand: {
         fontSize: 14,
-        color: '#666',
         marginBottom: 4,
     },
     productPrice: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#00c853',
+        fontSize: 14,
         marginBottom: 4,
     },
     productWeight: {
         fontSize: 14,
-        color: '#888',
+        marginBottom: 8,
+    },
+    productImage: {
+        width: '100%',
+        height: 200,
+        resizeMode: 'cover',
+        marginBottom: 8,
     },
     addButton: {
         marginTop: 8,
+        backgroundColor: 'green',
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 5,
         alignItems: 'center',
-    },
-    
-    searchInput: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        marginBottom: 10,
     },
 });
 

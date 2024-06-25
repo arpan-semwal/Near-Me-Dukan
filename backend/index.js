@@ -1591,7 +1591,7 @@ app.get('/myTotalCommission', async (req, res) => {
 // Backend route to fetch all products from product_master
 app.get('/products/:category', (req, res) => {
     const { category } = req.params;
-    const query = 'SELECT * FROM tbl_product_master WHERE type = ?';
+    const query = 'SELECT id, main_category, product_name, brand_name, price, weight, picture_path FROM tbl_product_master WHERE type = ?';
     db.query(query, [category], (error, results) => {
         if (error) {
             console.error('Error executing query:', error);
@@ -1770,6 +1770,40 @@ app.get('/api/preferred_shops/:phoneNumber', (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
+/**********************************************************My Address****************************************************************************************************************************
+ ************************************************************************************************************************************************************/
+
+app.get('/customer/address', (req, res) => {
+    const { phoneNumber } = req.query;
+    const query = `
+      SELECT 
+        address
+      FROM 
+        newcustomers 
+      WHERE 
+        phoneNumber = ?`;
+  
+    db.query(query, [phoneNumber], (error, results) => {
+      if (error) {
+        console.error('Error executing query:', error);
+        return res.status(500).json({ error: 'Database query error' });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: 'Address not found for this phone number' });
+      }
+      res.json(results[0]); // Assuming phoneNumber is unique, return the first result
+    });
+  });
+
+
+
+
+
+
+
+
 
 
 
