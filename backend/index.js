@@ -914,67 +914,68 @@ app.get('/shopkeepers/:shopID', (req, res) => {
 // Get shops in the area based on pincode
 app.get('/shopsInArea/:pincode', async (req, res) => {
     const { pincode } = req.params;
-
+  
     try {
-        const result = await new Promise((resolve, reject) => {
-            db.query(
-                'SELECT * FROM shopkeepers WHERE pincode = ?',
-                [pincode],
-                (err, result) => {
-                    if (err) {
-                        console.error('Error fetching shops in area:', err);
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                }
-            );
+      const result = await new Promise((resolve, reject) => {
+        db.query(
+          'SELECT * FROM shopkeepers WHERE pincode = ?',
+          [pincode],
+          (err, result) => {
+            if (err) {
+              console.error('Error fetching shops in area:', err);
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+  
+      if (result.length === 0) {
+        return res.status(404).json({ message: 'No shops found for this pincode' });
+      }
+  
+      const formattedShops = await Promise.all(result.map(async shop => {
+        const { id, shopkeeperName, phoneNumber, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, registrationDate, shopID, deliverToHome } = shop;
+  
+        const shopTypeResult = await new Promise((resolve, reject) => {
+          db.query(
+            'SELECT type FROM category WHERE name = ?',
+            [selectedCategory],
+            (err, result) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(result[0]?.type || 'unknown');
+              }
+            }
+          );
         });
-
-        if (result.length === 0) {
-            return res.status(404).json({ message: 'No shops found for this pincode' });
-        }
-
-        const formattedShops = await Promise.all(result.map(async shop => {
-            const { id, shopkeeperName, phoneNumber, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory, registrationDate, shopID } = shop;
-
-            const shopTypeResult = await new Promise((resolve, reject) => {
-                db.query(
-                    'SELECT type FROM category WHERE name = ?',
-                    [selectedCategory],
-                    (err, result) => {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(result[0]?.type || 'unknown');
-                        }
-                    }
-                );
-            });
-
-            return {
-                id,
-                shopkeeperName,
-                phoneNumber,
-                pincode,
-                shopState,
-                city,
-                address,
-                salesAssociateNumber,
-                selectedCategory,
-                selectedSubCategory,
-                registrationDate,
-                shopID,
-                shopType: shopTypeResult
-            };
-        }));
-
-        res.status(200).json(formattedShops);
+  
+        return {
+          id,
+          shopkeeperName,
+          phoneNumber,
+          pincode,
+          shopState,
+          city,
+          address,
+          salesAssociateNumber,
+          selectedCategory,
+          selectedSubCategory,
+          registrationDate,
+          shopID,
+          shopType: shopTypeResult,
+          deliverToHome: deliverToHome === "Yes" // Convert to boolean
+        };
+      }));
+  
+      res.status(200).json(formattedShops);
     } catch (error) {
-        console.error('Error fetching shops in area:', error);
-        res.status(500).json({ message: 'Internal server error' });
+      console.error('Error fetching shops in area:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
-});
+  });
 
 
 
@@ -1483,14 +1484,15 @@ app.post('/shopkeeperRegister', upload.none(), async (req, res) => {
         salesAssociateNumber,
         selectedCategory,
         selectedSubCategory,
+        deliverToHome  // Get the new field from the request body
     } = req.body;
 
     try {
         // Insert new shopkeeper into the database
         await new Promise((resolve, reject) => {
             db.query(
-                'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory],
+                'INSERT INTO shopkeepers (phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory,deliverToHome) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',
+                [phoneNumber, shopkeeperName, shopID, pincode, shopState, city, address, salesAssociateNumber, selectedCategory, selectedSubCategory , deliverToHome],
                 (err, result) => {
                     if (err) {
                         console.error('Error registering shopkeeper:', err);
@@ -1684,14 +1686,14 @@ app.get('/products/:category', async (req, res) => {
 });
 
 
-/************************************************************************************************************************************************************
+/**************************************************************************************************************************************************************
  *************************************************Preffered Shops*********************************************************************************************
 */
 app.post('/addPreferredShop', (req, res) => {
-    const { customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode } = req.body;
+    const { customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode , deliverToHome } = req.body;
 
-    const sql = 'INSERT INTO preferred_shops (customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(sql, [customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode], (err, result) => {
+    const sql = 'INSERT INTO preferred_shops (customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode ,  deliverToHome ) VALUES (?, ?, ?, ?, ?, ?, ?,?)';
+    db.query(sql, [customerPhoneNumber, shopID, shopkeeperName, phoneNumber, selectedCategory, shopType, pincode, deliverToHome, ], (err, result) => {
         if (err) {
             console.error('Error adding preferred shop:', err);
             return res.status(500).json({ message: 'Failed to add preferred shop' });

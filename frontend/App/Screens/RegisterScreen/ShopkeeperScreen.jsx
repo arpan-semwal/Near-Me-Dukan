@@ -34,6 +34,8 @@ export default function ShopkeeperScreen({ route }) {
     const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedSubCategoryId, setSelectedSubCategoryId] = useState('');
     const [selectedCategoryType, setSelectedCategoryType] = useState('');
+    const [deliverToHome, setDeliverToHome] = useState('');
+
 
     const { phoneNumber , userType } = route.params || {};
 
@@ -51,7 +53,7 @@ export default function ShopkeeperScreen({ route }) {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://172.16.16.41:3000/categories'); // Change to your server's endpoint
+                const response = await fetch('http://192.168.29.67:3000/categories'); // Change to your server's endpoint
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -69,7 +71,7 @@ export default function ShopkeeperScreen({ route }) {
         const fetchSubCategories = async () => {
             try {
                 if (selectedCategoryId) {
-                    const response = await fetch(`http://172.16.16.41:3000/subcategories/${selectedCategoryId}`);
+                    const response = await fetch(`http://192.168.29.67:3000/subcategories/${selectedCategoryId}`);
                     if (response.ok) {
                         const data = await response.json();
                         setSubCategories(data);
@@ -102,11 +104,12 @@ export default function ShopkeeperScreen({ route }) {
             selectedSubCategory,
             selectedCategoryType, // Include the selected category type in the data
             shopBanner,
-            profilePicture
+            profilePicture,
+            deliverToHome  // Include the new field
         };
     
         try {
-            const response = await fetch('http://172.16.16.41:3000/shopkeeperRegister', {
+            const response = await fetch('http://192.168.29.67:3000/shopkeeperRegister', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -269,6 +272,20 @@ export default function ShopkeeperScreen({ route }) {
                         multiline
                     />
                 </View>
+                
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Deliver to Home*</Text>
+                                <Picker
+                                    selectedValue={deliverToHome}
+                                    onValueChange={(itemValue) => setDeliverToHome(itemValue)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="Select an option" value="" />
+                                    <Picker.Item label="Yes" value="Yes" />
+                                    <Picker.Item label="No" value="No" />
+                                </Picker>
+                         </View>
+
                 
                 <View style={styles.inputContainer}>
                     <Text style={styles.label}>Your Shop Category*</Text>

@@ -44,7 +44,7 @@ export default function SearchShops({ route }) {
     }
 
     try {
-      const response = await fetch('http://172.16.16.41:3000/updatePincode', {
+      const response = await fetch('http://192.168.29.67:3000/updatePincode', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default function SearchShops({ route }) {
 
   const fetchCustomerDetails = async () => {
     try {
-      const response = await fetch(`http://172.16.16.41:3000/customerDetails/${phoneNumber}`);
+      const response = await fetch(`http://192.168.29.67:3000/customerDetails/${phoneNumber}`);
       const data = await response.json();
       setCustomerName(data.name);
       setNewPincode(data.pincode);
@@ -93,7 +93,7 @@ export default function SearchShops({ route }) {
  const fetchShopsInArea = async (pincode) => {
   setLoading(true);
   try {
-    const response = await fetch(`http://172.16.16.41:3000/shopsInArea/${pincode}`);
+    const response = await fetch(`http://192.168.29.67:3000/shopsInArea/${pincode}`);
     const data = await response.json();
 
     let filteredData = data;
@@ -153,7 +153,7 @@ export default function SearchShops({ route }) {
 
   const addPreferredShop = async (shop) => {
     try {
-      const response = await fetch('http://172.16.16.41:3000/addPreferredShop', {
+      const response = await fetch('http://192.168.29.67:3000/addPreferredShop', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,6 +166,7 @@ export default function SearchShops({ route }) {
           selectedCategory: shop.selectedCategory,
           shopType: shop.shopType,
           pincode: shop.pincode,
+          deliverToHome: shop.deliverToHome, 
         }),
       });
 
@@ -181,7 +182,7 @@ export default function SearchShops({ route }) {
 
   const removePreferredShop = async (shopID) => {
     try {
-      const response = await fetch('http://172.16.16.41:3000/removePreferredShop', {
+      const response = await fetch('http://192.168.29.67:3000/removePreferredShop', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -213,9 +214,8 @@ export default function SearchShops({ route }) {
           <Image source={require('../../../../../assets/logo.png')} style={styles.welcomeImage} />
         </View>
         <View style={styles.rightContainer}>
-          <Text style={styles.welcomeText}>Welcome, {shopID}</Text>
-          <Text style={styles.welcomeText}>Welcome, {phoneNumber}</Text>
-          <Text style={styles.pincodeText}>Shops at Pincode: </Text>
+          <Text style={styles.welcomeText}>Welcome, {firstcustomerName}</Text>
+          <Text style={styles.welcomeText}>Searching at: {pincode}</Text>
           <TouchableOpacity onPress={handleSubmit}>
             <Text style={styles.changePincodeText}>Change Pincode</Text>
           </TouchableOpacity>
@@ -235,25 +235,30 @@ export default function SearchShops({ route }) {
         if (item.phoneNumber === shopID) {
           return (
             <View>
-              <TouchableOpacity onPress={() => handleShopPress(item)}>
-                <View style={styles.itemContainer}>
-                  <View style={styles.shopDetails}>
-                    <Text>{item.shopkeeperName}</Text>
-                    <Text>Pincode: {item.pincode}</Text>
-                    <Text>Shop: {item.selectedCategory}</Text>
-                    <Text>Phone: {item.phoneNumber}</Text>
-                  </View>
-                  <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
-                    <AntDesign
-                      name={selectedShops.includes(item.id) ? "heart" : "hearto"}
-                      size={24}
-                      color={selectedShops.includes(item.id) ? "red" : "black"}
-                    />
-                  </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleShopPress(item)}>
+              <View style={styles.itemContainer}>
+                <View style={styles.shopDetails}>
+                  <Text>{item.shopkeeperName}</Text>
+                  <Text>Pincode: {item.pincode}</Text>
+                  <Text>Shop: {item.selectedCategory}</Text>
+                  <Text>Phone: {item.phoneNumber}</Text>
+                  <Text>Deliver to Home: {item.deliverToHome}</Text>
+               
+
                 </View>
-              </TouchableOpacity>
-              {renderSeparator()}
-            </View>
+              
+
+                <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
+                  <AntDesign
+                    name={selectedShops.includes(item.id) ? "heart" : "hearto"}
+                    size={24}
+                    color={selectedShops.includes(item.id) ? "red" : "black"}
+                  />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+            {renderSeparator()}
+          </View>
           );
         } else {
           // Return an empty view if the item's phoneNumber doesn't match shopID
@@ -270,7 +275,10 @@ export default function SearchShops({ route }) {
                   <Text>Pincode: {item.pincode}</Text>
                   <Text>Shop: {item.selectedCategory}</Text>
                   <Text>Phone: {item.phoneNumber}</Text>
+                  <Text>Deliver to Home: {item.deliverToHome ? "Yes" : "No"}</Text>
+                  
                 </View>
+               
                 <TouchableOpacity onPress={() => handleAddPreferredShop(item)}>
                   <AntDesign
                     name={selectedShops.includes(item.id) ? "heart" : "hearto"}

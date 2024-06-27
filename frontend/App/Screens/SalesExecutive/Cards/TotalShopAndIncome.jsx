@@ -9,7 +9,7 @@ export default function MyTotalCommission({ route }) {
         // Fetch total commission data for the logged-in user from the backend
         const fetchTotalCommission = async () => {
             try {
-                const response = await fetch(`http://172.16.16.41:3000/myTotalCommission?mobileNumber=${mobileNumber}`);
+                const response = await fetch(`http://192.168.29.67:3000/myTotalCommission?mobileNumber=${mobileNumber}`);
                 if (response.ok) {
                     const data = await response.json();
                     setTotalCommission(data.totalCommission);

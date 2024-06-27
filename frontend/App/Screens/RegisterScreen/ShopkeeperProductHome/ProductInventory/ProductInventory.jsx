@@ -32,7 +32,7 @@ const ProductInventory = ({ route }) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch(`http://172.16.16.41:3000/products/${selectedCategory}`);
+            const response = await fetch(`http://192.168.29.67:3000/products/${selectedCategory}`);
             if (response.ok) {
                 const data = await response.json();
                 const productsWithAddedStatus = data.map(product => ({ ...product, added: false }));
@@ -67,7 +67,7 @@ const ProductInventory = ({ route }) => {
 
     const handleAddProduct = async (productId, index) => {
         try {
-            const response = await fetch('http://172.16.16.41:3000/addProduct', {
+            const response = await fetch('http://192.168.29.67:3000/addProduct', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ const ProductInventory = ({ route }) => {
             <Text style={styles.productBrand}>{item.brand_name}</Text>
             <Text style={styles.productPrice}>Price: ${item.price}</Text>
             <Text style={styles.productWeight}>Weight: {item.weight}</Text>
-            <Image source={{ uri: `'http://172.16.16.41:3000/${item.picture_path}` }} style={styles.productImage} />
+            <Image source={{ uri: `'http://192.168.29.67:3000/${item.picture_path}` }} style={styles.productImage} />
             <TouchableOpacity
                 onPress={() => handleAddProduct(item.id, index)}
                 style={[styles.addButton, { backgroundColor: item.added ? 'gray' : 'green' }]}

@@ -18,7 +18,7 @@ export default function SalonShop({ route }) {
 
     const fetchShopkeeperDetails = async () => {
         try {
-            const response = await fetch(`http://172.16.16.41:3000/shopkeeperDetails/${phoneNumber}`);
+            const response = await fetch(`http://192.168.29.67:3000/shopkeeperDetails/${phoneNumber}`);
             if (response.ok) {
                 const data = await response.json();
                 setShopkeeperName(data.shopkeeperName);
@@ -89,7 +89,7 @@ export default function SalonShop({ route }) {
             console.log('Session token:', sessionToken); // Log the session token
     
             // Call logout API
-            const response = await fetch('http://172.16.16.41:3000/logout', {
+            const response = await fetch('http://192.168.29.67:3000/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

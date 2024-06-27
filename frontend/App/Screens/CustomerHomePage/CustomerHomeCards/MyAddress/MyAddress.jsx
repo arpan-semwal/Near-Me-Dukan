@@ -10,7 +10,7 @@ export default function MyAddress({ route }) {
   useEffect(() => {
     const fetchAddress = async () => {
       try {
-        const response = await axios.get(`http://172.16.16.41:3000/customer/address?phoneNumber=${phoneNumber}`);
+        const response = await axios.get(`http://192.168.29.67:3000/customer/address?phoneNumber=${phoneNumber}`);
         setAddress(response.data.address);
         setLoading(false);
       } catch (error) {
