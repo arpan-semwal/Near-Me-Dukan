@@ -16,11 +16,15 @@ export default function SearchShops({ route }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedShops, setSelectedShops] = useState([]);
+  const getLikedShopsKey = (phoneNumber) => `likedShops_${phoneNumber}`;
+
+  
 
   useEffect(() => {
     const loadLikedShops = async () => {
       try {
-        const likedShops = await AsyncStorage.getItem('likedShops');
+        const likedShopsKey = getLikedShopsKey(phoneNumber);
+        const likedShops = await AsyncStorage.getItem(likedShopsKey);
         if (likedShops !== null) {
           setSelectedShops(JSON.parse(likedShops));
         }
@@ -30,6 +34,8 @@ export default function SearchShops({ route }) {
     };
     loadLikedShops();
   }, []);
+ 
+  
   
   
 
@@ -133,7 +139,7 @@ export default function SearchShops({ route }) {
   const handleAddPreferredShop = async (shop) => {
     const isShopSelected = selectedShops.includes(shop.id);
     let updatedShops;
-
+  
     if (isShopSelected) {
       updatedShops = selectedShops.filter(id => id !== shop.id);
       await removePreferredShop(shop.id);
@@ -141,16 +147,17 @@ export default function SearchShops({ route }) {
       updatedShops = [...selectedShops, shop.id];
       await addPreferredShop(shop);
     }
-
+  
     setSelectedShops(updatedShops);
-
+  
     try {
-      await AsyncStorage.setItem('likedShops', JSON.stringify(updatedShops));
+      const likedShopsKey = getLikedShopsKey(phoneNumber);
+      await AsyncStorage.setItem(likedShopsKey, JSON.stringify(updatedShops));
     } catch (error) {
       console.error('Error saving liked shops:', error);
     }
   };
-
+  
   const addPreferredShop = async (shop) => {
     try {
       const response = await fetch('http://192.168.29.67:3000/addPreferredShop', {
