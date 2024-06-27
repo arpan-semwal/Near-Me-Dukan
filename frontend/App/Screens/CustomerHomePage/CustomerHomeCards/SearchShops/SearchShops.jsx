@@ -7,7 +7,7 @@ import Colors from '../../../../utils/Colors';
 
 
 export default function SearchShops({ route }) {
-  const { phoneNumber, userType, firstcustomerName, pincode, custPhoneNumber, selectedCategory  , shopID} = route.params || {};
+  const { phoneNumber, userType, firstcustomerName, pincode, selectedCategory  , shopID} = route.params || {};
   const navigation = useNavigation();
   const [showChangePincode, setShowChangePincode] = useState(false);
   const [newPincode, setNewPincode] = useState('');
@@ -130,9 +130,9 @@ export default function SearchShops({ route }) {
     const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
     if (shopType === 'product') {
-      navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
+      navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName  });
     } else if (shopType === 'service') {
-      navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName, custPhoneNumber });
+      navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName  });
     }
   };
 
