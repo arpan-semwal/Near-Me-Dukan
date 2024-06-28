@@ -33,7 +33,7 @@ import AddNewAddress from './App/Screens/CartScreen/AddNewAddress/AddNewAddress.
 import Pay from './App/Screens/CartScreen/Pay/Pay.jsx';
 import ViewOrder from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders/ViewOrder/ViewOrder.jsx';
  
-import VegetablesHomePage from './App/Screens/CustomerHomePage/VegetablesHomePage/VegetablesHomePage.jsx';
+ 
 import BarberHomePage from './App/Screens/CustomerHomePage/BarberHomePage/BarberHomePage.jsx';
 import BarberSearchShops from './App/Screens/CustomerHomePage/BarberHomePage/BarberSearchShops.jsx';
 import SalonsServices from './App/Screens/CustomerHomePage/BarberHomePage/SalonsServices.jsx';
@@ -53,7 +53,6 @@ import Inventory from './App/Screens/shops/SalonShop/Inventory/Inventory.jsx';
 import GroceryShop from './App/Screens/shops/GroceryShop/GroceryShop.jsx';
 import SalonShop from './App/Screens/shops/SalonShop/SalonShop.jsx';
 import BeautyPalor from './App/Screens/shops/BeautyPalor/BeautyPalor.jsx';
- 
 import SweetsAndNamkeenShop from './App/Screens/shops/SweetsAndNamkeenShop/SweetsAndNamkeenShop.jsx';
 import StationaryShop from './App/Screens/shops/StationaryShop/StationaryShop.jsx';
 import MyServices from './App/Screens/shops/SalonShop/MyServices/MyServices.jsx';
@@ -107,7 +106,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="AddNewAddress" component={AddNewAddress}options={{ headerShown: false }} />
       <Stack.Screen name="Pay" component={Pay}options={{ headerShown: false }} />
       <Stack.Screen name="ViewOrder" component={ViewOrder}options={{ headerShown: false }} />  
-      <Stack.Screen name="Vegetables" component={VegetablesHomePage}options={{ headerShown: false }} />
+   
       <Stack.Screen name="Barber" component={BarberHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="BarberSearchShops" component={BarberSearchShops}options={{ headerShown: false }} />
       <Stack.Screen name="Salons" component={SalonsServices}options={{ headerShown: false }} />

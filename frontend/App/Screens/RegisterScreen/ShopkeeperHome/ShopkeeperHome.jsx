@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Switch, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,12 +6,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function SalonShop({ route }) {
     const navigation = useNavigation();
     const [isVisible, setIsVisible] = useState(true);
-    const [isVisible1, setIsVisible1] = useState(true); // State for "Make Store LIVE" switch
+    const [isVisible1, setIsVisible1] = useState(true);
     const [shopkeeperName, setShopkeeperName] = useState('');
     const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
     const [selectedSubCategory, setSelectedSubCategory] = useState('');
-    const {phoneNumber,selectedCategory , userType} = route.params
-    
+    const { phoneNumber, selectedCategory, userType } = route.params;
+
     useEffect(() => {
         fetchShopkeeperDetails();
     }, []);
@@ -24,7 +24,6 @@ export default function SalonShop({ route }) {
                 setShopkeeperName(data.shopkeeperName);
                 setShopkeeperPhoneNumber(route.params.phoneNumber);
                 setSelectedSubCategory(data.selectedSubCategory);
-               
             } else {
                 console.error('Failed to fetch shopkeeper details:', response.statusText);
             }
@@ -33,7 +32,6 @@ export default function SalonShop({ route }) {
         }
     };
 
-     
     const buttonsData = [
         { id: 6, title: 'My Services', screen: 'MyServices' },
         { id: 1, title: 'My Appointments', screen: 'ShopkeeperOrders' },
@@ -44,71 +42,54 @@ export default function SalonShop({ route }) {
         { id: 10, title: 'Inventory', screen: 'Inventory' },
     ];
 
-    
-
-    // Function to handle button press and navigate to a specific screen
     const handleButtonPress = (screenName) => {
         if (screenName === 'Inventory') {
-            // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
             navigation.navigate(screenName, {
-                 selectedSubCategory: selectedSubCategory,  
-                 phoneNumber: shopkeeperPhoneNumber  ,  
-                 shopkeeperName: shopkeeperName, 
-                 selectedCategory:selectedCategory
-                
-                });
-                
-        } else if (screenName === 'MyServices') {
-            // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate('MyServices', { 
-                phoneNumber: shopkeeperPhoneNumber, 
+                selectedSubCategory: selectedSubCategory,
+                phoneNumber: shopkeeperPhoneNumber,
                 shopkeeperName: shopkeeperName,
-                selectedCategory:selectedCategory,
-                storeImage: require('../../../../assets/logo.png') // Pass the image source
+                selectedCategory: selectedCategory
             });
-        }else if (screenName === 'ShopkeeperOrders') {
-            // Pass selectedSubCategory as a parameter when navigating to the Inventory screen
-            navigation.navigate('ShopkeeperOrders', { 
-                shopkeeperPhoneNumber: shopkeeperPhoneNumber, 
+        } else if (screenName === 'MyServices') {
+            navigation.navigate('MyServices', {
+                phoneNumber: shopkeeperPhoneNumber,
+                shopkeeperName: shopkeeperName,
+                selectedCategory: selectedCategory,
+                storeImage: require('../../../../assets/logo.png')
+            });
+        } else if (screenName === 'ShopkeeperOrders') {
+            navigation.navigate('ShopkeeperOrders', {
+                shopkeeperPhoneNumber: shopkeeperPhoneNumber,
                 shopkeeperName: shopkeeperName,
                 selectedSubCategory: selectedSubCategory,
-                selectedCategory:selectedCategory
-                
-            })
-        } 
-        else {
+                selectedCategory: selectedCategory
+            });
+        } else {
             navigation.navigate(screenName);
         }
     };
 
     const handleLogout = async () => {
         try {
-            // Retrieve session token from AsyncStorage
             const sessionToken = await AsyncStorage.getItem('sessionToken');
-            
-            console.log('Session token:', sessionToken); // Log the session token
-    
-            // Call logout API
+            console.log('Session token:', sessionToken);
+
             const response = await fetch('http://192.168.29.67:3000/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userId: phoneNumber }), // Assuming phoneNumber is the userId
+                body: JSON.stringify({ userId: phoneNumber }),
             });
-    
+
             if (response.ok) {
-                // Clear session token from AsyncStorage
                 await AsyncStorage.removeItem('sessionToken');
-    
-                // Navigate to login screen
                 navigation.navigate('HomePage');
             } else {
-                // Handle error
                 console.error('Logout failed:', response.statusText);
             }
         } catch (error) {
-            console.error('Error logging oudsadt:', error);
+            console.error('Error logging out:', error);
         }
     };
 
@@ -122,52 +103,48 @@ export default function SalonShop({ route }) {
                     <View style={styles.headerContainer}>
                         <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
                         <View style={styles.headerText}>
-                            <Text style={styles.welcomeText}>Welcome : {shopkeeperName}{phoneNumber}</Text>
-                            <Text style={styles.shoppingAt}>Shop ID:{shopkeeperPhoneNumber}</Text>
-                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024 safdsafasf{selectedCategory}</Text>
+                            <Text style={styles.welcomeText}>Welcome: {shopkeeperName}</Text>
+                            <Text style={styles.shoppingAt}>Shop ID: {shopkeeperPhoneNumber}</Text>
+                            <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                         </View>
                     </View>
 
-                    {/* Full-width image */}
                     <Image source={require('../../../../assets/general.png')} style={styles.fullWidthImage} />
 
-                    {/* Circular image with overlay */}
                     <View style={styles.circularImageContainer}>
                         <Image source={require('../../../../assets/name.png')} style={styles.circularImage} />
                     </View>
 
-                    {/* Store Visibility switch */}
                     <View style={styles.visibilityContainer}>
-                        <Text style={styles.visibilityHeading}>Store Visibility</Text>
-                        <Switch
-                            trackColor={{ false: '#767577', true: '#81b0ff' }}
-                            thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={() => setIsVisible(previousState => !previousState)}
-                            value={isVisible}
-                            style={styles.toggleButton}
-                        />
+                        <View style={styles.visibilityItem}>
+                            <Text style={styles.visibilityHeading}>Store Visibility</Text>
+                            <Switch
+                                trackColor={{ false: '#D3D3D3', true: '#4A90E2' }}
+                                thumbColor={isVisible ? '#318D00' : '#f4f3f4'}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={() => setIsVisible(previousState => !previousState)}
+                                value={isVisible}
+                                style={styles.toggleButton}
+                            />
+                        </View>
+
+                        <View style={styles.visibilityItem}>
+                            <Text style={styles.visibilityHeading}>Make Store LIVE</Text>
+                            <Switch
+                                trackColor={{ false: '#D3D3D3', true: '#FF0000' }}
+                                thumbColor={isVisible1 ? '#FF0000' : '#f4f3f4'}
+                                ios_backgroundColor="#3e3e3e"
+                                onValueChange={() => setIsVisible1(previousState => !previousState)}
+                                value={isVisible1}
+                                style={styles.toggleButton}
+                            />
+                        </View>
                     </View>
 
-                    {/* Make Store LIVE switch */}
-                    <View style={styles.visibilityContainer}>
-                        <Text style={styles.visibilityHeading}>Make Store LIVE</Text>
-                        <Switch
-                            trackColor={{ false: '#767577', true: '#81b0ff' }}
-                            thumbColor={isVisible1 ? '#FF0000' : '#f4f3f4'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={() => setIsVisible1(previousState => !previousState)}
-                            value={isVisible1}
-                            style={styles.toggleButton}
-                        />
-                    </View>
-
-                    {/* Logout Button */}
                     <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                         <Text style={styles.logoutText}>Logout</Text>
                     </TouchableOpacity>
 
-                    {/* Buttons */}
                     <FlatList
                         data={buttonsData}
                         keyExtractor={(item, index) => item.id ? item.id.toString() : index.toString()}
@@ -186,7 +163,7 @@ export default function SalonShop({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#f0f4f7',
         padding: 20,
     },
     headerContainer: {
@@ -209,11 +186,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 5,
+        color: '#333',
     },
     shoppingAt: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
+        color: '#555',
     },
     fullWidthImage: {
         width: '100%',
@@ -235,25 +214,32 @@ const styles = StyleSheet.create({
         transform: [{ translateX: -60 }, { translateY: -60 }],
     },
     visibilityContainer: {
+        marginTop: 30,
+        paddingHorizontal: 10,
+    },
+    visibilityItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 50,
+        justifyContent: 'space-between',
+        marginVertical: 10,
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
     },
     visibilityHeading: {
-        paddingRight: 20,
-        fontSize: 26,
+        fontSize: 18,
         fontWeight: 'bold',
+        color: '#333',
     },
     toggleButton: {
-        transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
-        borderWidth: 2,
-        borderColor: '#00ff00',
+        transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }],
     },
     button: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#C7BC00',
+        backgroundColor: '#4A90E2',
         marginHorizontal: 10,
         marginVertical: 5,
         height: 50,

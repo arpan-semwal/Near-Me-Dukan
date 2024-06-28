@@ -7,11 +7,10 @@ import Colors from '../../../../utils/Colors';
 
 
 export default function SearchShops({ route }) {
-  const { phoneNumber, userType, firstcustomerName, pincode, selectedCategory  , shopID} = route.params || {};
+  const { phoneNumber, userType, firstcustomerName,   selectedCategory  , shopID , customerPinode} = route.params || {};
   const navigation = useNavigation();
   const [showChangePincode, setShowChangePincode] = useState(false);
   const [newPincode, setNewPincode] = useState('');
-  const [customerName, setCustomerName] = useState('');
   const [filteredShops, setFilteredShops] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -79,16 +78,15 @@ export default function SearchShops({ route }) {
   }, []);
 
   useEffect(() => {
-    if (pincode) {
-      fetchShopsInArea(pincode);
+    if (customerPinode) {
+      fetchShopsInArea(customerPinode);
     }
-  }, [pincode, selectedCategory]);
+  }, [customerPinode, selectedCategory]);
 
   const fetchCustomerDetails = async () => {
     try {
       const response = await fetch(`http://192.168.29.67:3000/customerDetails/${phoneNumber}`);
       const data = await response.json();
-      setCustomerName(data.name);
       setNewPincode(data.pincode);
     } catch (error) {
       console.error('Error fetching customer details:', error);
@@ -96,10 +94,10 @@ export default function SearchShops({ route }) {
     }
   };
 
- const fetchShopsInArea = async (pincode) => {
+ const fetchShopsInArea = async (customerPinode) => {
   setLoading(true);
   try {
-    const response = await fetch(`http://192.168.29.67:3000/shopsInArea/${pincode}`);
+    const response = await fetch(`http://192.168.29.67:3000/shopsInArea/${customerPinode}`);
     const data = await response.json();
 
     let filteredData = data;
@@ -238,7 +236,7 @@ const handleShopPress = (shop) => {
         </View>
         <View style={styles.rightContainer}>
           <Text style={styles.welcomeText}>Welcome, {firstcustomerName}</Text>
-          <Text style={styles.welcomeText}>Searching at: {pincode}</Text>
+          <Text style={styles.welcomeText}>Searching at: {customerPinode}</Text>
           <TouchableOpacity onPress={handleSubmit}>
             <Text style={styles.changePincodeText}>Change Pincode</Text>
           </TouchableOpacity>

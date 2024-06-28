@@ -29,6 +29,7 @@ export const CartProvider = ({ children }) => {
   const [firstCustomerName, setFirstCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [shopPhoneNumber, setShopPhoneNumber] = useState('');
+  const [customerPincode, setCustomerPincode] = useState('');
 
   // Function to add item to cart for a specific customer
   const addToCart = (custPhoneNumber, product, shopkeeperName) => {
@@ -62,6 +63,10 @@ export const CartProvider = ({ children }) => {
     updatedCartItems[custPhoneNumber] = [];
     setCartItems(updatedCartItems);
   };
+  
+  const setGlobalPhoneNumber = (number) => {
+    setPhoneNumber(number);
+  }
 
   // Return the provider with context values
   return (
@@ -101,6 +106,7 @@ export const CartProvider = ({ children }) => {
         setPhoneNumber,
         shopPhoneNumber,
         setShopPhoneNumber,
+        setGlobalPhoneNumber, 
       }}
     >
       <CustomerContext.Provider
@@ -127,6 +133,8 @@ export const CartProvider = ({ children }) => {
           setPhoneNumber,
           shopPhoneNumber,
           setShopPhoneNumber,
+          customerPincode, // Add customerPincode
+        setCustomerPincode, // Add setCustomerPincode function
         }}
       >
         {children}
