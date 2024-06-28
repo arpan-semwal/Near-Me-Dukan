@@ -1,19 +1,22 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { useCart } from '../../Context/ContextApi';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useCart, useCustomer } from '../../Context/ContextApi';
+import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = () => {
-  const { cartItems, removeFromCart, clearCart, custPhoneNumber, setCartItems } = useCart();
+  const { cartItems, removeFromCart, clearCart, custPhoneNumber, setCartItems,shopID ,  } = useCart();
+  const { firstCustomerName  } = useCustomer(); // Use useCustomer hook here
+  const navigation = useNavigation();
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text>{item.name}</Text>
-      <Text>Price: ${item.price.toFixed(2)}</Text>
+      <Text style={styles.itemName}>{item.name}</Text>
+      <Text style={styles.itemPrice}>Price: ${item.price.toFixed(2)}</Text>
       <View style={styles.quantityContainer}>
         <TouchableOpacity onPress={() => updateQuantity(item.id, -1)} style={styles.quantityButton}>
           <Text style={styles.quantityButtonText}>-</Text>
         </TouchableOpacity>
-        <Text>{item.quantity}</Text>
+        <Text style={styles.itemQuantity}>{item.quantity}</Text>
         <TouchableOpacity onPress={() => updateQuantity(item.id, 1)} style={styles.quantityButton}>
           <Text style={styles.quantityButtonText}>+</Text>
         </TouchableOpacity>
@@ -21,7 +24,6 @@ const CartScreen = () => {
       <TouchableOpacity onPress={() => removeFromCart(custPhoneNumber, item.id)} style={styles.removeButton}>
         <Text style={styles.removeButtonText}>Remove</Text>
       </TouchableOpacity>
-      
     </View>
   );
 
@@ -50,23 +52,37 @@ const CartScreen = () => {
     return totalPrice.toFixed(2);
   };
 
+  const handlePayAtShop = () => {
+    // Implement payment logic here, e.g., navigate to a confirmation screen or display a message
+    navigation.navigate('Checkout', { totalPrice: calculateTotalPrice(), cartItems: cartItems[custPhoneNumber]  , firstCustomerName:firstCustomerName});
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.totalPrice}>Total Price: ${calculateTotalPrice()}</Text>
+      <View style={styles.headerContainer}>
+        <Image source={require("../../../assets/logo.png")} style={styles.storeImage} />
+        <View style={styles.headerText}>
+          <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
+          <Text style={styles.shoppingAt}>Shopping at: {shopID}</Text>
+          
+        </View>
+      </View>
       {cartItems[custPhoneNumber] && cartItems[custPhoneNumber].length === 0 ? (
         <Text>Your cart is empty!</Text>
       ) : (
-        <>
-          <FlatList
-            data={cartItems[custPhoneNumber]}
-            renderItem={renderItem}
-            keyExtractor={item => item.id.toString()}
-          />
-          <TouchableOpacity onPress={() => clearCart(custPhoneNumber)} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>Clear Cart</Text>
-          </TouchableOpacity>
-        </>
+        <FlatList
+          data={cartItems[custPhoneNumber]}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          contentContainerStyle={styles.flatListContent}
+        />
       )}
+      <View style={styles.footerContainer}>
+        <Text style={styles.totalPrice}>Total Price: ${calculateTotalPrice()}</Text>
+        <TouchableOpacity onPress={handlePayAtShop} style={styles.payButton}>
+          <Text style={styles.payButtonText}>Proceed To Pay</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -74,13 +90,30 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#fff',
   },
-  totalPrice: {
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  storeImage: {
+    width: 80,
+    height: 80,
+    marginRight: 16,
+  },
+  headerText: {
+    flex: 1,
+  },
+  welcomeText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 12,
+  },
+  shoppingAt: {
+    fontSize: 14,
+  },
+  flatListContent: {
+    paddingBottom: 100, // Ensure there's enough space at the bottom
   },
   itemContainer: {
     marginBottom: 12,
@@ -89,6 +122,15 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 8,
     backgroundColor: '#f9f9f9',
+    marginHorizontal: 16,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  itemPrice: {
+    fontSize: 14,
+    color: '#333',
   },
   quantityContainer: {
     flexDirection: 'row',
@@ -104,6 +146,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#555',
   },
+  itemQuantity: {
+    marginHorizontal: 12,
+    fontSize: 16,
+  },
   removeButton: {
     marginTop: 8,
     backgroundColor: 'red',
@@ -115,16 +161,32 @@ const styles = StyleSheet.create({
   removeButtonText: {
     color: '#fff',
   },
-  clearButton: {
-    marginTop: 16,
-    backgroundColor: 'gray',
+  footerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+    alignItems: 'center',
+  },
+  totalPrice: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  payButton: {
+    backgroundColor: 'green',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 5,
     alignItems: 'center',
   },
-  clearButtonText: {
+  payButtonText: {
     color: '#fff',
+    fontSize: 16,
   },
 });
 

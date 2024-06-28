@@ -529,24 +529,23 @@ app.get('/customerDetails/:phoneNumber', (req, res) => {
 
 
  //order api
-app.post('/saveOrder', (req, res) => {
+ app.post('/saveOrder', (req, res) => {
     const { custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber } = req.body;
-
-    // Save order details to the database
+  
+    // Save order details to the database (replace with your database logic)
     db.query(
-        'INSERT INTO tbl_orders (customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, shopkeeperPhonenumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [custName, custPhoneNumber, JSON.stringify(cartItems), totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber],
-        (err, result) => {
-            if (err) {
-                console.error('Error saving order:', err);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-            console.log('Order saved successfully');
-            res.status(200).json({ message: 'Order saved successfully' });
+      'INSERT INTO tbl_orders (customerName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, shopkeeperPhonenumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [custName, custPhoneNumber, JSON.stringify(cartItems), totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber],
+      (err, result) => {
+        if (err) {
+          console.error('Error saving order:', err);
+          return res.status(500).json({ message: 'Internal server error' });
         }
+        console.log('Order saved successfully');
+        res.status(200).json({ message: 'Order saved successfully' });
+      }
     );
-});
-
+  });
 
  
 app.get('/orders/shops', (req, res) => {

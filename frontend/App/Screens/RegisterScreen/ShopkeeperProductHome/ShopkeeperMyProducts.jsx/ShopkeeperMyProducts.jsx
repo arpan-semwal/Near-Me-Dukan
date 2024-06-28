@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const ShopkeeperMyProducts = ({ route }) => {
     const [categories, setCategories] = useState([]);
-    const { phoneNumber , userType } = route.params;
+    const { phoneNumber , userType , shopkeeperName } = route.params;
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -43,7 +43,7 @@ const ShopkeeperMyProducts = ({ route }) => {
     const renderCategory = ({ item, index }) => (
         <TouchableOpacity
             style={[styles.categoryContainer, index % 2 === 1 ? styles.rightMargin : null]}
-            onPress={() => navigation.navigate('CategoryDetails', { category: item, phoneNumber , userType })}>
+            onPress={() => navigation.navigate('CategoryDetails', { category: item, phoneNumber , userType , shopkeeperName:shopkeeperName })}>
             <Text style={styles.categoryName}>{item.main_category}</Text>
         </TouchableOpacity>
     );

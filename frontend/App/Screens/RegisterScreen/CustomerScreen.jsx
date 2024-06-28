@@ -27,9 +27,10 @@ const PrivacyCheckbox = ({ onCheckboxChange }) => {
 }
 
 export default function CustomerScreen({ route }) {
-    const { setShopID, setCustomerName, setCustPhoneNumber } = useContext(CustomerContext);
+    const { setShopID, setCustomerName, setCustPhoneNumber, name: customerName   } = useContext(CustomerContext);
     
     const [name, setName] = useState('');
+    
     const [pincode, setPincodeLocal] = useState(''); // Local state for pincode
     const [shopID, setShopId] = useState('');
     const [state, setStateLocal] = useState(''); // Local state for state

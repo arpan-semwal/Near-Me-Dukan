@@ -31,21 +31,21 @@ export const CartProvider = ({ children }) => {
   const [shopPhoneNumber, setShopPhoneNumber] = useState('');
 
   // Function to add item to cart for a specific customer
-  const addToCart = (custPhoneNumber, product) => {
+  const addToCart = (custPhoneNumber, product, shopkeeperName) => {
     const updatedCartItems = { ...cartItems };
-
+  
     if (!updatedCartItems[custPhoneNumber]) {
       updatedCartItems[custPhoneNumber] = [];
     }
-
+  
     const existingItemIndex = updatedCartItems[custPhoneNumber].findIndex(item => item.id === product.id);
-
+  
     if (existingItemIndex !== -1) {
       updatedCartItems[custPhoneNumber][existingItemIndex].quantity++;
     } else {
-      updatedCartItems[custPhoneNumber].push({ ...product, quantity: 1 });
+      updatedCartItems[custPhoneNumber].push({ ...product, quantity: 1, shopkeeperName: shopkeeperName });
     }
-
+  
     setCartItems(updatedCartItems);
   };
 
@@ -90,6 +90,8 @@ export const CartProvider = ({ children }) => {
         setStoreName,
         userType,
         setUserType,
+        custPhoneNumber,
+        setCustPhoneNumber,
         shopkeeperPhoneNumber,
         name,
         setName,
@@ -99,8 +101,6 @@ export const CartProvider = ({ children }) => {
         setPhoneNumber,
         shopPhoneNumber,
         setShopPhoneNumber,
-        custPhoneNumber, // Make custPhoneNumber accessible globally
-        setCustPhoneNumber, // Provide setter for custPhoneNumber
       }}
     >
       <CustomerContext.Provider

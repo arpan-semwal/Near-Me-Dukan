@@ -126,15 +126,31 @@ export default function SearchShops({ route }) {
 
   
 
-  const handleShopPress = (shop) => {
-    const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
+const handleShopPress = (shop) => {
+  const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
-    if (shopType === 'product') {
-      navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName  });
-    } else if (shopType === 'service') {
-      navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName, userType, shopID: shop.id, firstcustomerName  });
-    }
-  };
+  if (shopType === 'product') {
+    navigation.navigate('ShopkeeperMyProducts', { 
+      phoneNumber, 
+      storeImage, 
+      shopkeeperName, 
+      userType, 
+      shopID: shop.id, 
+      firstcustomerName,
+      shopkeeperName:shopkeeperName // Passing shopkeeperName to ShopkeeperMyProducts
+    });
+  } else if (shopType === 'service') {
+    navigation.navigate('MyServices', { 
+      phoneNumber, 
+      storeImage, 
+      shopkeeperName, 
+      userType, 
+      shopID: shop.id, 
+      firstcustomerName,
+      shopkeeperName:shopkeeperName // Passing shopkeeperName to MyServices
+    });
+  }
+};
 
   const handleAddPreferredShop = async (shop) => {
     const isShopSelected = selectedShops.includes(shop.id);

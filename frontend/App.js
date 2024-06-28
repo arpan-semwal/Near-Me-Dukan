@@ -32,8 +32,7 @@ import Checkout from './App/Screens/CartScreen/Checkout/Checkout.jsx';
 import AddNewAddress from './App/Screens/CartScreen/AddNewAddress/AddNewAddress.jsx';
 import Pay from './App/Screens/CartScreen/Pay/Pay.jsx';
 import ViewOrder from './App/Screens/CustomerHomePage/CustomerHomeCards/Orders/ViewOrder/ViewOrder.jsx';
-import SweetsHomePage from "./App/Screens/CustomerHomePage/SweetsHomePage/SweetsHomePage.jsx"
-import SnacksHomePage from './App/Screens/CustomerHomePage/SnacksHomePage/SnacksHomePage.jsx';
+ 
 import VegetablesHomePage from './App/Screens/CustomerHomePage/VegetablesHomePage/VegetablesHomePage.jsx';
 import BarberHomePage from './App/Screens/CustomerHomePage/BarberHomePage/BarberHomePage.jsx';
 import BarberSearchShops from './App/Screens/CustomerHomePage/BarberHomePage/BarberSearchShops.jsx';
@@ -54,7 +53,7 @@ import Inventory from './App/Screens/shops/SalonShop/Inventory/Inventory.jsx';
 import GroceryShop from './App/Screens/shops/GroceryShop/GroceryShop.jsx';
 import SalonShop from './App/Screens/shops/SalonShop/SalonShop.jsx';
 import BeautyPalor from './App/Screens/shops/BeautyPalor/BeautyPalor.jsx';
-import VegetableShop from './App/Screens/shops/VegetableShop/VegetableShop.jsx';
+ 
 import SweetsAndNamkeenShop from './App/Screens/shops/SweetsAndNamkeenShop/SweetsAndNamkeenShop.jsx';
 import StationaryShop from './App/Screens/shops/StationaryShop/StationaryShop.jsx';
 import MyServices from './App/Screens/shops/SalonShop/MyServices/MyServices.jsx';
@@ -107,9 +106,7 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="Checkout" component={Checkout}options={{ headerShown: false }} />
       <Stack.Screen name="AddNewAddress" component={AddNewAddress}options={{ headerShown: false }} />
       <Stack.Screen name="Pay" component={Pay}options={{ headerShown: false }} />
-      <Stack.Screen name="ViewOrder" component={ViewOrder}options={{ headerShown: false }} />
-      <Stack.Screen name="Sweets" component={SweetsHomePage}options={{ headerShown: false }} />
-      <Stack.Screen name="Snacks" component={SnacksHomePage}options={{ headerShown: false }} />
+      <Stack.Screen name="ViewOrder" component={ViewOrder}options={{ headerShown: false }} />  
       <Stack.Screen name="Vegetables" component={VegetablesHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="Barber" component={BarberHomePage}options={{ headerShown: false }} />
       <Stack.Screen name="BarberSearchShops" component={BarberSearchShops}options={{ headerShown: false }} />
@@ -130,7 +127,6 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="GroceryShop" component={GroceryShop}options={{ headerShown: false }} />
       <Stack.Screen name="SalonShop" component={SalonShop}options={{ headerShown: false }} />
       <Stack.Screen name="BeautyPalor" component={BeautyPalor}options={{ headerShown: false }} />
-      <Stack.Screen name="VegetableShop" component={VegetableShop}options={{ headerShown: false }} />
       <Stack.Screen name="SweetsAndNamkeenShop" component={SweetsAndNamkeenShop}options={{ headerShown: false }} />
       <Stack.Screen name="StationaryShop" component={StationaryShop}options={{ headerShown: false }} />
       <Stack.Screen name="MyServices" component={MyServices}options={{ headerShown: false }} />
@@ -153,9 +149,6 @@ function StackNavigator({ formSubmitted }) {
       <Stack.Screen name="ShopkeeperProfileScreen" component={ShopkeeperProfileScreen}options={{ headerShown: false }} />
       <Stack.Screen name="CategoryDetails" component={CategoryDetails}options={{ headerShown: false }} />
       <Stack.Screen name="ProductOrders" component={ProductOrders}options={{ headerShown: false }} />
-      
-     
-    
     </Stack.Navigator>
   );
 }

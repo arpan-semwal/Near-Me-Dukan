@@ -4,13 +4,17 @@ import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import {useEffect, useState} from 'react';
+import {useCustomer} from '../../Context/ContextApi';
+ 
+
 
 export default function CustomerHomePage({ route }) {
   const {  pincode , custPhoneNumber,userType , phoneNumber , name   } = route.params || {};
   const [customerDetails, setCustomerDetails] = useState(null);
-  const [firstcustomerName, setFirstCustomerName] = useState('');
+ 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [shopID, setShopID] = useState('');
+  const { firstCustomerName, setFirstCustomerName } = useCustomer(); // Use useCustomer hook here
  
   const navigation = useNavigation();
 
@@ -53,11 +57,11 @@ export default function CustomerHomePage({ route }) {
             style={styles.image}
           />
         </View>
-        <Text style={styles.welcomeText}>Welcome,{phoneNumber}</Text>
+        <Text style={styles.welcomeText}>Welcome,{firstCustomerName}</Text>
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber  , phoneNumber:phoneNumber})}>
+            <TouchableOpacity onPress={() => navigateToScreen('PrefferedShops', { pincode: pincode, firstcustomerName: firstCustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber  , phoneNumber:phoneNumber})}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <FontAwesome5 name="shopping-cart" size={50} color="black" style={styles.icon} />
@@ -68,12 +72,12 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('Orders'  ,{ pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType })}>
+            <TouchableOpacity onPress={() => navigateToScreen('Orders'  ,{ pincode: pincode, firstcustomerName: firstCustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Orders{phoneNumber}</Text>
+                <Text style={styles.cardText}>My Orders</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -81,7 +85,7 @@ export default function CustomerHomePage({ route }) {
 
         <View style={styles.cardRow}>
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('MyAddress' , { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID,  phoneNumber:phoneNumber , userType:userType }) }>
+            <TouchableOpacity onPress={() => navigateToScreen('MyAddress' , { pincode: pincode, firstcustomerName: firstCustomerName, shopID: shopID,  phoneNumber:phoneNumber , userType:userType }) }>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="google-maps" size={50} color="black" style={styles.icon} />
@@ -92,19 +96,19 @@ export default function CustomerHomePage({ route }) {
           </View>
 
           <View style={styles.card}>
-            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstcustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType , phoneNumber:phoneNumber , selectedCategory:selectedCategory })}>
+            <TouchableOpacity onPress={() => navigateToScreen('SearchShops', { pincode: pincode, firstcustomerName: firstCustomerName, shopID: shopID, custPhoneNumber: custPhoneNumber , userType:userType , phoneNumber:phoneNumber , selectedCategory:selectedCategory })}>
               <View style={styles.cardContent}>
                 <View style={styles.iconWrapper}>
                   <MaterialCommunityIcons name="shopping-search" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>Search Shops {firstcustomerName}</Text>
+                <Text style={styles.cardText}>Search Shops</Text>
               </View>
             </TouchableOpacity>
           </View>
         </View>
 
         <View>
-          <Text style={styles.headingText}>Types of shops{shopID}</Text>
+          <Text style={styles.headingText}>Types of shops</Text>
         </View>
 
         <View style={styles.container1}>

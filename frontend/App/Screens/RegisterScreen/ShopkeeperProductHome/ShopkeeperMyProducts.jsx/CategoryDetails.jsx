@@ -3,17 +3,16 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react
 import { useCart } from '../../../../Context/ContextApi';
 
 const CategoryDetails = ({ route }) => {
-  const { category } = route.params;
-  const { addToCart, custPhoneNumber, userType } = useCart(); // Using addToCart function and custPhoneNumber from CartContext
+  const { category,shopkeeperName } = route.params;
+  const { addToCart, custPhoneNumber, userType  } = useCart(); // Using addToCart function and custPhoneNumber from CartContext
 
   const [products, setProducts] = useState(category.products);
 
   // Function to add a product to the cart
   const addProductToCart = (product) => {
-    addToCart(custPhoneNumber, product); // Call the addToCart function from the context with custPhoneNumber
+    addToCart(custPhoneNumber, product , shopkeeperName); // Call the addToCart function from the context with custPhoneNumber
     Alert.alert('Product added to cart successfully!');
-    // Optionally navigate to CartScreen after adding to cart
-    // navigation.navigate('CartScreen');
+   
   };
 
   // Function to render each product item
@@ -38,7 +37,7 @@ const CategoryDetails = ({ route }) => {
         <Text>Brand: {item.brand_name}</Text>
         <Text>Price: ${item.price}</Text>
         <Text>Weight: {item.weight}</Text>
-        {/* Render button based on userType */}
+        
         {renderButton()}
       </View>
     );

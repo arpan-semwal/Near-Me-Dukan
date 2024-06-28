@@ -1,105 +1,66 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import Colors from '../../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
-import { useCart, useCustomer } from '../../../Context/ContextApi';
-import axios from 'axios';
-
-const saveOrder = async (custName, custPhoneNumber, cartItems, totalPrice, selectedDate, selectedTime, shopID, shopkeeperName, phoneNumber) => {
-  try {
-    const response = await axios.post('http://192.168.29.67:3000/saveOrder', {
-      custName: custName,
-      custPhoneNumber: custPhoneNumber,
-      cartItems: cartItems,
-      totalPrice: totalPrice,
-      selectedDate: selectedDate, 
-      selectedTime: selectedTime,
-      shopID: shopID, // Pass shopID parameter
-      shopkeeperName: shopkeeperName,
-      phoneNumber: phoneNumber
-    });
-    console.log(response.data.message);
-    // Redirect to success page or show a success message
-    return true;
-  } catch (error) {
-    console.error('Error saving order:', error);
-    // Handle error
-    return false;
-  }
-};
 
 const Checkout = ({ route }) => {
-  const { cartItems, totalPrice, shopkeeperName, phoneNumber, shopID, custName, custPhoneNumber, selectedDate, selectedTime } = route.params;
-  const { storeName } = useCart();
+  const { cartItems, totalPrice, shopkeeperName, shopID, custName, custPhoneNumber, selectedDate, selectedTime, firstCustomerName } = route.params;
   const navigation = useNavigation();
 
-  // State to track if the notification is sent
-  const [notificationSent, setNotificationSent] = useState(false);
+  const saveOrder = async () => {
+    try {
+      const response = await fetch('http://192.168.29.67:3000/saveOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          custName,
+          custPhoneNumber,
+          cartItems,
+          totalPrice,
+          selectedDate,
+          selectedTime,
+          shopID,
+          shopkeeperName,
+          phoneNumber: custPhoneNumber, // Assuming phoneNumber is custPhoneNumber
+        }),
+      });
 
-  // Function to handle notification
-  const handleNotification = async () => {
-    const shopResponse = await sendShopNotification(); // Send notification to shopkeeper
-    if (shopResponse) {
-      const customerResponse = await sendCustomerNotification(); // Send notification to customer
-      if (customerResponse) {
-        Alert.alert('Success', 'Your appointment has been confirmed.');
+      if (response.ok) {
+        // Order saved successfully, navigate to payment success screen or another screen
+        navigation.navigate('Pay'); // Replace with your desired navigation action
       } else {
-        Alert.alert('Error', 'Failed to send confirmation notification to the customer.');
+        // Failed to save order
+        Alert.alert('Failed to save the order. Please try again.');
       }
-    } else {
-      Alert.alert('Error', 'Failed to send appointment notification to the shopkeeper.');
-    }
-  };
-
-  // Function to send notification to shopkeeper
-  const sendShopNotification = async () => {
-    // Code to send notification to the shopkeeper
-    // Return true if notification is sent successfully, false otherwise
-    return true; // Placeholder response, replace with actual implementation
-  };
-
-  // Function to send notification to customer
-  const sendCustomerNotification = async () => {
-    // Code to send notification to the customer
-    // Return true if notification is sent successfully, false otherwise
-    return true; // Placeholder response, replace with actual implementation
-  };
-
-  // Function to handle payment and notification
-  const handlePayment = async () => {
-    const orderSaved = await saveOrder(custName, custPhoneNumber, cartItems, totalPrice, selectedDate || null, selectedTime || null, shopID, shopkeeperName, phoneNumber);
-    if (orderSaved) {
-      handleNotification();
-    } else {
-      Alert.alert('Error', 'Failed to save the order. Please try again later.');
+    } catch (error) {
+      console.error('Error saving order:', error);
+      Alert.alert('Failed to save the order. Please try again.');
     }
   };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Header section */}
         <View style={styles.headerContainer}>
           <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
           <View style={styles.headerText}>
-            <Text style={styles.welcomeText}>Welcome: {custName}</Text>
+            <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
             <Text style={styles.shoppingAt}>Shopping at: {shopID}</Text>
-            <TouchableOpacity>
-              <Text style={styles.shoppingAt}>Change Address</Text>
-            </TouchableOpacity>
-            <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
-            <Text style={styles.shoppingAt}>ShopKeeper Name: {shopkeeperName}</Text>
-            <Text style={styles.shoppingAt}>Customer Phone: {selectedDate}</Text>
-            <Text style={styles.shoppingAt}>Customer Phone: {selectedTime}</Text>
           </View>
         </View>
+
+        {/* Checkout title */}
         <View>
           <Text style={styles.checkout}>CheckOut</Text>
         </View>
 
+        {/* Display cart items */}
         {cartItems.map((item, index) => (
           <View key={item.id}>
+            {/* Item details */}
             <View style={styles.itemContainer}>
-              <Image source={item.image} style={styles.itemImage} />
               <View style={styles.itemDetails}>
                 <Text style={styles.itemText}>{item.name}</Text>
                 <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
@@ -107,27 +68,33 @@ const Checkout = ({ route }) => {
                 <Text style={styles.itemTotal}>Total: ₹{item.price * item.quantity}</Text>
               </View>
             </View>
+            {/* Divider between items */}
             {index < cartItems.length - 1 && <View style={styles.line} />}
           </View>
         ))}
 
+        {/* Display total price */}
         <Text style={styles.totalPrice}>Total Price: ₹{totalPrice}</Text>
 
-        <Text style={styles.paymentMethod}>Select Payment Method</Text>
-        <TouchableOpacity
-          style={styles.paymentButton}
-          onPress={handlePayment}>
-          <Text style={styles.paymentButtonText}>Pay At Shop</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        {/* Payment button */}
+        <View style={styles.paymentContainer}>
+          <TouchableOpacity
+            style={styles.paymentButton}
+            onPress={saveOrder} // Call saveOrder function on button press
+          >
+            <Text style={styles.paymentButtonText}>Pay At Shop</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    flexGrow: 1,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
     backgroundColor: '#fff',
   },
   headerContainer: {
@@ -135,7 +102,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 20,
-    paddingHorizontal: 10,
   },
   storeImage: {
     width: 90,
@@ -149,10 +115,6 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  customerName: {
-    fontSize: 16,
     marginBottom: 5,
   },
   shoppingAt: {
@@ -171,14 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0', // Grey background color
     marginBottom: 10,
     padding: 10,
-    alignItems: 'center',
     borderRadius: 5,
-  },
-  itemImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    marginRight: 20,
   },
   itemDetails: {
     flex: 1,
@@ -205,24 +160,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-  paymentMethod: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  paymentContainer: {
     marginTop: 20,
-    marginBottom: 10,
-    textAlign: 'center',
+    alignItems: 'center',
   },
   paymentButton: {
     backgroundColor: '#007bff',
-    padding: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     borderRadius: 50,
     alignItems: 'center',
-    marginHorizontal: 50,
-    marginBottom: 10,
+    marginBottom: 40,
   },
   paymentButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 18,
   },
   line: {
     borderBottomWidth: 1,
