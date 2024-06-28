@@ -1,47 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Inventory = ({ route }) => {
-    const { phoneNumber, shopkeeperName, selectedSubCategory } = route.params;
+    const { phoneNumber, shopkeeperName, shopkeeperPhoneNumber, selectedSubCategory } = route.params;
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
-    const [numColumns, setNumColumns] = useState(2); // Initial number of columns
+    const screenWidth = useWindowDimensions().width;
+    const numColumns = screenWidth >= 600 ? 3 : 2; // Adjust based on screen width
 
     useEffect(() => {
+        const fetchMainServices = async () => {
+            try {
+                const response = await fetch(`http://192.168.29.67:3000/mainServices/${selectedSubCategory}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setServices(data);
+                } else {
+                    console.error('Failed to fetch main services:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching main services:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchMainServices();
 
-        // Clean up function to remove event listener
+        // Clean up function (optional) for async operations
         return () => {
-            Dimensions.removeEventListener('change', handleLayoutChange);
+            // Clean-up logic if needed
         };
-    }, []);
-
-    const fetchMainServices = async () => {
-        try {
-            const response = await fetch(`http://192.168.29.67:3000/mainServices/${selectedSubCategory}`);
-            if (response.ok) {
-                const data = await response.json();
-                setServices(data);
-            } else {
-                console.error('Failed to fetch main services:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error fetching main services:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [selectedSubCategory]);
 
     const renderService = ({ item }) => (
         <TouchableOpacity
             style={styles.serviceContainer}
-            onPress={() => navigation.navigate('SubSalonService', 
-            { 
-                mainServiceId: item.id, 
-                phoneNumber, 
-                shopkeeperName 
+            onPress={() => navigation.navigate('SubSalonService',
+            {
+                mainServiceId: item.id,
+                phoneNumber,
+                shopkeeperName
             })}
         >
             <View style={styles.card}>
@@ -50,33 +51,17 @@ const Inventory = ({ route }) => {
         </TouchableOpacity>
     );
 
-    // Calculate item width based on screen dimensions for dynamic number of columns
-    const screenWidth = Dimensions.get('window').width;
-    const itemWidth = (screenWidth - 30) / numColumns; // Subtracting padding and margin
-
-    // Function to handle layout change, e.g., orientation change
-    const handleLayoutChange = () => {
-        const orientation = screenWidth > Dimensions.get('window').height ? 'landscape' : 'portrait';
-        if (orientation === 'landscape') {
-            setNumColumns(3); // Set to 3 columns in landscape mode
-        } else {
-            setNumColumns(2); // Set to 2 columns in portrait mode
-        }
-    };
-
-    // Event listener for orientation change
-    useEffect(() => {
-        Dimensions.addEventListener('change', handleLayoutChange);
-        
-        // Clean up function to remove event listener
-        return () => {
-            Dimensions.removeEventListener('change', handleLayoutChange);
-        };
-    }, []);
-
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Inventory: {phoneNumber}</Text>
+            <View style={styles.headerContainer}>
+                <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
+                <View style={styles.headerText}>
+                    <Text style={styles.welcomeText}>Welcome: {shopkeeperName}</Text>
+                    <Text style={styles.shoppingAt}>Shop ID: {shopkeeperPhoneNumber}</Text>
+                    <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
+                </View>
+            </View>
+            <Text style={styles.title}>Inventory</Text>
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : (
@@ -133,6 +118,34 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         textAlign: 'center', // Center text within the card
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+        paddingHorizontal: 10,
+    },
+    storeImage: {
+        width: 90,
+        height: 90,
+        borderRadius: 10,
+    },
+    headerText: {
+        flex: 1,
+        marginLeft: 20,
+    },
+    welcomeText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#333',
+    },
+    shoppingAt: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#555',
     },
 });
 

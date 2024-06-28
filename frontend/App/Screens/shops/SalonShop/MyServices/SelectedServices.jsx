@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator , StyleSheet } from 'react-native';
-import { useCart, useCustomer } from '../../../../Context/ContextApi'; // Import useCustomer hook
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useCart } from '../../../../Context/ContextApi'; // Import useCart hook
 
 const SubServices = ({ route }) => {
-    const { shopPhoneNumber, mainServiceId, userType, firstcustomerName , custPhoneNumber } = route.params;
+    const { shopPhoneNumber, mainServiceId, userType, firstcustomerName, custPhoneNumber } = route.params;
     const { addToCart, setCustPhoneNumber } = useCart(); // Access addToCart function and setCustPhoneNumber from CartProvider
     const [subServices, setSubServices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ const SubServices = ({ route }) => {
         fetchSubServices();
         // Set custPhoneNumber globally
         setCustPhoneNumber(custPhoneNumber);
-    }, [shopPhoneNumber, mainServiceId]);
+    }, [shopPhoneNumber, mainServiceId, setCustPhoneNumber]);
 
     const fetchSubServices = async () => {
         try {
@@ -28,9 +28,8 @@ const SubServices = ({ route }) => {
 
     return (
         <View style={styles.container}>
-           <Text style={styles.welcomeText}>Welcome :{custPhoneNumber}  </Text>
-           <Text style={styles.welcomeText}>Shop Phone number :{shopPhoneNumber}  </Text>
-            {/* Your existing code */}
+            <Text style={styles.welcomeText}>Welcome:{firstcustomerName}</Text>
+            <Text style={styles.welcomeText}>Shop Phone number: {shopPhoneNumber}</Text>
 
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -43,14 +42,13 @@ const SubServices = ({ route }) => {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.card}>
-                            {/* Your existing card content */}
                             {/* Display sub service name and fetched price */}
                             <View style={styles.detailsContainer}>
                                 <Text style={styles.subServiceName}>Sub Service: {item.subServiceName}</Text>
                                 <Text style={styles.subServicePrice}>Price: ₹{item.subServicePrice.toFixed(2)}</Text>
                                 {/* Conditionally render Add to Cart button based on userType */}
                                 {userType === 'customer' && (
-                                    <TouchableOpacity onPress={() => addToCart(item, custPhoneNumber, firstcustomerName , shopPhoneNumber)} style={styles.addToCartButton}>
+                                    <TouchableOpacity onPress={() => addToCart(item, custPhoneNumber)} style={styles.addToCartButton}>
                                         <Text style={styles.addToCartButtonText}>Add to Cart</Text>
                                     </TouchableOpacity>
                                 )}
@@ -65,44 +63,14 @@ const SubServices = ({ route }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor:"white",
         flex: 1,
         padding: 20,
-        marginBottom: 20,
-    },
-    headerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    line: {
-        borderBottomColor: '#ccc',
-        borderBottomWidth: 1,
-        marginBottom: 20,
-    },
-    storeImage: {
-        width: 90,
-        height: 90,
-        borderRadius: 10,
-    },
-    headerText: {
-        flex: 1,
-        marginLeft: 20,
+        backgroundColor: '#f0f4f7',
     },
     welcomeText: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    shoppingAt: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 10,
     },
     cardContainer: {
         alignItems: 'center',
@@ -114,43 +82,37 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 10,
-        width: 314,
-        height: 173,
-        backgroundColor: '#44C7F4',
-    },
-    cardContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    serviceImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 30,
-        marginRight: 10,
+        width: '100%',
+        backgroundColor: '#4A90E2',
     },
     detailsContainer: {
         flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     subServiceName: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
-        color: '#000',
-        marginBottom: 10,
+        color: '#fff',
+        marginBottom: 5,
+        textAlign: 'center',
     },
     subServicePrice: {
-        fontSize: 14,
-        color: '#000',
+        fontSize: 16,
+        color: '#fff',
+        textAlign: 'center',
     },
     addToCartButton: {
-        backgroundColor: 'green',
-        paddingHorizontal: 15,
+        backgroundColor: '#45CE30',
+        paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 5,
         marginTop: 10,
     },
     addToCartButtonText: {
-        color: 'white',
+        color: '#fff',
         fontWeight: 'bold',
+        fontSize: 16,
     },
 });
 

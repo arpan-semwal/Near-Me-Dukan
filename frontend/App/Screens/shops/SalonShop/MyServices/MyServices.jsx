@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import {useCart} from '../../../../Context/ContextApi';
+import { useCart } from '../../../../Context/ContextApi';
 
 const MyServices = ({ route, navigation }) => {
-    const { phoneNumber,   userType , shopID  ,   firstcustomerName , custPhoneNumber  } = route.params;
+    const { phoneNumber, userType, shopID, firstcustomerName, custPhoneNumber } = route.params;
     const [mainServices, setMainServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const { setGlobalPhoneNumber } = useCart();
@@ -22,22 +22,21 @@ const MyServices = ({ route, navigation }) => {
             }
         };
         setGlobalPhoneNumber(phoneNumber);
-    
+
         fetchMainServices();
-    }, [phoneNumber , setGlobalPhoneNumber]);
+    }, [phoneNumber, setGlobalPhoneNumber]);
 
     const handleMainServiceClick = (mainServiceId) => {
-        navigation.navigate('SelectedServices', { shopPhoneNumber:phoneNumber, mainServiceId  , userType:userType , shopID :shopID  , firstcustomerName:firstcustomerName , custPhoneNumber:custPhoneNumber});
+        navigation.navigate('SelectedServices', { shopPhoneNumber: phoneNumber, mainServiceId, userType, shopID, firstcustomerName, custPhoneNumber });
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-            <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
+                <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome : {firstcustomerName}</Text>
-                    <Text style={styles.welcomeText}>Welcome : {custPhoneNumber}</Text>
-                    
+                    <Text style={styles.welcomeText}>Welcome: {firstcustomerName}</Text>
+                    <Text style={styles.welcomeText}>Phone: {custPhoneNumber}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                     {userType !== 'customer' && (
                         <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
@@ -48,20 +47,22 @@ const MyServices = ({ route, navigation }) => {
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
             ) : mainServices.length === 0 ? (
-                <Text>No selected services found for this phone number: {phoneNumber}</Text>
+                <Text style={styles.noServicesText}>No selected services found for this phone number: {phoneNumber}</Text>
             ) : (
-                <View style={styles.mainServiceContainer}>
-                    {mainServices.map((item, index) => (
+                <FlatList
+                    data={mainServices}
+                    keyExtractor={(item) => item.mainServiceId.toString()}
+                    renderItem={({ item }) => (
                         <TouchableOpacity
-                            key={index}
                             onPress={() => handleMainServiceClick(item.mainServiceId)}
                             style={styles.item}
                         >
                             <MaterialIcons name="people-alt" size={24} color="black" style={styles.icon} />
                             <Text style={styles.itemText}>{item.mainServiceName}</Text>
                         </TouchableOpacity>
-                    ))}
-                </View>
+                    )}
+                    numColumns={2}
+                />
             )}
         </View>
     );
@@ -102,6 +103,11 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+    },
+    noServicesText: {
+        fontSize: 18,
+        textAlign: 'center',
+        marginTop: 20,
     },
     mainServiceContainer: {
         flexDirection: 'row',

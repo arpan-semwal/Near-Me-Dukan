@@ -89,13 +89,12 @@ export default function SubSalonService({ route, navigation }) {
         }
     };
 
-
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
                 <Image source={require('../../../../../../assets/logo.png')} style={styles.storeImage} />
                 <View style={styles.headerText}>
-                    <Text style={styles.welcomeText}>Welcome :{shopkeeperName}  </Text>
+                    <Text style={styles.welcomeText}>Welcome: {shopkeeperName}</Text>
                     <Text style={styles.shoppingAt}>Shop ID: {phoneNumber}</Text>
                     <Text style={styles.shoppingAt}>Subscription Valid till 10 October 2024</Text>
                 </View>
@@ -120,11 +119,8 @@ export default function SubSalonService({ route, navigation }) {
                         <View style={styles.card}>
                             <Text style={styles.itemText}>{item.name}</Text>
                             <Text style={styles.description}>{item.description}</Text>
-                            
-
                             {/* Display entered price for the service */}
                             <Text style={styles.itemText}>Price: ₹{getPriceForService(item.id)}</Text>
-
                             {/* Button to select the service */}
                             <TouchableOpacity
                                 style={[
@@ -168,9 +164,6 @@ export default function SubSalonService({ route, navigation }) {
 
             {/* Button to navigate to MyServices screen */}
             <Button title="Go to MyServices" onPress={goToMyServices} />
-
-            {/* Display selected services */}
-
         </View>
     );
 }
@@ -179,71 +172,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    searchBar: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-    },
-    card: {
-        padding: 15,
-        margin: 5,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    itemText: {
-        fontSize: 16,
-    },
-    description: {
-        marginTop: 10,
-    },
-    price: {
-        marginTop: 10,
-        color: 'green',
-        fontWeight: 'bold',
-    },
-    enteredPrice: {
-        marginTop: 5,
-        color: '#666',
-    },
-    button: {
-        marginTop: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor: '#ccc',
-        borderRadius: 5,
-    },
-    buttonSelected: {
-        backgroundColor: '#007BFF',
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    selectedServicesContainer: {
-        marginTop: 20,
-    },
-    selectedServicesTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        backgroundColor: '#f0f4f7',
     },
     headerContainer: {
         flexDirection: 'row',
@@ -271,6 +200,54 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 5,
     },
+    searchBar: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        backgroundColor: '#fff',
+    },
+    card: {
+        padding: 15,
+        margin: 5,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    itemText: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    description: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 5,
+    },
+    button: {
+        marginTop: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        backgroundColor: '#007BFF',
+        borderRadius: 5,
+    },
+    buttonSelected: {
+        backgroundColor: '#5cb85c',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
@@ -293,6 +270,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     modalText: {
+        fontSize: 18,
         marginBottom: 15,
         textAlign: 'center',
     },
@@ -301,7 +279,8 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         padding: 10,
         borderRadius: 5,
-        marginBottom: 10,
+        marginBottom: 15,
         width: 200,
+        backgroundColor: '#fff',
     },
 });
