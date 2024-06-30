@@ -16,11 +16,6 @@ const CartScreen = () => {
       <Text>Weight: {item.weight}</Text>
       <Text>Phonenumber: {item.shopkeeperPhoneNumber}</Text>
       
-      
-      
-      
-      
-      
       <View style={styles.quantityContainer}>
         <TouchableOpacity onPress={() => updateQuantity(item.id, -1)} style={styles.quantityButton}>
           <Text style={styles.quantityButtonText}>-</Text>
@@ -62,7 +57,14 @@ const CartScreen = () => {
   };
 
   const handlePayAtShop = () => {
-    navigation.navigate('Checkout', { totalPrice: calculateTotalPrice(), cartItems: cartItems[custPhoneNumber], firstCustomerName: firstCustomerName , custPhoneNumber:custPhoneNumber, shopkeeperPhoneNumber:shopkeeperPhoneNumber });
+    navigation.navigate('Checkout', {
+      totalPrice: calculateTotalPrice(),
+      cartItems: cartItems[custPhoneNumber],
+      firstCustomerName: firstCustomerName,
+      custPhoneNumber: custPhoneNumber,
+      shopkeeperPhoneNumber: shopkeeperPhoneNumber,
+      shopID: shopID  // Add shopID here to pass it to Checkout
+    });
   };
 
   // VirtualizedList functions
@@ -212,4 +214,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CartScreen;
+export default CartScreen

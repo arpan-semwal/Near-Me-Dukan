@@ -10,14 +10,13 @@ const CategoryDetails = ({ route }) => {
 
   // Function to add a product to the cart
   const addProductToCart = (product) => {
-    addToCart(custPhoneNumber, product, shopkeeperName, shopkeeperPhonenumber); // Pass shopkeeperPhonenumber
+    addToCart(custPhoneNumber, product, shopkeeperName, shopkeeperPhonenumber); // Ensure shopID is part of the product
     Alert.alert('Product added to cart successfully!');
   };
   
 
   // Function to render each product item
   const renderProduct = ({ item }) => {
-    // Check userType to conditionally render the Add to Cart button
     const renderButton = () => {
       if (userType === 'customer') {
         return (

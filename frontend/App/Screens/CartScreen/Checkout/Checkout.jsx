@@ -41,8 +41,8 @@ const Checkout = ({ route }) => {
     try {
       // Get the shopkeeper's name and shopID from the fetched details or from cartItems if the details are not available
       const shopkeeperName = shopkeeperDetails ? shopkeeperDetails.shopkeeperName : cartItems[0]?.shopkeeperName;
-      const shopkeeperShopID = shopkeeperDetails ? shopkeeperDetails.shopID : shopID; // Added line to get shopID from details or params
-
+      const shopkeeperShopID = shopkeeperDetails ? shopkeeperDetails.shopID : shopID;  // Use the fetched shopID or fallback to params
+  
       const response = await fetch('http://192.168.29.67:3000/saveOrder', {
         method: 'POST',
         headers: {
@@ -60,9 +60,9 @@ const Checkout = ({ route }) => {
           shopkeeperPhoneNumber,  // Fixed this line
         }),
       });
-
+  
       if (response.ok) {
-        navigation.navigate('Pay' , {custPhoneNumber:custPhoneNumber}); // Navigate to the payment screen
+        navigation.navigate('Pay', { custPhoneNumber: custPhoneNumber });  // Navigate to the payment screen
       } else {
         Alert.alert('Failed to save the order. Please try again.');
       }
