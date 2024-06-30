@@ -1,17 +1,26 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, VirtualizedList } from 'react-native';
 import { useCart, useCustomer } from '../../Context/ContextApi';
 import { useNavigation } from '@react-navigation/native';
 
 const CartScreen = () => {
-  const { cartItems, removeFromCart, clearCart, custPhoneNumber, setCartItems,shopID ,  } = useCart();
-  const { firstCustomerName  } = useCustomer(); // Use useCustomer hook here
+  const { cartItems, removeFromCart, setCartItems, custPhoneNumber, shopID } = useCart();
+  const { firstCustomerName, shopkeeperPhoneNumber } = useCustomer();
   const navigation = useNavigation();
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemPrice}>Price: ${item.price.toFixed(2)}</Text>
+      <Text style={styles.itemName}>{item.main_category}</Text>
+      <Text>Product Name: {item.product_name}</Text>
+      <Text>Brand: {item.brand_name}</Text>
+      <Text>Weight: {item.weight}</Text>
+      <Text>Phonenumber: {item.shopkeeperPhoneNumber}</Text>
+      
+      
+      
+      
+      
+      
       <View style={styles.quantityContainer}>
         <TouchableOpacity onPress={() => updateQuantity(item.id, -1)} style={styles.quantityButton}>
           <Text style={styles.quantityButtonText}>-</Text>
@@ -53,8 +62,16 @@ const CartScreen = () => {
   };
 
   const handlePayAtShop = () => {
-    // Implement payment logic here, e.g., navigate to a confirmation screen or display a message
-    navigation.navigate('Checkout', { totalPrice: calculateTotalPrice(), cartItems: cartItems[custPhoneNumber]  , firstCustomerName:firstCustomerName});
+    navigation.navigate('Checkout', { totalPrice: calculateTotalPrice(), cartItems: cartItems[custPhoneNumber], firstCustomerName: firstCustomerName , custPhoneNumber:custPhoneNumber, shopkeeperPhoneNumber:shopkeeperPhoneNumber });
+  };
+
+  // VirtualizedList functions
+  const getItemCount = () => {
+    return cartItems[custPhoneNumber] ? cartItems[custPhoneNumber].length : 0;
+  };
+
+  const getItem = (data, index) => {
+    return data[index];
   };
 
   return (
@@ -63,17 +80,20 @@ const CartScreen = () => {
         <Image source={require("../../../assets/logo.png")} style={styles.storeImage} />
         <View style={styles.headerText}>
           <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
-          <Text style={styles.shoppingAt}>Shopping at: {shopID}</Text>
-          
+         
+        
         </View>
       </View>
       {cartItems[custPhoneNumber] && cartItems[custPhoneNumber].length === 0 ? (
-        <Text>Your cart is empty!</Text>
+        <Text style={styles.emptyCartText}>Your cart is empty!</Text>
       ) : (
-        <FlatList
+        <VirtualizedList
           data={cartItems[custPhoneNumber]}
+          initialNumToRender={10}
           renderItem={renderItem}
           keyExtractor={item => item.id.toString()}
+          getItemCount={getItemCount}
+          getItem={getItem}
           contentContainerStyle={styles.flatListContent}
         />
       )}
@@ -111,6 +131,12 @@ const styles = StyleSheet.create({
   },
   shoppingAt: {
     fontSize: 14,
+  },
+  emptyCartText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#555',
   },
   flatListContent: {
     paddingBottom: 100, // Ensure there's enough space at the bottom
@@ -162,10 +188,6 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   footerContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: 16,
     backgroundColor: '#fff',
     borderTopWidth: 1,

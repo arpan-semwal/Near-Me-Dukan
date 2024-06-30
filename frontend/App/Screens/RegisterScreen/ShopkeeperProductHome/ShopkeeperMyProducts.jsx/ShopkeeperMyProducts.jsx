@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const ShopkeeperMyProducts = ({ route }) => {
     const [categories, setCategories] = useState([]);
-    const { phoneNumber , userType , shopkeeperName } = route.params;
+    const { phoneNumber , userType , shopkeeperName , shopkeeperPhonenumber } = route.params;
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -13,7 +13,7 @@ const ShopkeeperMyProducts = ({ route }) => {
 
     const fetchSelectedProducts = async () => {
         try {
-            const response = await fetch(`http://192.168.29.67:3000/myProducts/${phoneNumber}`);
+            const response = await fetch(`http://192.168.29.67:3000/myProducts/${shopkeeperPhonenumber}`);
             if (response.ok) {
                 const data = await response.json();
                 const groupedCategories = groupProductsByCategory(data);
@@ -43,7 +43,7 @@ const ShopkeeperMyProducts = ({ route }) => {
     const renderCategory = ({ item, index }) => (
         <TouchableOpacity
             style={[styles.categoryContainer, index % 2 === 1 ? styles.rightMargin : null]}
-            onPress={() => navigation.navigate('CategoryDetails', { category: item, phoneNumber , userType , shopkeeperName:shopkeeperName })}>
+            onPress={() => navigation.navigate('CategoryDetails', { category: item, shopkeeperPhonenumber:shopkeeperPhonenumber , userType , shopkeeperName:shopkeeperName })}>
             <Text style={styles.categoryName}>{item.main_category}</Text>
         </TouchableOpacity>
     );

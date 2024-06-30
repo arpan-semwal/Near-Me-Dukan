@@ -1,36 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const Checkout = ({ route }) => {
-  const { cartItems, totalPrice, shopkeeperName, shopID, custName, custPhoneNumber, selectedDate, selectedTime, firstCustomerName } = route.params;
+  const { cartItems, totalPrice, shopID, custName, selectedDate, selectedTime, firstCustomerName, custPhoneNumber } = route.params;
   const navigation = useNavigation();
+  const [shopkeeperDetails, setShopkeeperDetails] = useState(null);
+
+  // Extract the shopkeeper phone number from the first cart item
+  const shopkeeperPhoneNumber = cartItems[0]?.shopkeeperPhoneNumber;
+
+  useEffect(() => {
+    if (!shopkeeperPhoneNumber) {
+      Alert.alert('Error', 'Shopkeeper phone number is not available.');
+      return;
+    }
+
+    const fetchShopkeeperDetails = async () => {
+      try {
+        console.log(`Fetching details for phone number: ${shopkeeperPhoneNumber}`); // Debugging line
+        const response = await fetch(`http://192.168.29.67:3000/getShopkeeperDetails?phoneNumber=${shopkeeperPhoneNumber}`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched shopkeeper details:', data); // Debugging line
+          setShopkeeperDetails(data);
+        } else {
+          console.error('Failed to fetch shopkeeper details:', response.status); // Debugging line
+          Alert.alert('Failed to fetch shopkeeper details. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error fetching shopkeeper details:', error);
+        Alert.alert('Failed to fetch shopkeeper details. Please try again.');
+      }
+    };
+
+    fetchShopkeeperDetails();
+  }, [shopkeeperPhoneNumber]);
 
   const saveOrder = async () => {
     try {
+      // Get the shopkeeper's name and shopID from the fetched details or from cartItems if the details are not available
+      const shopkeeperName = shopkeeperDetails ? shopkeeperDetails.shopkeeperName : cartItems[0]?.shopkeeperName;
+      const shopkeeperShopID = shopkeeperDetails ? shopkeeperDetails.shopID : shopID; // Added line to get shopID from details or params
+
       const response = await fetch('http://192.168.29.67:3000/saveOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          custName,
-          custPhoneNumber,
+          custName: firstCustomerName,
           cartItems,
           totalPrice,
           selectedDate,
           selectedTime,
-          shopID,
-          shopkeeperName,
-          phoneNumber: custPhoneNumber, // Assuming phoneNumber is custPhoneNumber
+          shopID: shopkeeperShopID,  // Use the fetched shopID or fallback to params
+          shopkeeperName,  // Using the fetched shopkeeper name
+          custPhoneNumber,
+          shopkeeperPhoneNumber,  // Fixed this line
         }),
       });
 
       if (response.ok) {
-        // Order saved successfully, navigate to payment success screen or another screen
-        navigation.navigate('Pay'); // Replace with your desired navigation action
+        navigation.navigate('Pay' , {custPhoneNumber:custPhoneNumber}); // Navigate to the payment screen
       } else {
-        // Failed to save order
         Alert.alert('Failed to save the order. Please try again.');
       }
     } catch (error) {
@@ -47,7 +80,7 @@ const Checkout = ({ route }) => {
           <Image source={require('../../../../assets/logo.png')} style={styles.storeImage} />
           <View style={styles.headerText}>
             <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
-            <Text style={styles.shoppingAt}>Shopping at: {shopID}</Text>
+            <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
           </View>
         </View>
 
@@ -62,16 +95,30 @@ const Checkout = ({ route }) => {
             {/* Item details */}
             <View style={styles.itemContainer}>
               <View style={styles.itemDetails}>
-                <Text style={styles.itemText}>{item.name}</Text>
+                <Text style={styles.itemText}>{item.product_name}</Text>
                 <Text style={styles.itemPrice}>Price: ₹{item.price}</Text>
                 <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
                 <Text style={styles.itemTotal}>Total: ₹{item.price * item.quantity}</Text>
+                <Text style={styles.itemTotal}>Shopkeeper Phone: {item.shopkeeperPhoneNumber}</Text>
               </View>
             </View>
             {/* Divider between items */}
             {index < cartItems.length - 1 && <View style={styles.line} />}
           </View>
         ))}
+
+        {/*Display shopkeeper details
+        {shopkeeperDetails && (
+          <View style={styles.shopkeeperDetailsContainer}>
+            <Text style={styles.shopkeeperDetailsTitle}>Shopkeeper Details</Text>
+            <Text style={styles.shopkeeperDetail}>Name: {shopkeeperDetails.shopkeeperName}</Text>
+            <Text style={styles.shopkeeperDetail}>Phone: {shopkeeperDetails.phoneNumber}</Text>
+            <Text style={styles.shopkeeperDetail}>Address: {shopkeeperDetails.address}, {shopkeeperDetails.city}, {shopkeeperDetails.pincode}, {shopkeeperDetails.shopState}</Text>
+            <Text style={styles.shopkeeperDetail}>Shop Type: {shopkeeperDetails.shopType}</Text>
+            <Text style={styles.shopkeeperDetail}>Category: {shopkeeperDetails.selectedCategory}</Text>
+            <Text style={styles.shopkeeperDetail}>Store Name: {shopkeeperDetails.shopID}</Text>
+          </View>
+        )}*/}
 
         {/* Display total price */}
         <Text style={styles.totalPrice}>Total Price: ₹{totalPrice}</Text>
@@ -127,6 +174,21 @@ const styles = StyleSheet.create({
     fontSize: 26,
     textAlign: 'center',
     marginBottom: 20,
+  },
+  shopkeeperDetailsContainer: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  shopkeeperDetailsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  shopkeeperDetail: {
+    fontSize: 16,
+    marginBottom: 5,
   },
   itemContainer: {
     flexDirection: 'row',

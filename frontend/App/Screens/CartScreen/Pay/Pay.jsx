@@ -3,15 +3,15 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Animated }
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
-import { useCart, useCustomer } from '../../../Context/ContextApi';
+ 
 
 const Pay = ({route}) => {
   
   const scaleValue = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation(); // Initialize navigation object
-  const { customerName, shopName,   } = useCustomer();
-  const { custName  , custPhoneNumber , cartItems , totalPrice ,shopID , shopkeeperName  , phoneNumber,selectedDate,selectedTime  } = route.params || {};
-  const {    storeName } = useCart();
+ const {custPhoneNumber} = route.params;
+ 
+ 
 
   useEffect(() => {
     startAnimation();
@@ -31,7 +31,7 @@ const Pay = ({route}) => {
 
   const goToOrderPage = () => {
     // Navigate to the order page and pass customerPhone and shopID as params
-    navigation.navigate('Orders', { customerPhone: custPhoneNumber, shopID: shopID , custName:custName  , custPhoneNumber:custPhoneNumber , cartItems:cartItems , totalPrice:totalPrice ,shopID:shopID , shopkeeperName:shopkeeperName  , phoneNumber:phoneNumber ,selectedDate:selectedDate, selectedTime:selectedTime  });
+    navigation.navigate('Orders',{custPhoneNumber:custPhoneNumber});
   };
 
   return (

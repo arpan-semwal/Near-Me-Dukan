@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
 import { useCart } from '../../../../Context/ContextApi';
 
 const CategoryDetails = ({ route }) => {
-  const { category,shopkeeperName } = route.params;
-  const { addToCart, custPhoneNumber, userType  } = useCart(); // Using addToCart function and custPhoneNumber from CartContext
-
+  const { category, shopkeeperName , shopkeeperPhonenumber } = route.params;
+  const { addToCart, custPhoneNumber, userType, firstCustomerName } = useCart(); // Using addToCart function and custPhoneNumber from CartContext
+  
   const [products, setProducts] = useState(category.products);
 
   // Function to add a product to the cart
   const addProductToCart = (product) => {
-    addToCart(custPhoneNumber, product , shopkeeperName); // Call the addToCart function from the context with custPhoneNumber
+    addToCart(custPhoneNumber, product, shopkeeperName, shopkeeperPhonenumber); // Pass shopkeeperPhonenumber
     Alert.alert('Product added to cart successfully!');
-   
   };
+  
 
   // Function to render each product item
   const renderProduct = ({ item }) => {
@@ -26,7 +26,7 @@ const CategoryDetails = ({ route }) => {
           </TouchableOpacity>
         );
       }
-      return null; // If userType is shopkeeper, don't render the button
+      return null;
     };
 
     return (
@@ -36,8 +36,8 @@ const CategoryDetails = ({ route }) => {
         <Text>ID: {item.id}</Text>
         <Text>Brand: {item.brand_name}</Text>
         <Text>Price: ${item.price}</Text>
+        <Text>Store Name: {item.shopID}</Text>
         <Text>Weight: {item.weight}</Text>
-        
         {renderButton()}
       </View>
     );
@@ -45,6 +45,15 @@ const CategoryDetails = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      {/* Header section */}
+      <View style={styles.headerContainer}>
+        <Image source={require('../../../../../assets/logo.png')} style={styles.storeImage} />
+        <View style={styles.headerText}>
+          <Text style={styles.welcomeText}>Welcome: {firstCustomerName}</Text>
+          <Text style={styles.shoppingAt}>Shopping at: {custPhoneNumber}</Text>
+        </View>
+      </View>
+
       <FlatList data={products} renderItem={renderProduct} keyExtractor={(item) => item.id.toString()} />
     </View>
   );
@@ -55,6 +64,28 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  storeImage: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 16,
+  },
+  headerText: {
+    flex: 1,
+  },
+  welcomeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  shoppingAt: {
+    fontSize: 14,
+    color: '#555',
   },
   productContainer: {
     marginBottom: 16,

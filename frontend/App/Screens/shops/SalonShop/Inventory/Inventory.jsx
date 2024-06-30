@@ -23,7 +23,7 @@ const Inventory = ({ route }) => {
             } catch (error) {
                 console.error('Error fetching main services:', error);
             } finally {
-                setLoading(false);
+                setLoading(false); 
             }
         };
 

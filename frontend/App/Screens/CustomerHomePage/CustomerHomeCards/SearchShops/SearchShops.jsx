@@ -129,7 +129,7 @@ const handleShopPress = (shop) => {
 
   if (shopType === 'product') {
     navigation.navigate('ShopkeeperMyProducts', { 
-      phoneNumber, 
+      shopkeeperPhonenumber : phoneNumber, 
       storeImage, 
       shopkeeperName, 
       userType, 
@@ -263,6 +263,7 @@ const handleShopPress = (shop) => {
                   <Text>Pincode: {item.pincode}</Text>
                   <Text>Shop: {item.selectedCategory}</Text>
                   <Text>Phone: {item.phoneNumber}</Text>
+                
                   <Text>Deliver to Home: {item.deliverToHome}</Text>
                
 
@@ -296,6 +297,7 @@ const handleShopPress = (shop) => {
                   <Text>Pincode: {item.pincode}</Text>
                   <Text>Shop: {item.selectedCategory}</Text>
                   <Text>Phone: {item.phoneNumber}</Text>
+                  <Text>Store Name: {item.shopID}</Text>
                   <Text>Deliver to Home: {item.deliverToHome ? "Yes" : "No"}</Text>
                   
                 </View>

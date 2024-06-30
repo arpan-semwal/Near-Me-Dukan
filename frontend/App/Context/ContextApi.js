@@ -24,7 +24,7 @@ export const CartProvider = ({ children }) => {
   const [storeName, setStoreName] = useState('');
   const [userType, setUserType] = useState('customer');
   const [custPhoneNumber, setCustPhoneNumber] = useState('');
-  const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState('');
+  const [shopkeeperPhoneNumber, setShopkeeperPhoneNumber] = useState(''); // Added
   const [name, setName] = useState('');
   const [firstCustomerName, setFirstCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -32,21 +32,21 @@ export const CartProvider = ({ children }) => {
   const [customerPincode, setCustomerPincode] = useState('');
 
   // Function to add item to cart for a specific customer
-  const addToCart = (custPhoneNumber, product, shopkeeperName) => {
+  const addToCart = (custPhoneNumber, product, shopkeeperName, shopkeeperPhoneNumber) => {
     const updatedCartItems = { ...cartItems };
-  
+
     if (!updatedCartItems[custPhoneNumber]) {
       updatedCartItems[custPhoneNumber] = [];
     }
-  
+
     const existingItemIndex = updatedCartItems[custPhoneNumber].findIndex(item => item.id === product.id);
-  
+
     if (existingItemIndex !== -1) {
       updatedCartItems[custPhoneNumber][existingItemIndex].quantity++;
     } else {
-      updatedCartItems[custPhoneNumber].push({ ...product, quantity: 1, shopkeeperName: shopkeeperName });
+      updatedCartItems[custPhoneNumber].push({ ...product, quantity: 1, shopkeeperName: shopkeeperName, shopkeeperPhoneNumber: shopkeeperPhoneNumber });
     }
-  
+
     setCartItems(updatedCartItems);
   };
 
@@ -63,7 +63,7 @@ export const CartProvider = ({ children }) => {
     updatedCartItems[custPhoneNumber] = [];
     setCartItems(updatedCartItems);
   };
-  
+
   const setGlobalPhoneNumber = (number) => {
     setPhoneNumber(number);
   }
@@ -97,7 +97,7 @@ export const CartProvider = ({ children }) => {
         setUserType,
         custPhoneNumber,
         setCustPhoneNumber,
-        shopkeeperPhoneNumber,
+        shopkeeperPhoneNumber,  // Add this line
         name,
         setName,
         firstCustomerName,
@@ -106,7 +106,7 @@ export const CartProvider = ({ children }) => {
         setPhoneNumber,
         shopPhoneNumber,
         setShopPhoneNumber,
-        setGlobalPhoneNumber, 
+        setGlobalPhoneNumber,
       }}
     >
       <CustomerContext.Provider
@@ -134,7 +134,7 @@ export const CartProvider = ({ children }) => {
           shopPhoneNumber,
           setShopPhoneNumber,
           customerPincode, // Add customerPincode
-        setCustomerPincode, // Add setCustomerPincode function
+          setCustomerPincode, // Add setCustomerPincode function
         }}
       >
         {children}

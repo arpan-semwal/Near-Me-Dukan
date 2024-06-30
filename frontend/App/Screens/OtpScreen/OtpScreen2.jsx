@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity , Dimensions , Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, TouchableOpacity, Dimensions, Image } from 'react-native';
 import Colors from '../../utils/Colors';
 import { useNavigation } from '@react-navigation/native';
- 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -28,39 +27,20 @@ export default function OtpScreen2({ route }) {
         if (otp === correctOtp) {
             setIsCorrectOtp(true);
             
-            try {
-                // Make a request to create a session in the backend
-                const response = await fetch('http://192.168.29.67:3000/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ userId: phoneNumber }), // Assuming phoneNumber is the userId
-                });
-    
-                if (response.ok) {
-                    const data = await response.json();
-                    // Navigate user based on userType
-                    if (userType === 'shopkeeper') {
-                        navigation.navigate('ShopkeeperHome', { phoneNumber: phoneNumber, userType: userType });
-                    } 
-                    else if (userType === 'customer') {
-                        navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType });
-                    }
-                    else if (userType === 'unregistered') {
-                        navigation.navigate('Register', { phoneNumber: phoneNumber, userType: userType });
-                    }
-                } else {
-                    console.error('Error creating session:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error creating session:', error);
+            // Navigate user based on userType
+            if (userType === 'shopkeeper') {
+                navigation.navigate('ShopkeeperHome', { phoneNumber: phoneNumber, userType: userType });
+            } 
+            else if (userType === 'customer') {
+                navigation.navigate('CustomerHomePage', { phoneNumber: phoneNumber, userType: userType });
+            }
+            else if (userType === 'unregistered') {
+                navigation.navigate('Register', { phoneNumber: phoneNumber, userType: userType });
             }
         } else {
             setIsCorrectOtp(false);
         }
     };
-    
 
     const handleResend = () => {
         setIsResent(true);
@@ -75,7 +55,7 @@ export default function OtpScreen2({ route }) {
                     style={styles.logo}
                 />
             </View>
-            <Text style={styles.heading}>Enter OTP : {userType}</Text>
+            <Text style={styles.heading}>Enter OTP</Text>
             <View style={styles.blueBox}>
                 <View style={styles.countryCodeContainer}>
                     <Text style={styles.countryCode}>+91</Text>
@@ -105,7 +85,7 @@ export default function OtpScreen2({ route }) {
                         ))}
                     </View>
                     <TouchableOpacity onPress={handleResend}>
-                        <Text style={styles.resendText}>Resend OTP {phoneNumber}</Text>
+                        <Text style={styles.resendText}>Resend OTP</Text>
                     </TouchableOpacity>
                 </View>
             </View>
