@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const ShopkeeperMyProducts = ({ route }) => {
     const [categories, setCategories] = useState([]);
-    const { phoneNumber , userType , shopkeeperName , shopkeeperPhonenumber } = route.params;
+    const {  userType , shopkeeperName , shopkeeperPhonenumber } = route.params;
     const navigation = useNavigation();
 
     useEffect(() => {
