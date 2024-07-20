@@ -79,7 +79,7 @@ export default function CustomerHomePage({ route }) {
                 <View style={styles.iconWrapper}>
                   <MaterialIcons name="menu-book" size={50} color="black" style={styles.icon} />
                 </View>
-                <Text style={styles.cardText}>My Orders{phoneNumber}</Text>
+                <Text style={styles.cardText}>My Orders</Text>
               </View>
             </TouchableOpacity>
           </View>

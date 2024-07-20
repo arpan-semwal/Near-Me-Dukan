@@ -26,7 +26,7 @@ export default function PreferredShops({ route }) {
     const { phoneNumber, storeImage, shopkeeperName, shopType } = shop;
 
     if (shopType === 'product') {
-        navigation.navigate('ShopkeeperMyProducts', { phoneNumber, storeImage, shopkeeperName });
+        navigation.navigate('ShopkeeperMyProducts', { shopkeeperPhonenumber:phoneNumber, storeImage, shopkeeperName });
     } else if (shopType === 'service') {
         navigation.navigate('MyServices', { phoneNumber, storeImage, shopkeeperName });
     }
